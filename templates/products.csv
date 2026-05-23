@@ -1,0 +1,21 @@
+id,name,categ_id/id,detailed_type,uom_id/name,uom_po_id/name,list_price,standard_price,description
+# ── RAW MATERIALS ──────────────────────────────────────────────────────────────
+famoil_prod_soyabean,SoyaBean,famoil_cat_raw_materials,product,kg,kg,720,710,Whole soybeans for oil extraction
+# ── FINISHED GOODS ─────────────────────────────────────────────────────────────
+famoil_prod_crude_oil,Crude Soya Oil,famoil_cat_finished_goods,product,kg,kg,0,0,Primary output of pressing stage
+famoil_prod_soya_cake,Soya Cake,famoil_cat_finished_goods,product,kg,kg,0,0,Co-product high-protein animal feed
+famoil_prod_soapstock,SoapStock,famoil_cat_finished_goods,product,kg,kg,0,0,Co-product from oil processing
+# ── WORK IN PROGRESS ───────────────────────────────────────────────────────────
+famoil_prod_waste,Production Waste,famoil_cat_wip,consu,kg,kg,0,0,Waste generated during production
+# ── CONSUMABLES ────────────────────────────────────────────────────────────────
+famoil_prod_hexane,Hexane Chemical,famoil_cat_consumables,consu,L,L,0,11000,Solvent used in oil extraction
+famoil_prod_lubricant,Lubricant Oil,famoil_cat_consumables,consu,L,L,0,3000,Machine lubricant
+# ── PACKAGING MATERIALS ────────────────────────────────────────────────────────
+famoil_prod_bottle_1l,1L Bottle,famoil_cat_packaging,consu,Units,Units,0,0,1 litre PET bottle
+famoil_prod_jerrycan_5l,5L Jerrycan,famoil_cat_packaging,consu,Units,Units,0,0,5 litre plastic jerrycan
+famoil_prod_cap,Caps,famoil_cat_packaging,consu,Units,Units,0,0,Bottle/jerrycan caps
+famoil_prod_label,Labels,famoil_cat_packaging,consu,Units,Units,0,0,Product labels
+# ── SPARE PARTS ────────────────────────────────────────────────────────────────
+famoil_prod_bearing,Bearing 6205,famoil_cat_spares,product,Units,Units,0,0,Press machine bearing
+famoil_prod_filter,Oil Filter,famoil_cat_spares,product,Units,Units,0,0,Filtration system filter element
+famoil_prod_belt,Press Belt A52,famoil_cat_spares,product,Units,Units,0,0,Press machine drive belt

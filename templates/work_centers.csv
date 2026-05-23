@@ -1,0 +1,6 @@
+id,name,code,costs_hour,default_capacity,time_efficiency,active,note
+famoil_wc_cleaning,FamOil Cleaning Section,CLN,15000,140,100,True,Cleaning and grading of raw soybeans
+famoil_wc_extrusion,FamOil Extrusion Section,EXT,45000,140,100,True,Flaking and conditioning stage
+famoil_wc_pressing,FamOil Pressing Section,PRS,75000,140,100,True,Mechanical pressing for oil extraction
+famoil_wc_filtration,FamOil Filtration Section,FLT,20000,140,100,True,Crude oil filtration and clarification
+famoil_wc_packaging,FamOil Packaging Section,PKG,12000,140,100,True,Bottling packing and labelling

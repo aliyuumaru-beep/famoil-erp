@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_maintenance_request_form_spareparts_v6"
+            model="ir.ui.view">
+        <field name="name">maintenance.request.form.spareparts.v6</field>
+        <field name="model">maintenance.request</field>
+
+        <!-- ✅ Inherit LAST view in chain -->
+        <field name="inherit_id"
+               ref="maintenance_hr.maintenance_request_view_form_inherit_hr"/>
+
+        <field name="arch" type="xml">
+
+            <!-- Spare Parts tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Spare Parts">
+                    <group>
+                        <field name="spare_part_line_ids">
+                            <tree editable="bottom">
+                                <field name="product_id"/>
+                                <field name="quantity"/>
+                                <field name="uom_id" readonly="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- Request Spare Parts button -->
+            <xpath expr="//header" position="inside">
+                <button name="action_request_spare_parts"
+                        string="Request Spare Parts"
+                        type="object"
+                        class="btn-primary"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

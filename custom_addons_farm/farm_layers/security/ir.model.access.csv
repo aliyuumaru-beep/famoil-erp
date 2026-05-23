@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_layer_batch,Farm Layer Batch,model_farm_layer_batch,,1,1,1,1
+access_farm_layer_daily_log,Farm Layer Daily Log,model_farm_layer_daily_log,,1,1,1,1

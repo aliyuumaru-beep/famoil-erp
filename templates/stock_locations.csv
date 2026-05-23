@@ -1,0 +1,19 @@
+id,name,location_id/id,usage,active,comment
+# ── FAMoil WAREHOUSE ROOT ──────────────────────────────────────────────────────
+# The warehouse (CW) is created via UI — Inventory > Configuration > Warehouses
+# The following child locations go under CW/Stock
+# ── STOCK CHILDREN ─────────────────────────────────────────────────────────────
+famoil_loc_rm,RM Warehouse,famoil_loc_cw_stock,internal,True,Raw material holding area
+famoil_loc_production,Production,famoil_loc_cw_stock,internal,True,WIP staging area for active MOs
+famoil_loc_crude_tank1,Crude Oil Tank 1,famoil_loc_cw_stock,internal,True,Post-pressing crude oil storage
+famoil_loc_crude_tank2,Crude Oil Tank 2,famoil_loc_cw_stock,internal,True,Post-pressing crude oil storage (alt)
+famoil_loc_filtered_tank1,Filtered Oil Tank 1,famoil_loc_cw_stock,internal,True,Post-filtration oil storage
+famoil_loc_filtered_tank2,Filtered Oil Tank 2,famoil_loc_cw_stock,internal,True,Post-filtration oil storage (alt)
+famoil_loc_cake,Cake Storage Area,famoil_loc_cw_stock,internal,True,Soya cake holding before dispatch
+famoil_loc_soapstock,Soapstock Tank,famoil_loc_cw_stock,internal,True,Soapstock byproduct storage
+famoil_loc_fg,FG Warehouse,famoil_loc_cw_stock,internal,True,Packed finished goods before dispatch
+famoil_loc_pkg_store,Packaging Store,famoil_loc_cw_stock,internal,True,Bottles caps labels in stock
+famoil_loc_pkg_dispatch,Packaging Dispatch Area,famoil_loc_cw_stock,internal,True,Outbound staging for packaged goods
+famoil_loc_spares,Spare Parts Store,famoil_loc_cw_stock,internal,True,Maintenance spare parts
+famoil_loc_qc,Quality Control,famoil_loc_cw_stock,internal,True,QC hold area for incoming goods
+famoil_loc_waste,Waste Area,famoil_loc_cw_stock,inventory,True,Production waste disposal (inventory loss)

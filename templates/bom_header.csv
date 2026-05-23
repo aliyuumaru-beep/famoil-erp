@@ -1,0 +1,2 @@
+id,product_id/id,product_tmpl_id/id,product_qty,product_uom_id/name,type,company_id/name,picking_type_id/name,note
+famoil_bom_crude_oil,famoil_prod_crude_oil,,140,kg,normal,FamOil FTZ,CW: Manufacturing,Main BOM for soybean oil extraction

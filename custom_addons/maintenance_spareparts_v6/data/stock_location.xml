@@ -1,0 +1,7 @@
+<odoo>
+    <record id="stock_location_maintenance_used" model="stock.location">
+        <field name="name">Maintenance Used Parts</field>
+        <field name="usage">internal</field>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+    </record>
+</odoo>

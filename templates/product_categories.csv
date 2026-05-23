@@ -1,0 +1,7 @@
+id,name,parent_id/id,property_cost_method,property_valuation,removal_strategy_id/id
+famoil_cat_raw_materials,Raw Materials,product.product_category_all,average,auto_real,
+famoil_cat_finished_goods,Finished Goods,product.product_category_all,fifo,auto_real,
+famoil_cat_wip,Work In Progress,product.product_category_all,average,,
+famoil_cat_consumables,Consumables,product.product_category_all,average,,
+famoil_cat_packaging,Packaging Materials,product.product_category_all,fifo,auto_real,
+famoil_cat_spares,Spare Parts,product.product_category_all,average,,

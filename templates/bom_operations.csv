@@ -1,0 +1,6 @@
+id,name,bom_id/id,workcenter_id/id,time_mode,time_cycle_manual,sequence,note
+famoil_op_cleaning,Cleaning,famoil_bom_crude_oil,famoil_wc_cleaning,manual,15,10,Cleaning and grading raw soybeans
+famoil_op_extrusion,Extrusion,famoil_bom_crude_oil,famoil_wc_extrusion,manual,30,20,Flaking and conditioning
+famoil_op_pressing,Pressing/Oil Extraction,famoil_bom_crude_oil,famoil_wc_pressing,manual,45,30,Mechanical oil extraction
+famoil_op_filtration,Filtration,famoil_bom_crude_oil,famoil_wc_filtration,manual,20,40,Crude oil clarification
+famoil_op_bottling,Bottling,famoil_bom_crude_oil,famoil_wc_packaging,manual,30,50,Filling packing labelling

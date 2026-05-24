@@ -1,6 +1,6 @@
 # FamOil — Costing Validation
 
-_Validated: 2026-05-22. Updated: 2026-05-22 — SoapStock removed from BOM (refining byproduct, not crude production); Soya Cake cost share raised to 40%._
+_Validated: 2026-05-22. Updated: 2026-05-23 — SoapStock removed from BOM 10 (refining byproduct, not crude production); Soya Cake cost share raised 35% → 40%._
 
 ---
 
@@ -85,7 +85,7 @@ Total Cost      :  ₦805,167
 Gross Loss      : -₦144,367  (-17.9%)
 ```
 
-> **CRITICAL WARNING:** At current list prices, each batch runs at a ₦142,867 loss.
+> **CRITICAL WARNING:** At current list prices, each batch runs at a ₦144,367 loss.
 > Crude Soya Oil at ₦220/kg is almost certainly a placeholder — market price is typically ₦1,500–₦3,000/litre.
 > **List prices must be updated before any financial reporting is trusted.**
 
@@ -132,16 +132,23 @@ Gross Loss      : -₦144,367  (-17.9%)
 
 ---
 
-## 8. Current Stock Snapshot (at time of validation)
+## 8. Current Stock Snapshot (corrected 2026-05-24)
 
-| Product        | Location               | Qty    |
-|---------------|------------------------|--------|
-| SoyaBean       | CW/Stock/RM Warehouse  | 1,000 kg |
-| Crude Soya Oil | CW/Stock               | 20 kg  |
-| Crude Soya Oil | CW/Stock/Crude Oil Tank 1 | 59 kg |
-| Crude Soya Oil | CW/Stock/Crude Oil Tank 2 | 22 kg |
-| Crude Soya Oil | CW/Stock/FG Warehouse  | 319 kg |
-| Soya Cake      | CW/Stock/FG Warehouse  | 2,520 kg |
-| SoapStock      | CW/Stock/FG Warehouse  | 30 kg  |
+Stock corrections applied 2026-05-24 via `scripts/fix_locations_and_routing.py`:
+- Negative quant (-81 kg) in Crude Oil Tank 1 zeroed out
+- Misplaced Crude Soya Oil (20 kg parent + 179 kg FG Warehouse) moved to Crude Oil Tank 1
+- Misplaced Refined Soya Oil (135 kg parent) moved to Refined Oil Tank 1
+- Misplaced SoapStock (5 kg in Refined Oil Tank 1) moved to Soapstock Tank
 
-> Soya Cake quantity (2,520 kg) = exactly 3 production runs × 840 kg. Confirms 3 batches completed.
+| Product           | Location                            | Qty      |
+|------------------|-------------------------------------|----------|
+| SoyaBean          | Famoil/Stock/RM Warehouse           | 1,000 kg |
+| Crude Soya Oil    | Famoil/Stock/Crude Oil Tank 1       | 199 kg   |
+| Crude Soya Oil    | Famoil/Stock/Crude Oil Tank 2       | 22 kg    |
+| Refined Soya Oil  | Famoil/Stock/Refined Oil Tank 1     | 224 kg   |
+| SoapStock         | Famoil/Stock/Soapstock Tank         | 5 kg     |
+| SoapStock         | Famoil/Stock/FG Warehouse           | 30 kg    |
+| Soya Cake         | Famoil/Stock/FG Warehouse           | 2,520 kg |
+
+> Soya Cake quantity (2,520 kg) = exactly 3 extraction runs × 840 kg. Confirms 3 Stage 1 batches completed.
+> Refined Soya Oil (224 kg) includes one validated Stage 2 MO (135 kg) plus earlier stock.

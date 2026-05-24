@@ -79,9 +79,10 @@ cp -r /path/to/backup/custom_addons/ /Users/mac/odoo17/custom_addons/
 
 ### 4. Restart Odoo
 ```bash
-cd /Users/mac/odoo17/odoo
-python odoo-bin -d Famoil -r odoo \
-  --addons-path=odoo/odoo/addons,custom_addons,/Users/mac/oca_web
+# Run from /Users/mac/odoo17 — NOT from inside the odoo subdirectory
+source /Users/mac/odoo17/odoo/venv/bin/activate
+python /Users/mac/odoo17/odoo/odoo-bin -d Famoil -r odoo \
+  --addons-path=/Users/mac/odoo17/odoo/odoo/addons,/Users/mac/odoo17/custom_addons,/Users/mac/oca_web
 ```
 
 ## Backup Log

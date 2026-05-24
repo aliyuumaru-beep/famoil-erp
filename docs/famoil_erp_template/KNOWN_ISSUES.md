@@ -246,3 +246,135 @@ Cost impact: Soya Cake unit cost rises ₦335/kg → ₦383/kg. Crude Soya Oil u
 
 ### Prevention Rule
 > Map each byproduct to the specific process stage that physically produces it before entering it in any BOM. If a downstream stage produces additional outputs, create a separate BOM for that stage rather than bundling all outputs into the upstream BOM.
+
+---
+
+## ISSUE-009 — Negative Quant in Crude Oil Tank 1 (-81 kg)
+
+**Severity:** HIGH (resolved)
+**Status:** FIXED 2026-05-24
+
+### Issue
+`stock.quant` showed -81 kg for Crude Soya Oil in Crude Oil Tank 1 (id=141), causing inventory valuation errors and preventing correct stock reporting.
+
+### Root Cause
+One or more manufacturing orders were partially validated (stock moves committed) and then cancelled without reversing the outbound stock moves. Odoo created the outbound quant decrements but the inbound production quants were never fully committed, leaving a net negative position.
+
+### Discovery Method
+```sql
+SELECT sq.quantity, sl.complete_name
+FROM stock_quant sq JOIN stock_location sl ON sq.location_id=sl.id
+JOIN product_product pp ON sq.product_id=pp.id
+JOIN product_template pt ON pp.product_tmpl_id=pt.id
+WHERE pt.name->>'en_US' = 'Crude Soya Oil' AND sl.usage='internal';
+```
+
+### Fix
+```python
+env['stock.quant']._update_available_quantity(crude_oil, tank1, 81.0)
+```
+Applied via `/Users/mac/odoo17/scripts/fix_locations_and_routing.py`.
+
+### Prevention Rule
+> Always cancel an MO before any stock moves are validated. If a partially-processed MO must be cancelled, run a stock reconciliation (inventory adjustment) on affected locations immediately to restore correct quantities.
+
+---
+
+## ISSUE-010 — Crude Soya Oil Misplaced: 20 kg in Parent Location, 179 kg in FG Warehouse
+
+**Severity:** HIGH (resolved)
+**Status:** FIXED 2026-05-24
+
+### Issue
+- 20 kg Crude Soya Oil sitting in `Famoil/Stock` (parent, id=152) — should be in Crude Oil Tank 1
+- 179 kg Crude Soya Oil sitting in `Famoil/Stock/FG Warehouse` (id=140) — should be in Crude Oil Tank 1
+
+### Root Cause
+Manufacturing orders were completed before putaway rules were configured. Odoo placed finished goods at the MO destination location rather than routing them to the correct child tank.
+
+### Discovery Method
+Stock snapshot query across all internal locations.
+
+### Fix
+```python
+env['stock.quant']._update_available_quantity(crude_oil, famoil_stock, -20.0)
+env['stock.quant']._update_available_quantity(crude_oil, tank1, 20.0)
+env['stock.quant']._update_available_quantity(crude_oil, fg_wh, -179.0)
+env['stock.quant']._update_available_quantity(crude_oil, tank1, 179.0)
+```
+Applied via `/Users/mac/odoo17/scripts/fix_locations_and_routing.py`.
+
+### Prevention Rule
+> Configure putaway rules before processing the first manufacturing order. Always set destination on operation types to the parent location and let putaway route each product to its correct child location automatically.
+
+---
+
+## ISSUE-011 — Refined Soya Oil Floating in Parent Location (135 kg)
+
+**Severity:** HIGH (resolved)
+**Status:** FIXED 2026-05-24
+
+### Issue
+135 kg Refined Soya Oil sitting in `Famoil/Stock` (parent) instead of `Famoil/Stock/Refined Oil Tank 1`.
+
+### Root Cause
+Same as ISSUE-010 — MO for refined oil completed before putaway rules were in place. The Refining Manufacturing operation type destination was set to `Famoil/Stock`, so output landed at the parent location without being routed onward.
+
+### Fix
+```python
+env['stock.quant']._update_available_quantity(refined_oil, famoil_stock, -135.0)
+env['stock.quant']._update_available_quantity(refined_oil, refined_tank1, 135.0)
+```
+
+### Prevention Rule
+> Same as ISSUE-010. Putaway rules must precede any MO processing.
+
+---
+
+## ISSUE-012 — SoapStock Misplaced in Refined Oil Tank 1 (5 kg)
+
+**Severity:** MEDIUM (resolved)
+**Status:** FIXED 2026-05-24
+
+### Issue
+5 kg SoapStock sitting in `Famoil/Stock/Refined Oil Tank 1` (id=143). This contaminates the refined oil tank location with a different product and misrepresents stock position.
+
+### Root Cause
+`mrp.bom.byproduct` has no `location_id` field in Odoo 17 — byproducts are delivered to the same destination as the main finished product. The Refining MO destination at the time was `Refined Oil Tank 1`, so SoapStock was also deposited there.
+
+### Fix
+```python
+env['stock.quant']._update_available_quantity(soapstock, refined_tank1, -5.0)
+env['stock.quant']._update_available_quantity(soapstock, soapstock_tank, 5.0)
+```
+Long-term fix: set Refining Manufacturing destination to parent `Famoil/Stock` + putaway rule for SoapStock → Soapstock Tank (applied as part of ISSUE-013 resolution).
+
+### Prevention Rule
+> When a BOM has byproducts, always set the operation type destination to the parent location and configure putaway rules for every output product (main product and all byproducts). Never set destination to a product-specific child location when a BOM produces more than one output.
+
+---
+
+## ISSUE-013 — Operation Type Source/Destination Not Aligned with 3-Stage Pipeline
+
+**Severity:** HIGH (resolved)
+**Status:** FIXED 2026-05-24
+
+### Issue
+Manufacturing operation types (Extraction, Refining, Packaging) had incorrect or absent source/destination locations, causing components to be reserved from wrong locations and finished goods to land in wrong locations.
+
+### Root Cause
+Operation types were created without configuring source and destination locations. Default Odoo behaviour leaves these blank, falling back to the warehouse's default locations rather than the stage-specific locations required by the 3-stage pipeline.
+
+### Fix
+Configured via UI + SQL:
+
+| Stage | Operation Type | Source | Destination |
+|---|---|---|---|
+| Extraction | Extraction Manufacturing (id=79) | Famoil/Stock/RM Warehouse | Famoil/Stock |
+| Refining | Refining Manufacturing (id=127) | Famoil/Stock | Famoil/Stock |
+| Packaging | Packaging Manufacturing (id=128) | Famoil/Stock | Famoil/Stock/FG Warehouse |
+
+Putaway rules then route each product from `Famoil/Stock` to the correct child location automatically.
+
+### Prevention Rule
+> When configuring a multi-stage manufacturing pipeline, define operation type source and destination locations before creating any BOMs or MOs. Use the parent location as source and destination where putaway rules handle child routing — never hardcode a product-specific child location as an operation type destination when multiple product types pass through that stage.

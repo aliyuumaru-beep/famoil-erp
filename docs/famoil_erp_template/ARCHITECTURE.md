@@ -36,12 +36,13 @@ custom_addons
 /Users/mac/oca_web
 ```
 
-The `odoo.conf` file targets `OdooClean` database. FamOil is started via CLI override:
-```
+The `odoo.conf` file targets `OdooClean` database. FamOil is started via CLI override (run from `/Users/mac/odoo17`):
+```bash
+source odoo/venv/bin/activate
 python odoo/odoo-bin -d Famoil -r odoo \
-  --addons-path=odoo/odoo/addons,custom_addons,/Users/mac/oca_web \
-  -i stock_crude_oil_tank_restriction
+  --addons-path=odoo/odoo/addons,custom_addons,/Users/mac/oca_web
 ```
+> `-i <module>` flag is for first-time installation only — do not include on normal start.
 
 ## OCA Web Addons (/Users/mac/oca_web)
 

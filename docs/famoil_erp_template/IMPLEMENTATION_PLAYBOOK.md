@@ -215,51 +215,122 @@ Create 5 work centers with accurate hourly rates:
 | FamOil Filtration Section| FLT  | 140 kg  | [actual]   |
 | FamOil Packaging Section | PKG  | 140 kg  | [actual]   |
 
-#### 4b — Bill of Materials
-Create BOM for Crude Soya Oil:
+#### 4b — Operation Types
+Create three dedicated operation types (Manufacturing → Configuration → Operations):
 
-| Field       | Value              |
-|------------|-------------------|
-| Product     | Crude Soya Oil     |
-| Quantity    | 140 kg             |
-| BOM Type    | Manufacturing      |
+| Operation Type           | Source Location         | Destination Location       |
+|--------------------------|-------------------------|----------------------------|
+| Extraction Manufacturing | [WH]/Stock/RM Warehouse | [WH]/Stock (parent)        |
+| Refining Manufacturing   | [WH]/Stock (parent)     | [WH]/Stock (parent)        |
+| Packaging Manufacturing  | [WH]/Stock (parent)     | [WH]/Stock/FG Warehouse    |
+
+> Setting destination to the parent location allows putaway rules to route each product to its correct child location. Never set destination to a product-specific tank when a BOM produces multiple outputs.
+
+#### 4c — Putaway Rules
+Configure via Inventory → Configuration → Putaway Rules. All rules use the parent Stock location as "From":
+
+| Product               | From (arrives at) | To (routed to)      |
+|----------------------|-------------------|---------------------|
+| Crude Soya Oil        | [WH]/Stock        | Crude Oil Tank 1    |
+| Refined Soya Oil      | [WH]/Stock        | Refined Oil Tank 1  |
+| SoapStock             | [WH]/Stock        | Soapstock Tank      |
+| Soya Cake             | [WH]/Stock        | FG Warehouse        |
+| Refined Soya Oil 5L   | [WH]/Stock        | FG Warehouse        |
+| Refined Soya Oil 25L  | [WH]/Stock        | FG Warehouse        |
+
+> **Configure putaway rules BEFORE processing the first MO.** Outputs from MOs completed before rules are set will land in the parent location without routing.
+
+#### 4d — BOM 10: Crude Soya Oil (Extraction Stage)
+
+| Field          | Value                              |
+|---------------|------------------------------------|
+| Product        | Crude Soya Oil                     |
+| Quantity       | 140 kg                             |
+| BOM Type       | Manufacturing                      |
+| Routing        | Extraction Manufacturing           |
 
 **Components:**
-| Product     | Qty    | UoM |
-|------------|--------|-----|
-| SoyaBean   | 1,000  | kg  |
-| Hexane Chemical | [qty] | L |
-| Lubricant Oil | [qty] | L |
+
+| Product          | Qty   | UoM | Type       |
+|-----------------|-------|-----|------------|
+| SoyaBean         | 1,000 | kg  | Storable   |
+| Hexane Chemical  | [qty] | L   | Consumable |
+| Lubricant Oil    | [qty] | L   | Consumable |
 
 **Byproducts:**
-| Product         | Qty | UoM | Cost Share |
-|----------------|-----|-----|-----------|
-| Soya Cake       | 840 | kg  | 35%       |
-| SoapStock       | 10  | kg  | 5%        |
-| Production Waste| 10  | kg  | 0%        |
 
-**Operations (routing):**
-| Seq | Name     | Work Center | Duration (min) |
-|-----|---------|------------|---------------|
-| 1   | Cleaning | Cleaning   | 15            |
-| 2   | Extrusion| Extrusion  | 30            |
-| 3   | Pressing | Pressing   | 45            |
-| 4   | Filtration| Filtration | 20            |
-| 5   | Bottling | Packaging  | 30            |
+| Product          | Qty | UoM | Cost Share |
+|-----------------|-----|-----|------------|
+| Soya Cake        | 840 | kg  | 40%        |
+| Production Waste | 10  | kg  | 0%         |
+
+> Do NOT add SoapStock here — it is a refining byproduct (Stage 2), not an extraction output.
+
+**Operations:**
+
+| Seq | Name                    | Work Center | Duration (min) |
+|-----|------------------------|------------|---------------|
+| 1   | Cleaning                | Cleaning   | 15            |
+| 2   | Extrusion               | Extrusion  | 30            |
+| 3   | Pressing/Oil Extraction | Pressing   | 45            |
+| 4   | Filtration              | Filtration | 20            |
+| 5   | Bottling                | Packaging  | 30            |
+
+#### 4e — BOM 15: Refined Soya Oil (Refining Stage)
+
+| Field          | Value                              |
+|---------------|------------------------------------|
+| Product        | Refined Soya Oil                   |
+| Quantity       | 135 kg                             |
+| BOM Type       | Manufacturing                      |
+| Routing        | Refining Manufacturing             |
+
+**Components:**
+
+| Product          | Qty   | UoM | Type       |
+|-----------------|-------|-----|------------|
+| Crude Soya Oil   | 140   | kg  | Storable   |
+| Caustic Soda     | [qty] | kg  | Consumable |
+| Bleaching Earth  | [qty] | kg  | Consumable |
+| Citric Acid      | [qty] | kg  | Consumable |
+
+**Byproducts:**
+
+| Product   | Qty | UoM | Cost Share |
+|-----------|-----|-----|------------|
+| SoapStock | 5   | kg  | —          |
+
+**Operations:**
+
+| Seq | Name              | Work Center    | Duration (min) |
+|-----|------------------|----------------|---------------|
+| 1   | Neutralization   | Neutralization | 30            |
+| 2   | Bleaching        | Bleaching      | 45            |
+| 3   | Deodorization    | Deodorization  | 60            |
+| 4   | Final Filtration | Filtration     | 20            |
+
+#### 4f — Packaging BOMs
+Create one BOM per packaging SKU (e.g., 25L, 5L), routing to Packaging Manufacturing operation type.
 
 ### Validation Checks
-- [ ] BOM cost simulation shows expected unit cost
-- [ ] Byproduct cost shares sum to ≤ 100%
-- [ ] All 5 operations linked to correct work centers
-- [ ] Test MO created and components reserve from CW/Stock/RM Warehouse
+- [ ] BOM 10 cost simulation shows expected unit cost (~₦3,451/kg at ₦710 SoyaBean + current work center rates)
+- [ ] BOM 10 byproduct cost shares sum to ≤ 100% (Soya Cake 40% + Waste 0% = 40%)
+- [ ] All 5 BOM 10 operations linked to correct work centers
+- [ ] BOM 15 confirmed active with correct Crude Soya Oil input quantity
+- [ ] All 3 operation types have correct source and destination locations
+- [ ] All 6 putaway rules created before first MO
+- [ ] Test MO (BOM 10): components reserve from RM Warehouse; Crude Soya Oil routes to Crude Oil Tank 1; Soya Cake routes to FG Warehouse
+- [ ] Test MO (BOM 15): Crude Soya Oil reserves from Crude Oil Tank 1; Refined Soya Oil routes to Refined Oil Tank 1; SoapStock routes to Soapstock Tank
 
 ### Failure Points
 - Operations missing → no overhead posted to manufacturing cost
+- SoapStock added to BOM 10 → wrong cost allocation and wrong physical output stage
 - Byproduct cost shares wrong → main product cost over/understated
-- MO reserves from wrong warehouse → ISSUE-001 type problem
+- Operation type destination set to child location → byproducts land in wrong location
+- Putaway rules created after first MO → outputs land in parent location, require manual correction
 
 ### Estimated Effort
-1 day
+1–2 days
 
 ---
 

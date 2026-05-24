@@ -69,7 +69,7 @@ These elements are specific to FamOil and must be adapted for other industries:
 | Work centers | Cleaning, Extrusion, Pressing, Filtration, Packaging | Process-specific |
 | Tank locations | Crude Oil Tank, Filtered Oil Tank, Soapstock Tank | Storage-specific |
 | Byproducts | Soya Cake (feed), SoapStock (resell), Waste | Crop-specific |
-| Cost shares | 60/35/5/0 | Derived from NRV of each output |
+| Cost shares | 60/40/0 (crude oil/cake/waste) | Derived from NRV of each output |
 | Restriction module | Crude oil tank → Crude Soya Oil only | Product-location restriction pattern |
 
 ---
@@ -93,11 +93,12 @@ These elements are specific to FamOil and must be adapted for other industries:
 
 ## 4. Future Scaling Strategy
 
-### Scale 1: Add Refining Stage
-- Add: Filtered Oil Tank 1 & 2 (already in location hierarchy ✓)
-- Add: New BOM for Refined Soya Oil (input: Crude Soya Oil → output: Refined Oil + refining byproducts)
-- Add: Refining work center with cost rate
-- No structural changes needed
+### Scale 1: Add Refining Stage — **COMPLETE (2026-05-24)**
+- Refined Oil Tank 1 & 2 — in location hierarchy ✓
+- BOM 15 (Refined Soya Oil): Crude Soya Oil → 135 kg Refined + 5 kg SoapStock ✓
+- Refining work centers: Neutralization, Bleaching, Deodorization ✓
+- Refining Manufacturing operation type (id=127) configured ✓
+- Putaway rules route all outputs to correct child locations ✓
 
 ### Scale 2: Multiple Production Lines
 - Duplicate work centers (Pressing Line 2, etc.)

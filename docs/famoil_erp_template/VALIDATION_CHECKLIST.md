@@ -81,34 +81,62 @@ WHERE pt.active=true
 
 ## 4. Manufacturing Validation
 
-- [ ] BOM 10 (Crude Soya Oil) is active
-- [ ] BOM input: 1,000 kg SoyaBean
-- [ ] BOM output: 140 kg Crude Soya Oil
-- [ ] 3 byproducts configured: Soya Cake (35%), SoapStock (5%), Waste (0%)
-- [ ] Byproduct cost shares sum to ≤ 100% (currently 40%)
-- [ ] All 5 operations linked to correct FamOil work centers
-- [ ] No operation named "Clearning" (typo — should be "Cleaning")
+### BOM 10 — Crude Soya Oil (Extraction)
+- [ ] BOM 10 is active; input: 1,000 kg SoyaBean; output: 140 kg Crude Soya Oil
+- [ ] Byproducts: Soya Cake (840 kg, 40%), Production Waste (10 kg, 0%) — SoapStock must NOT be present
+- [ ] All 5 operations linked to correct FamOil work centers (Cleaning/Extrusion/Pressing/Filtration/Packaging)
+- [ ] No operation named "Clearning" (typo fixed to "Cleaning")
 - [ ] Work center rates are non-zero and finance-approved
-- [ ] Consumables (Hexane, Lubricant) added to BOM with correct quantities
+- [ ] Consumables (Hexane, Lubricant) added to BOM with correct quantities (OPEN — not yet done)
+
+### BOM 15 — Refined Soya Oil (Refining)
+- [ ] BOM 15 is active; input: 140 kg Crude Soya Oil; output: 135 kg Refined Soya Oil
+- [ ] Byproduct: SoapStock (5 kg) — no cost share field
+- [ ] 4 operations linked: Neutralization → Bleaching → Deodorization → Final Filtration
+- [ ] Chemicals (Caustic Soda, Bleaching Earth, Citric Acid) are type=consu in BOM components
+
+### Operation Types
+- [ ] Extraction Manufacturing (id=79): source=Famoil/Stock/RM Warehouse, dest=Famoil/Stock
+- [ ] Refining Manufacturing (id=127): source=Famoil/Stock, dest=Famoil/Stock
+- [ ] Packaging Manufacturing (id=128): source=Famoil/Stock, dest=Famoil/Stock/FG Warehouse
+
+### Putaway Rules (all trigger at Famoil/Stock)
+- [ ] Crude Soya Oil → Crude Oil Tank 1
+- [ ] Refined Soya Oil → Refined Oil Tank 1
+- [ ] SoapStock → Soapstock Tank
+- [ ] Soya Cake → FG Warehouse
+- [ ] Refined Soya Oil 5L → FG Warehouse
+- [ ] Refined Soya Oil 25L → FG Warehouse
 
 **Verify via SQL:**
 ```sql
--- BOM and byproducts
+-- BOM 10 byproducts (SoapStock must NOT appear)
 SELECT pt.name->>'en_US' AS product, mbp.product_qty, mbp.cost_share
 FROM mrp_bom_byproduct mbp
 JOIN product_product pp ON mbp.product_id=pp.id
 JOIN product_template pt ON pp.product_tmpl_id=pt.id
 WHERE mbp.bom_id=10;
 
--- Operations
+-- Operations BOM 10
 SELECT name, time_cycle_manual FROM mrp_routing_workcenter WHERE bom_id=10;
 
 -- Work center rates
 SELECT name, costs_hour FROM mrp_workcenter WHERE name LIKE 'FamOil%';
+
+-- Putaway rules
+SELECT pp.default_code, pt.name->>'en_US' AS product,
+       li.complete_name AS loc_in, lo.complete_name AS loc_out
+FROM stock_putaway_rule spr
+JOIN product_product pp ON spr.product_id=pp.id
+JOIN product_template pt ON pp.product_tmpl_id=pt.id
+JOIN stock_location li ON spr.location_in_id=li.id
+JOIN stock_location lo ON spr.location_out_id=lo.id
+WHERE spr.company_id=2;
 ```
 
-- [ ] Test manufacturing order: create MO for 140 kg, confirm components reserve from CW/Stock/RM Warehouse
-- [ ] Test MO completion: confirm cost layers created for Crude Soya Oil, Soya Cake, SoapStock
+- [ ] Test MO (BOM 10): components reserve from Famoil/Stock/RM Warehouse; output routes to Crude Oil Tank 1 via putaway
+- [ ] Test MO (BOM 15): Crude Soya Oil reserves from Crude Oil Tank 1; output routes to Refined Oil Tank 1; SoapStock routes to Soapstock Tank
+- [ ] Confirm cost layers created correctly after MO completion
 
 ---
 

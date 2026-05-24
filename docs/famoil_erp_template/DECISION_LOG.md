@@ -179,3 +179,89 @@ _Records every major architectural decision, rationale, alternatives, trade-offs
 **Revisit Conditions:**
 - On Odoo version upgrade — test that `button_validate` override is still compatible.
 - If additional location restrictions are needed (e.g., Soapstock Tank) — extend the same module.
+
+---
+
+## DEC-008 — Per-Component Source Location: Rank 1 (Parent + child_of) vs Custom Module
+
+**Decision:** Use **Rank 1 — parent location + child_of semantics** as the primary approach for component sourcing. A custom module overriding `_get_move_raw_values` is deferred.
+
+**Context:**
+Odoo 17 Community (and Enterprise) does not support per-BOM-line source locations natively. `mrp.bom.line` has no `location_id` field at either the ORM or DB level. The OCA module `mrp_bom_location` exists for 16.0 and 18.0 but not 17.0, and was informational-only (no `_get_move_raw_values` override) even where available.
+
+**Rationale:**
+- Setting the MO source location to the parent `Famoil/Stock` causes Odoo's `stock.quant._gather` to use `child_of` semantics — components are reserved from whichever child location they physically reside in.
+- This achieves the functional outcome (each component reserved from its correct physical location) with zero custom code.
+- Physical stock discipline + putaway rules enforce correct product placement, making the parent-location approach reliable in practice.
+
+**Alternatives Considered:**
+- Custom module overriding `_get_move_raw_values` to inject `location_id` per BOM line: correct and explicit, but requires ~80 lines of Python + upgrade maintenance.
+- Setting source directly at MO level (override per MO): manual, does not scale, defeats BOM automation.
+- OCA `mrp_bom_location` for 17.0: does not exist as of 2026-05.
+
+**Trade-offs:**
+- Rank 1 relies on physical stock discipline — if wrong products are placed in wrong locations, Odoo will still reserve them.
+- No hard BOM-level enforcement: an operator who manually adjusts source on the MO can break routing.
+- Does not support a scenario where two storable components of the same product reside in different child locations and must each be taken from specific ones.
+
+**Revisit Conditions:**
+- If a future BOM requires two components of the same product sourced from different specific child locations.
+- If regulatory audit requires a traceable BOM-to-location linkage on every transaction.
+- When implementing for a client with low stock discipline — the custom `_get_move_raw_values` module becomes justified.
+
+---
+
+## DEC-009 — Putaway Rules for Manufacturing Output Routing
+
+**Decision:** Configure `stock.putaway.rule` (product × parent location → specific child location) for all manufacturing outputs, rather than setting child location directly on operation type destination.
+
+**Rationale:**
+- `mrp.bom.byproduct` has no `location_id` field — byproducts always go to the same destination as the main product.
+- Setting operation type destination to a product-specific child location (e.g., Crude Oil Tank 1) would also route byproducts (e.g., Soya Cake, SoapStock) there — incorrect.
+- Setting destination to parent `Famoil/Stock` and using putaway rules gives each output (main product and all byproducts) its own correct child destination independently.
+
+**Putaway rules configured (all trigger on arrival at Famoil/Stock, id=152):**
+
+| Product | Destination |
+|---|---|
+| Crude Soya Oil | Crude Oil Tank 1 |
+| Refined Soya Oil | Refined Oil Tank 1 |
+| SoapStock | Soapstock Tank |
+| Soya Cake | FG Warehouse |
+| Refined Soya Oil 5L | FG Warehouse |
+| Refined Soya Oil 25L | FG Warehouse |
+
+**Alternatives Considered:**
+- Destination = child location on operation type: works for single-output BOMs; breaks for multi-output BOMs with byproducts.
+- Custom override of byproduct destination via Python: possible but higher complexity than putaway rules.
+
+**Trade-offs:**
+- Putaway rules are a soft routing mechanism — they apply when a product *arrives* at a location, but do not prevent manual overrides.
+- If a new product is added to a BOM without creating its putaway rule, it will land in the parent `Famoil/Stock` without further routing — silent failure.
+
+**Revisit Conditions:**
+- When adding a new BOM or byproduct: **always** check if a putaway rule exists for the new product.
+- If a product needs to route to different destinations depending on production context (e.g., grade A vs grade B output) — putaway rules cannot handle this; a custom override or split BOM is required.
+
+---
+
+## DEC-010 — Separate Operation Types per Manufacturing Stage
+
+**Decision:** Create three distinct operation types (Extraction Manufacturing, Refining Manufacturing, Packaging Manufacturing) rather than using a single shared "Manufacturing" operation type for all stages.
+
+**Rationale:**
+- Each stage has different source and destination locations — a single operation type cannot carry three different source/destination pairs.
+- Separate operation types allow stage-specific sequence numbering (MO references), role-based access (different operators can be granted access to different operation types), and independent scheduling.
+- Stage-level visibility in the Manufacturing menu (filter by operation type) is more useful than filtering by product.
+
+**Alternatives Considered:**
+- Single Manufacturing operation type: simpler, but source/destination must be set manually on every MO — error-prone.
+- Two operation types (Extraction vs Refining+Packaging): slightly fewer operations to manage, but loses Packaging-specific visibility and FG Warehouse destination separation.
+
+**Trade-offs:**
+- Three operation types means three places to check/update if warehouse topology changes.
+- Sequence number pools are separate — MO references (e.g., WH/MO/00001) are not contiguous across stages.
+
+**Revisit Conditions:**
+- If a fourth manufacturing stage is added (e.g., blending, flavouring) — create a fourth operation type.
+- If the business wants unified MO numbering across all stages — merge operation types and manage source/destination at MO level.

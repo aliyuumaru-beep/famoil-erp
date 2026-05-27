@@ -26,11 +26,15 @@ jobs:
             "-----BEGIN.*PRIVATE KEY-----"
           )
           for pattern in "${PATTERNS[@]}"; do
+            # Exclude lines that use environment variable lookups — those are
+            # the correct secure pattern and must not be flagged as violations.
             HITS=$(grep -rn --include="*.py" --include="*.sh" \
                    --include="*.conf" --include="*.json" --include="*.env" \
                    -i "$pattern" . \
                    --exclude-dir=".git" \
-                   --exclude-dir="backups" 2>/dev/null || true)
+                   --exclude-dir="backups" 2>/dev/null \
+                   | grep -v "os\.environ\|os\.getenv\|environ\.get\|getenv\b" \
+                   || true)
             if [ -n "$HITS" ]; then
               echo "SECURITY VIOLATION — pattern '$pattern' found:"
               echo "$HITS"

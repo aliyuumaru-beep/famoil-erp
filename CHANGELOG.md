@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## v1.2.0 — 2026-05-27 — Phase 2 Backup Governance
+
+- Extended `scripts/backup_famoil.sh`: added docs/scripts population, tar.gz
+  compression (COMPRESS flag), governance bridge manifest update, retention
+  dry-run reporter (no deletions)
+- Fixed R-01 (critical gap): created `backups/BACKUP_MANIFEST.md` as governance
+  bridge so `backup_check.yml` workflow can validate backup currency
+- Fixed `.gitignore`: changed `backups/` → `backups/*` + `!backups/BACKUP_MANIFEST.md`
+  so only the manifest (metadata, no sensitive data) is tracked
+- Committed pending governance docs: `docs/architecture/ARCHITECTURAL_PRINCIPLES.md`
+  (12-principle factory doctrine), Rule 12 in IMPLEMENTATION_STANDARDS.md,
+  Architectural Governance section in PROJECT_FACTORY_MANUAL.md
+- Updated `docs/BACKUP_AND_RECOVERY.md` v1.1: governance bridge, compression,
+  retention report documentation, fresh backup warning
+- Remaining risks: no automated scheduling (launchd), no cloud offsite (rclone),
+  retention deletion not yet enabled, fresh backup still required
+
+## v1.1.0 — 2026-05-27 — Phase 4 CI/CD Governance Complete
+
+- GitHub remote connected: https://github.com/aliyuumaru-beep/famoil-erp
+- All 4 GitHub Actions workflows active (ci_review, doc_lint, backup_check, security_scan)
+- Branch protection rules applied on main by operator
+- CLAUDE.md updated: all phases COMPLETE, governance engine FULLY ACTIVE
+- GOVERNANCE_ENGINE.md updated: Layer 2 status ACTIVE
+
 ## v1.0.0 — 2026-05-24
 
 ### Phase 2: Configuration Validation

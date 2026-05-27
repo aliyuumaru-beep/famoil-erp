@@ -8,6 +8,17 @@
 
 ---
 
+## v1.2.0 — 2026-05-27 — Phase 2 Backup Governance
+
+- Extended `scripts/backup_famoil.sh`: docs/scripts population, compression,
+  governance bridge manifest update, retention dry-run reporter
+- Fixed R-01 governance gap: `backups/BACKUP_MANIFEST.md` created as bridge
+  for `backup_check.yml` workflow validation
+- Fixed `.gitignore` to allow `backups/BACKUP_MANIFEST.md` to be tracked
+- Committed `docs/architecture/ARCHITECTURAL_PRINCIPLES.md` (12-principle doctrine)
+- Updated `docs/BACKUP_AND_RECOVERY.md` to v1.1
+- Remaining: automated scheduling, cloud sync, retention deletion (later phases)
+
 ## v1.1.0 — 2026-05-27 — Phase 4 CI/CD Governance Complete
 
 - GitHub remote connected: https://github.com/aliyuumaru-beep/famoil-erp

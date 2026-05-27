@@ -1,0 +1,44 @@
+name: Documentation Completeness Check
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  doc-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check mandatory documents exist and are non-empty
+        run: |
+          FAILED=0
+          MANDATORY_DOCS=(
+            "CLAUDE.md"
+            "docs/IMPLEMENTATION_STANDARDS.md"
+            "docs/BACKUP_AND_RECOVERY.md"
+            "docs/ONBOARDING_GUIDE.md"
+            "docs/CHANGELOG.md"
+            ".claude/settings.json"
+          )
+          for doc in "${MANDATORY_DOCS[@]}"; do
+            if [ ! -f "$doc" ]; then
+              echo "MISSING: $doc"
+              FAILED=1
+            elif [ ! -s "$doc" ]; then
+              echo "EMPTY: $doc"
+              FAILED=1
+            else
+              echo "OK: $doc"
+            fi
+          done
+          if [ $FAILED -ne 0 ]; then
+            echo ""
+            echo "Documentation gate FAILED. See missing/empty files above."
+            echo "All mandatory documents must exist before merging."
+            exit 1
+          fi
+          echo ""
+          echo "Documentation gate PASSED."

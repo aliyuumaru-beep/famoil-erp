@@ -22,3 +22,10 @@ odoo.conf
 
 **/secrets/
 **/passwords*
+
+# Governance engine audit logs (local operational records — not repo assets)
+logs/*.log
+
+# Legacy template directory (migrated to csv_templates/)
+templates/
+

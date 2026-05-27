@@ -1,0 +1,5 @@
+id,name,code,warehouse_id/id,default_location_src_id/id,default_location_dest_id/id,company_id/id
+# id=external ID | name=operation type name | code=MRP for manufacturing | warehouse_id/id=warehouse ext ID | default_location_src_id/id=source location | default_location_dest_id/id=destination location | company_id/id=company ext ID
+famoil_optype_extraction_example,Extraction Manufacturing [EXAMPLE],mrp_operation,famoil_warehouse_main_example,famoil_location_rm_warehouse_example,famoil_location_stock_example,base.main_company
+famoil_optype_refining_example,Refining Manufacturing [EXAMPLE],mrp_operation,famoil_warehouse_main_example,famoil_location_stock_example,famoil_location_stock_example,base.main_company
+famoil_optype_packaging_example,Packaging Manufacturing [EXAMPLE],mrp_operation,famoil_warehouse_main_example,famoil_location_stock_example,famoil_location_fg_warehouse_example,base.main_company

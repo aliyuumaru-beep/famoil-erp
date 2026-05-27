@@ -1,0 +1,3 @@
+id,name,code,partner_id/id,company_id/id
+# id=external ID | name=warehouse display name | code=short code (max 5 chars) | partner_id/id=company contact ext ID | company_id/id=company ext ID
+famoil_warehouse_main_example,FamOilWH [EXAMPLE],CW,base.main_partner,base.main_company

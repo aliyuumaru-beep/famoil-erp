@@ -1,0 +1,45 @@
+name: Claude Code PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude Code Review
+        uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          max_turns: 8
+          direct_prompt: |
+            You are reviewing a pull request against the Software Factory
+            governance standards defined in CLAUDE.md and docs/IMPLEMENTATION_STANDARDS.md.
+
+            Review this PR and check for:
+            1. Any file modified without a corresponding documentation update (Rule 1)
+            2. Any hardcoded password, API key, or credential (Rule 8)
+            3. Any custom code added without a justification comment (Rule 4)
+            4. Any naming convention violations as defined in IMPLEMENTATION_STANDARDS.md (Rule 6)
+            5. Any script missing error handling or comments (Rule 9)
+            6. Any CSV file missing required headers per CSV_STANDARDS.md (Rule 6)
+
+            For each issue found:
+            - State the file and line number
+            - State which rule is violated
+            - State the required correction
+
+            End your review with one of:
+            REVIEW RESULT: APPROVED — no governance violations found
+            REVIEW RESULT: CHANGES REQUIRED — list violations above

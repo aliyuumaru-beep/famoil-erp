@@ -1,0 +1,36 @@
+name: Backup Staleness Check
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # Every Monday at 06:00 UTC
+  workflow_dispatch:        # Allow manual trigger
+
+jobs:
+  backup-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for recent backup manifest
+        run: |
+          BACKUP_DIR="backups"
+          STALE_DAYS=7
+          FOUND=0
+
+          if [ ! -d "$BACKUP_DIR" ]; then
+            echo "WARNING: backups/ directory does not exist."
+            exit 1
+          fi
+
+          # Find any BACKUP_MANIFEST.md modified within STALE_DAYS days
+          RECENT=$(find "$BACKUP_DIR" -name "BACKUP_MANIFEST.md" \
+                   -mtime -${STALE_DAYS} 2>/dev/null)
+
+          if [ -n "$RECENT" ]; then
+            echo "BACKUP CHECK PASSED: Recent backup manifest found."
+            echo "$RECENT"
+          else
+            echo "BACKUP CHECK FAILED: No backup manifest found within ${STALE_DAYS} days."
+            echo "A backup must be created and committed."
+            exit 1
+          fi

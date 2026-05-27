@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.famoil.gdrive.sync.plist
+  FamOil — Daily Google Drive Backup Sync (launchd agent)
+
+  Runs scripts/sync_backup_to_gdrive.sh daily at 03:00 AM local time.
+  Runs one hour after the backup job to allow the backup to complete first.
+  Requires rclone and gdrive remote to be configured.
+  Install: see docs/deployment/MACOS_BACKUP_AUTOMATION.md
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.famoil.gdrive.sync</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/mac/odoo17/scripts/sync_backup_to_gdrive.sh</string>
+  </array>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>3</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>/Users/mac/odoo17/logs/launchd_gdrive.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/Users/mac/odoo17/logs/launchd_gdrive.log</string>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>KeepAlive</key>
+  <false/>
+</dict>
+</plist>

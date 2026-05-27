@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v1.3.0 — 2026-05-27 — Phase 3 Backup Automation
+
+- Created `scripts/sync_backup_to_gdrive.sh`: rclone-based Google Drive sync;
+  uploads famoil_*.tar.gz to gdrive:FamOil_Backups/ERP/; dry-run flag;
+  preflight checks for rclone and gdrive remote; logs to gdrive_sync.log
+- Created `scripts/com.famoil.backup.daily.plist`: launchd agent running
+  backup_famoil.sh daily at 02:00 AM
+- Created `scripts/com.famoil.gdrive.sync.plist`: launchd agent running
+  sync_backup_to_gdrive.sh daily at 03:00 AM
+- Created `docs/deployment/MACOS_BACKUP_AUTOMATION.md`: full launchd setup,
+  rclone installation and configuration, log reference, troubleshooting guide
+- rclone not yet installed locally — setup required (see MACOS_BACKUP_AUTOMATION.md)
+
 ## v1.2.0 — 2026-05-27 — Phase 2 Backup Governance
 
 - Extended `scripts/backup_famoil.sh`: added docs/scripts population, tar.gz

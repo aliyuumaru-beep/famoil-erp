@@ -8,6 +8,14 @@
 
 ---
 
+## v1.3.0 — 2026-05-27 — Phase 3 Backup Automation
+
+- Created `scripts/sync_backup_to_gdrive.sh`: rclone Google Drive sync
+- Created launchd plists: com.famoil.backup.daily.plist (02:00 AM),
+  com.famoil.gdrive.sync.plist (03:00 AM)
+- Created `docs/deployment/MACOS_BACKUP_AUTOMATION.md`: full setup guide
+- Requires: `brew install rclone` + `rclone config` to activate offsite sync
+
 ## v1.2.0 — 2026-05-27 — Phase 2 Backup Governance
 
 - Extended `scripts/backup_famoil.sh`: docs/scripts population, compression,

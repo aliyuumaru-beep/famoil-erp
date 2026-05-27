@@ -136,8 +136,8 @@ Deodorization (id=23)
 - Backup script: `scripts/backup_famoil.sh` (Phase 2 enhanced — compression + governance bridge)
 - Governance bridge: `backups/BACKUP_MANIFEST.md` (must be committed after each run)
 - **A fresh backup is overdue** — 5 days of changes since last backup; run before next change
-- Automated scheduling: NOT YET configured (pending launchd Phase 3)
-- Cloud offsite sync: NOT YET configured (pending rclone Phase 3)
+- Automated scheduling: launchd plists created — install per MACOS_BACKUP_AUTOMATION.md
+- Cloud offsite sync: sync script created — requires `brew install rclone` + `rclone config gdrive`
 
 ---
 

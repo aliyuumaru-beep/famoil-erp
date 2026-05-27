@@ -42,6 +42,7 @@ BACKUP_BASE="/Users/mac/odoo_backups"
 REPO_ROOT="/Users/mac/odoo17"
 COMPRESS="true"
 KEEP_DAYS=7
+AUTO_DELETE="false"   # set to "true" to permanently delete retention candidates
 
 # ---------------------------------------------------------------------------
 # Timestamp and target directory
@@ -261,19 +262,28 @@ for ITEM in "${BACKUP_BASE}"/famoil_* "${BACKUP_BASE}"/v2_*; do
   printf "| %-36s | %-10s | %-6s | %-9s |\n" "${NAME}" "${AGE_DAYS}" "${SIZE}" "${STATUS}" \
     >> "${RETENTION_LOG}"
   echo "  ${NAME} — age: ${AGE_DAYS} days — ${SIZE} — ${STATUS}"
+
+  if [ "${STATUS}" = "CANDIDATE" ] && [ "${AUTO_DELETE}" = "true" ]; then
+    rm -r "${ITEM}"
+    echo "  [DELETED] ${NAME}"
+    echo "  DELETED: ${NAME}" >> "${RETENTION_LOG}"
+  fi
 done
+
+ACTION_TAKEN="NONE (dry-run)"
+[ "${AUTO_DELETE}" = "true" ] && ACTION_TAKEN="DELETED ${CANDIDATES} candidate(s)"
 
 {
   echo ""
   echo "Total scanned : ${TOTAL}"
   echo "Candidates    : ${CANDIDATES}"
-  echo "Action taken  : NONE (dry-run mode)"
+  echo "Action taken  : ${ACTION_TAKEN}"
   echo ""
-  echo "To enable deletion: remove dry-run guard and set auto-delete flag in script."
+  echo "To enable deletion: set AUTO_DELETE=\"true\" in script config section."
 } >> "${RETENTION_LOG}"
 
 echo ""
-echo "  Total: ${TOTAL} | Candidates: ${CANDIDATES} | Report: ${RETENTION_LOG}"
+echo "  Total: ${TOTAL} | Candidates: ${CANDIDATES} | Action: ${ACTION_TAKEN} | Report: ${RETENTION_LOG}"
 echo "------------------------------------------------------------"
 
 # ---------------------------------------------------------------------------

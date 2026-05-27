@@ -10,16 +10,16 @@
 
 | Field                | Value                                          |
 |---------------------|------------------------------------------------|
-| Last Backup Date     | 2026-05-22 11:33:00 (last known manual backup) |
-| Backup Archive Name  | famoil_20260522_1133                          |
-| Backup Location      | /Users/mac/odoo_backups/famoil_20260522_1133  |
-| Raw Directory Size   | ~200MB (estimated)                            |
-| Compressed Archive   | not compressed                                |
-| Archive Size         | n/a                                           |
-| Verification Status  | COMPLETED (manual — Phase 1 baseline)         |
+| Last Backup Date     | 2026-05-27 21:03:37                  |
+| Backup Archive Name  | famoil_20260527_2103                           |
+| Backup Location      | /Users/mac/odoo_backups/famoil_20260527_2103                                 |
+| Raw Directory Size   |  47M                            |
+| Compressed Archive   | /Users/mac/odoo_backups/famoil_20260527_2103.tar.gz                    |
+| Archive Size         |  20M                          |
+| Verification Status  | COMPLETED                                     |
 | Odoo Version         | 17.0.1.3 Community                            |
-| Database             | Famoil                                        |
-| Backed Up By         | scripts/backup_famoil.sh (manual run)         |
+| Database             | Famoil                                    |
+| Backed Up By         | scripts/backup_famoil.sh                      |
 
 ## Contents Backed Up
 
@@ -27,15 +27,8 @@
 - [x] Odoo filestore
 - [x] odoo.conf (passwords stripped)
 - [x] custom_addons/
-- [ ] docs/ snapshot (added in Phase 2 backup enhancement)
-- [ ] scripts/ snapshot (added in Phase 2 backup enhancement)
-
-## Status Note
-
-This is the initial governance bridge manifest created during Phase 2 backup
-governance work (2026-05-27). It reflects the last known manual backup from
-2026-05-22. A fresh backup should be taken immediately to update this file
-with current state.
+- [x] docs/ snapshot
+- [x] scripts/ snapshot
 
 ## Restore Reference
 
@@ -47,6 +40,6 @@ See: docs/famoil_erp_template/BACKUP_AND_RESTORE.md
 After each backup run, commit this file to maintain workflow continuity:
 
   git add backups/BACKUP_MANIFEST.md
-  git commit -m "chore: update backup manifest <YYYY-MM-DD>"
+  git commit -m "chore: update backup manifest 2026-05-27"
 
 The backup_check.yml workflow fails if this file is not updated within 7 days.

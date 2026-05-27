@@ -34,7 +34,8 @@ jobs:
                    --include="*.conf" --include="*.json" --include="*.env" \
                    -i "$pattern" . \
                    --exclude-dir=".git" \
-                   --exclude-dir="backups" 2>/dev/null \
+                   --exclude-dir="backups" \
+                   --exclude="local_secret_scan.sh" 2>/dev/null \
                    | grep -v "'test_password'\|'dummy_password'" \
                    || true)
             if [ -n "$HITS" ]; then

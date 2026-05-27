@@ -1,6 +1,6 @@
 # Project Factory Manual
 # FamOil Software Factory
-# Version: 1.0 | Created: 2026-05-27
+# Version: 1.1 | Created: 2026-05-27 | Updated: 2026-05-27
 
 ---
 
@@ -48,6 +48,8 @@ CLAUDE.md                        ← Session anchor: always read first
 │
 ├── docs/IMPLEMENTATION_STANDARDS.md   ← The 11 rules
 │
+├── docs/architecture/ARCHITECTURAL_PRINCIPLES.md   ← Architecture doctrine
+│
 ├── docs/ONBOARDING_GUIDE.md           ← How to get started
 │
 ├── docs/architecture/
@@ -74,7 +76,29 @@ CLAUDE.md                        ← Session anchor: always read first
 
 ---
 
-## 4. Phase Structure
+## 4. Architectural Governance
+
+All implementation decisions must comply with:
+
+`docs/architecture/ARCHITECTURAL_PRINCIPLES.md`
+
+This document defines the factory doctrine for configuration, customization,
+documentation, reproducibility, AI governance, rollback, data integrity, and
+complexity control.
+
+The practical relationship is:
+
+- `ARCHITECTURAL_PRINCIPLES.md` defines what the factory believes
+- `IMPLEMENTATION_STANDARDS.md` defines how the factory executes
+- `CLAUDE.md` tells Claude Code the current session state and where to look
+- `DECISION_LOG.md` records approved deviations and rationale
+
+New developers, ERP analysts, and Claude Code and/or any other AI sessions must read the architectural
+principles before proposing major architectural changes or custom code.
+
+---
+
+## 5. Phase Structure
 
 | Phase | Name                                    | Gate Protocol                          |
 |------|-----------------------------------------|----------------------------------------|
@@ -87,7 +111,7 @@ CLAUDE.md                        ← Session anchor: always read first
 
 ---
 
-## 5. How to Onboard a New Developer or AI Session
+## 6. How to Onboard a New Developer or AI Session
 
 1. Read `CLAUDE.md` (read automatically at session start via hooks)
 2. Read `docs/ONBOARDING_GUIDE.md`
@@ -102,7 +126,7 @@ Read the documents. Trust the documents. Update the documents after every change
 
 ---
 
-## 6. Governance Architecture Summary
+## 7. Governance Architecture Summary
 
 Two layers of governance are active:
 
@@ -118,7 +142,7 @@ rules. Provides team-wide enforcement independent of local sessions.
 
 ---
 
-## 7. Adding a New Client or Industry Fork
+## 8. Adding a New Client or Industry Fork
 
 1. Read `docs/famoil_erp_template/TEMPLATE_VERSIONING.md` for naming convention
 2. Read `docs/famoil_erp_template/INDUSTRY_VARIATION_MATRIX.md` for adaptation scope

@@ -1,11 +1,26 @@
 # Implementation Standards
 # FamOil Software Factory — Core Engineering Rules
-# Version: 1.0 | Created: 2026-05-27
+# Version: 1.1 | Created: 2026-05-27 | Updated: 2026-05-27
 
 > These rules govern all implementation activity on this project.
 > They are enforced at two layers: this document (Layer 1 — documentation)
 > and `.claude/hooks/` + `.github/workflows/` (Layer 2 — technical enforcement).
 > See `docs/architecture/GOVERNANCE_ENGINE.md` for the enforcement mapping.
+> All implementation decisions must comply with `docs/architecture/ARCHITECTURAL_PRINCIPLES.md`.
+
+---
+
+## Architectural Doctrine Reference
+
+Before making major implementation, module, deployment, workflow, or customization
+decisions, consult:
+
+`docs/architecture/ARCHITECTURAL_PRINCIPLES.md`
+
+The principles document governs decision philosophy. This standards document governs
+execution rules. If a proposed change conflicts with the architectural principles,
+the exception must be approved by the operator and recorded in
+`docs/famoil_erp_template/DECISION_LOG.md`.
 
 ---
 
@@ -222,6 +237,36 @@ A rule that exists only in documentation is a suggestion.
 A rule that exists in both layers is a guarantee.
 
 **Enforced by:** `.claude/settings.json` (Layer 1), all workflows (Layer 2)
+
+---
+
+## Rule 12 — Architectural Principles Compliance
+
+All implementation decisions must comply with:
+
+`docs/architecture/ARCHITECTURAL_PRINCIPLES.md`
+
+This includes decisions relating to:
+- Custom code
+- Workflow design
+- ERP configuration
+- Repository structure
+- CI/CD governance
+- Data migration
+- Security
+- Industry template expansion
+- AI agent permissions
+
+If an exception is necessary, it must be:
+1. Approved by the operator
+2. Recorded in `docs/famoil_erp_template/DECISION_LOG.md`
+3. Linked to the relevant principle being overridden
+4. Given a future revisit condition
+
+The architectural principles are the factory doctrine. These implementation standards
+are the execution rules. Both must be kept aligned.
+
+**Enforced by:** `ci_review.yml` code review (Layer 2), `doc_lint.yml` references check (Layer 2), operator approval gate
 
 ---
 

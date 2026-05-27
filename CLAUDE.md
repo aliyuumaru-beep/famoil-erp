@@ -1,6 +1,6 @@
 # CLAUDE.md — Software Factory Session Anchor
 # FamOil Industrial ERP Framework
-# Version: 1.0.0 | Last updated: 2026-05-27
+# Version: 1.0.1 | Last updated: 2026-05-27
 
 > This file is read automatically by Claude Code at the start of every session.
 > It is the single source of truth for project state. Keep it current.
@@ -121,6 +121,7 @@ Deodorization (id=23)
 ## CRITICAL RULES FOR THIS SESSION
 
 > Full rules: see docs/IMPLEMENTATION_STANDARDS.md
+> Architectural doctrine: see docs/architecture/ARCHITECTURAL_PRINCIPLES.md
 
 **ACTIVE DO NOT rules:**
 - DO NOT push to any remote repository (no remote configured yet)
@@ -128,6 +129,7 @@ Deodorization (id=23)
 - DO NOT delete any existing committed file without operator approval
 - DO NOT expose passwords, API keys, or database credentials in any output
 - DO NOT run git push without explicit operator instruction
+- DO NOT make architectural decisions that conflict with docs/architecture/ARCHITECTURAL_PRINCIPLES.md unless the exception is approved and recorded in the Decision Log
 
 **Backup status:**
 - Last backup: 2026-05-22 11:33 — `/Users/mac/odoo_backups/famoil_20260522_1133/`
@@ -196,6 +198,7 @@ Deodorization (id=23)
 │   ├── ONBOARDING_GUIDE.md
 │   ├── CHANGELOG.md
 │   ├── architecture/
+│   │   ├── ARCHITECTURAL_PRINCIPLES.md
 │   │   └── GOVERNANCE_ENGINE.md
 │   ├── sops/
 │   │   └── CI_CD_RUNBOOK.md

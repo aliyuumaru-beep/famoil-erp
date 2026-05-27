@@ -1,6 +1,6 @@
 # Backup and Recovery
 # FamOil Software Factory
-# Version: 1.0 | Created: 2026-05-27
+# Version: 1.1 | Created: 2026-05-27 | Updated: 2026-05-27
 
 > This document supersedes `docs/famoil_erp_template/BACKUP_AND_RESTORE.md`
 > for the purposes of the mandatory document checklist.
@@ -16,7 +16,8 @@
 | Weekly    | 4 weeks   | External drive       |
 | Monthly   | 12 months | Cloud / offsite      |
 
-**Current status:** Manual backups only. Automated scheduling not yet configured.
+**Current status:** Manual backups only. Automated scheduling pending (launchd — Phase 3 of backup governance).
+Google Drive offsite sync pending (rclone — Phase 3 of backup governance).
 
 ---
 
@@ -35,13 +36,28 @@ Creates a timestamped directory under `/Users/mac/odoo_backups/` containing:
 - `scripts/` — utility scripts
 - `BACKUP_MANIFEST.md` — backup record
 
+Also produces:
+- `famoil_YYYYMMDD_HHMM.tar.gz` — compressed archive (controlled by `COMPRESS` variable)
+- `backups/BACKUP_MANIFEST.md` — governance bridge in the repository (commit after each run)
+- `logs/retention_report.log` — retention dry-run report (no deletions)
+
+### Governance Bridge
+
+After running the backup, commit the governance bridge manifest so `backup_check.yml` can validate:
+
+```bash
+git add backups/BACKUP_MANIFEST.md
+git commit -m "chore: update backup manifest $(date '+%Y-%m-%d')"
+```
+
 ---
 
 ## Backup Log
 
-| Date-Time         | Type         | Path                                            | Notes                        |
-|------------------|--------------|------------------------------------------------|------------------------------|
-| 2026-05-22 11:33 | Full Manual  | `/Users/mac/odoo_backups/famoil_20260522_1133` | Phase 1 pre-change baseline  |
+| Date-Time         | Type         | Path                                            | Notes                                       |
+|------------------|--------------|------------------------------------------------|---------------------------------------------|
+| 2026-05-22 11:33 | Full Manual  | `/Users/mac/odoo_backups/famoil_20260522_1133` | Phase 1 pre-change baseline                 |
+| 2026-05-27 —     | **REQUIRED** | —                                              | Fresh backup needed — 5 days of work since last |
 
 ---
 

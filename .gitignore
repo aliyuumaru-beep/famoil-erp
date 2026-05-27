@@ -10,7 +10,8 @@ venv/
 *.tar
 *.tar.gz
 
-backups/
+backups/*
+!backups/BACKUP_MANIFEST.md
 filestore/
 sessions/
 

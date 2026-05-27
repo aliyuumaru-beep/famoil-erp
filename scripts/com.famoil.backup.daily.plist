@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.famoil.backup.daily.plist
+  FamOil — Daily Automated Backup (launchd agent)
+
+  Runs scripts/backup_famoil.sh daily at 02:00 AM local time.
+  Install: see docs/deployment/MACOS_BACKUP_AUTOMATION.md
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.famoil.backup.daily</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/mac/odoo17/scripts/backup_famoil.sh</string>
+  </array>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>2</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>/Users/mac/odoo17/logs/launchd_backup.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/Users/mac/odoo17/logs/launchd_backup.log</string>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>KeepAlive</key>
+  <false/>
+</dict>
+</plist>

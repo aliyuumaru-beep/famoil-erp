@@ -39,9 +39,9 @@ python odoo/odoo-bin -d Famoil -r odoo \
 | 1    | Inspection, Backup & Repository Foundation | COMPLETE | 2026-05-22 | Operator    |
 | 2    | Configuration Validation & Pipeline Setup  | COMPLETE | 2026-05-24 | Operator    |
 | 3    | Commercialisation Framework                | COMPLETE | 2026-05-24 | Operator    |
-| 4    | CI/CD Governance Engine                    | PENDING  |            |             |
+| 4    | CI/CD Governance Engine                    | COMPLETE | 2026-05-27 | Operator    |
 
-**Current phase:** Phase 4 — awaiting GitHub remote to be connected before workflows can be activated.
+**Current phase:** Phase 4 — COMPLETE. GitHub remote connected, Actions active, branch protection on main enabled.
 
 **Governance engine:** Phase 1 hooks created 2026-05-27. See GOVERNANCE ENGINE STATUS below.
 
@@ -147,11 +147,11 @@ Deodorization (id=23)
 | PostToolUse — audit_logger.sh   | ACTIVE (LOG exit 0)     | Logs all bash commands             |
 | SessionStart — session_start_loader.sh | ACTIVE (WARN exit 0) | Loads context at session start  |
 | Stop — session_end_reporter.sh  | ACTIVE (LOG exit 0)     | Reports session summary            |
-| GitHub Actions — ci_review.yml  | PENDING                 | Needs remote repo                  |
-| GitHub Actions — doc_lint.yml   | PENDING                 | Needs remote repo                  |
-| GitHub Actions — backup_check.yml | PENDING               | Needs remote repo                  |
-| GitHub Actions — security_scan.yml | PENDING              | Needs remote repo                  |
-| Branch protection (main)        | PENDING                 | Operator must apply in GitHub UI   |
+| GitHub Actions — ci_review.yml  | ACTIVE                  | Fires on every PR                  |
+| GitHub Actions — doc_lint.yml   | ACTIVE                  | Fires on push + PR to main         |
+| GitHub Actions — backup_check.yml | ACTIVE               | Fires every Monday 06:00 UTC       |
+| GitHub Actions — security_scan.yml | ACTIVE              | Fires on push + PR to main         |
+| Branch protection (main)        | ENABLED                 | Applied by operator 2026-05-27     |
 | Last audit log entry            | 2026-05-27 session start|                                    |
 | Last backup verification        | 2026-05-22              |                                    |
 

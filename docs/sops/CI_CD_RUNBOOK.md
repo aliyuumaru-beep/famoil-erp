@@ -31,7 +31,7 @@
 │  Independent of any local session                                │
 │  Provides team-wide enforcement                                  │
 │  Blocks merges that violate governance rules                     │
-│  Status: PENDING — GitHub remote not yet connected              │
+│  Status: ACTIVE — remote connected, branch protection enabled   │
 │                                                                   │
 │  ci_review.yml       → Claude Code PR review on every PR        │
 │  doc_lint.yml        → mandatory documents check on push        │

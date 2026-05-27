@@ -8,6 +8,14 @@
 
 ---
 
+## v1.1.0 — 2026-05-27 — Phase 4 CI/CD Governance Complete
+
+- GitHub remote connected: https://github.com/aliyuumaru-beep/famoil-erp
+- All 4 GitHub Actions workflows active (ci_review, doc_lint, backup_check, security_scan)
+- Branch protection rules applied on main by operator
+- CLAUDE.md updated: all phases COMPLETE, governance engine FULLY ACTIVE
+- GOVERNANCE_ENGINE.md updated: Layer 2 status ACTIVE
+
 ## v1.0.0 — 2026-05-27 — Phase 1 Governance
 
 - Created `CLAUDE.md` session memory anchor

@@ -84,9 +84,8 @@ Workflows in `.github/workflows/` fire on every git push and pull request,
 independent of any local development session. They enforce governance at the
 repository boundary — nothing reaches `main` without passing all gates.
 
-> **Status:** Workflows are defined but inactive — no remote GitHub repository
-> is connected yet. Activate by connecting a remote and enabling Actions.
-> See Phase 4 tasks in the Software Factory Master Prompt v2.1.
+> **Status:** ACTIVE — remote connected 2026-05-27. All 4 workflows active.
+> Branch protection on main enabled by operator 2026-05-27.
 
 | Workflow File         | Trigger               | Purpose                                   |
 |----------------------|-----------------------|-------------------------------------------|

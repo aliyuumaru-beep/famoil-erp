@@ -1,6 +1,6 @@
 # CLAUDE.md — Software Factory Session Anchor
 # FamOil Industrial ERP Framework
-# Version: 1.1.0 | Last updated: 2026-05-28
+# Version: 1.2.0 | Last updated: 2026-05-28
 
 > This file is read automatically by Claude Code at the start of every session.
 > It is the single source of truth for project state. Keep it current.
@@ -34,9 +34,19 @@ python odoo/odoo-bin -d Famoil -r odoo \
 
 ## ACTIVE PHASE
 
-**Current phase:** Phase 4 — COMPLETE. All phases 1–4 operational.
+**Current phase:** Phase 4 — COMPLETE. All phases 1–4 operational. Restore validation COMPLETE.
 
-**Next priority:** Restore Drill (Priority 1) — see `docs/roadmap/PLATFORM_ROADMAP.md` § 7 and `docs/famoil_erp_template/FAMOIL_ROADMAP.md` § 7.
+**Current active phase:** Procurement Maturity & Operational Workflow Expansion.
+
+**Priority order:**
+1. Procurement maturity (RFQs, approvals, vendor management, landed costs)
+2. Sales workflow maturity
+3. Dispatch & logistics maturity
+4. Maintenance maturity
+5. Barcode & warehouse operations
+6. Off-machine survivability activation (rclone + Google Drive)
+7. Quarterly restore governance
+8. Multi-template expansion
 
 > Full platform roadmap, phase history, MVP definition, and implementation sequencing:
 > **`docs/roadmap/PLATFORM_ROADMAP.md`** — authoritative platform source.
@@ -44,7 +54,24 @@ python odoo/odoo-bin -d Famoil -r odoo \
 > FamOil-specific operational roadmap, ERP module status, and phase-level priorities:
 > **`docs/famoil_erp_template/FAMOIL_ROADMAP.md`** — FamOil template execution source.
 
-**Governance engine:** Phase 1 hooks active since 2026-05-27. See GOVERNANCE ENGINE STATUS below.
+**Governance engine:** Active. See GOVERNANCE ENGINE STATUS below.
+
+---
+
+## RESTORE VALIDATION STATUS
+
+| Item | Status |
+|------|--------|
+| Restore Drill 1 (2026-05-28) | PARTIAL PASS — ir_attachment 0/875 (plain format FK failure) |
+| Backup format upgrade (R-01) | COMPLETE — `pg_dump -F c`, `pg_restore --disable-triggers` |
+| Restore Drill 2 (2026-05-28) | **FULL PASS** — ir_attachment 875/875, PDFs 16/16, images 844/844 |
+| PDF access via Odoo UI | VALIDATED — HTTP 200, 47,172 bytes served |
+| Odoo module load on restore | VALIDATED — 83 modules, 0 errors |
+| Measured RTO | ≈ 43 seconds |
+| Survivability assessment | **Production-grade recoverability validated** |
+| Restore script | `scripts/restore_famoil.sh` (full procedure + validation) |
+
+See: `docs/operations/RESTORE_DRILL.md` for full drill reports.
 
 ---
 
@@ -133,8 +160,9 @@ Deodorization (id=23)
 - DO NOT commit ERP backup archives (SQL, filestore, tar.gz) to the repository — only `backups/BACKUP_MANIFEST.md` metadata is tracked
 
 **Backup status:**
-- Last backup: 2026-05-28 00:33 — `/Users/mac/odoo_backups/famoil_20260528_0033/`
-- Backup script: `scripts/backup_famoil.sh` (Phase 2 enhanced — compression + governance bridge)
+- Last backup: 2026-05-28 18:14 — `/Users/mac/odoo_backups/famoil_20260528_1814/`
+- Backup format: `pg_dump -F c` (custom format — `Famoil.dump`, 6MB) — resolves ir_attachment FK issue
+- Restore script: `scripts/restore_famoil.sh` — full restore + validation in one script
 - Governance bridge: `backups/BACKUP_MANIFEST.md` (must be committed after each run)
 - Automated scheduling: launchd plists created — install per `docs/deployment/MACOS_BACKUP_AUTOMATION.md`
 - Cloud offsite sync: sync script ready — requires `brew install rclone` + `rclone config gdrive`
@@ -157,8 +185,8 @@ Deodorization (id=23)
 | GitHub Actions — backup_check.yml | ACTIVE               | Fires every Monday 06:00 UTC       |
 | GitHub Actions — security_scan.yml | ACTIVE              | Fires on push + PR to main         |
 | Branch protection (main)        | ENABLED                 | Applied by operator 2026-05-27     |
-| Last audit log entry            | 2026-05-27 session start|                                    |
-| Last backup verification        | 2026-05-22              |                                    |
+| Last audit log entry            | 2026-05-28              |                                    |
+| Last backup verification        | 2026-05-28 (Drill 2 — FULL PASS) |                             |
 
 ---
 
@@ -172,7 +200,7 @@ Deodorization (id=23)
 - Cost method not set on Raw Materials category
 - Consumables (Hexane, Lubricant Oil) missing from BOM 10
 - Spare parts/consumables list_price = ₦1 (placeholder)
-- Restore drill not yet performed (Priority 1 — see PLATFORM_ROADMAP.md)
+- Off-machine backup sync not yet activated (rclone not installed)
 
 ---
 
@@ -188,7 +216,7 @@ Deodorization (id=23)
 │   ├── settings.json                ← hook engine config
 │   └── hooks/                       ← 6 enforcement scripts
 ├── .github/
-│   └── workflows/                   ← CI/CD workflows (pending remote)
+│   └── workflows/                   ← CI/CD workflows (active)
 ├── docs/
 │   ├── IMPLEMENTATION_STANDARDS.md  ← 12 core engineering rules
 │   ├── DEPLOYMENT_GUIDE.md
@@ -210,7 +238,7 @@ Deodorization (id=23)
 │   └── famoil_erp_template/         ← FamOil-specific docs
 ├── csv_templates/                   ← 9 reusable import templates
 ├── custom_addons/                   ← 11 installed modules
-├── scripts/                         ← 4 operational scripts
+├── scripts/                         ← 5 operational scripts
 ├── prompts/                         ← prompt library
 ├── tests/                           ← test scripts
 └── logs/                            ← local audit logs (git-ignored)

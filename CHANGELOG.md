@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## v1.7.0 — 2026-05-28 — Post-Restore Governance Synchronization
+
+- CLAUDE.md v1.2.0: updated active phase to "Procurement Maturity & Operational Workflow
+  Expansion"; added RESTORE VALIDATION STATUS section; updated backup status (latest:
+  famoil_20260528_1814, custom format); resolved stale known issue (restore drill removed);
+  updated scripts count (4→5); fixed stale workflow status ("pending remote" → "active")
+- PLATFORM_ROADMAP.md v1.2: marked RESTORE DRILL as COMPLETE with Drill 2 results;
+  added milestones v1.4.0-roadmap-institutionalization and v1.5.0-restore-validated to
+  Phase 4; renumbered priorities (Procurement is now Priority 1); updated risks (removed
+  "restore drill not yet validated", added off-machine sync and operator-driven risks);
+  updated Section 11 current focus (removed "restore validation")
+- FAMOIL_ROADMAP.md v1.1: updated current strategic priority; updated Phase 4 with
+  restore drill outcome and milestone; updated Section 6 priority order (Procurement #1);
+  updated Section 7 next phase (Procurement Maturity replaces Restore Drill); updated
+  risks; removed stale "restore governance matures" condition
+- AI_ONBOARDING_V2.txt v2.1: Rule 10 updated with current active phase and restore
+  validation status
+- DECISION_LOG.md: added DEC-011 — backup format architectural decision (pg_dump -F c,
+  rationale, validation, alternatives, trade-offs, revisit conditions)
+- Git tag v1.5.0-restore-validated created at f083a9a
+
 ## v1.6.0 — 2026-05-28 — Backup Architecture Upgrade and Restore Validation
 
 - Upgraded backup format from `pg_dump -F p` (plain text) to `pg_dump -F c` (custom):

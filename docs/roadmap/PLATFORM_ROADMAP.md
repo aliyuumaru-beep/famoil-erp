@@ -2,7 +2,7 @@
 
 # Software Factory Platform Roadmap
 
-Version: 1.1
+Version: 1.2
 Last Updated: 2026-05-28
 
 ---
@@ -245,16 +245,22 @@ Milestones:
 
 * v1.2.0-governance-foundation
 * v1.3.0-offsite-backup-operational
+* v1.4.0-roadmap-institutionalization
+* v1.5.0-restore-validated
 
 Major outcome:
 Governance now actively enforced by repository systems.
+Production-grade restore survivability validated (Drill 2: full pass, RTO ≈ 43s).
 
 ---
 
 # 5. CURRENT ACTIVE PRIORITY
 
 CURRENT PRIORITY:
-Operational Maturity + Commercial MVP Completion
+Procurement Maturity & Operational Workflow Expansion
+
+Restore validation is complete (v1.5.0-restore-validated).
+Backup system is production-grade trusted.
 
 Current operational template:
 FamOil ERP
@@ -315,43 +321,95 @@ Commercial MVP includes:
 
 ---
 
-# PRIORITY 1 — RESTORE DRILL
+# RESTORE DRILL — COMPLETE
 
-STATUS: NOT YET COMPLETED
+STATUS: COMPLETE / VALIDATED (2026-05-28)
 
-Objectives:
+Milestone: v1.5.0-restore-validated
 
-* restore PostgreSQL dump
-* restore filestore
-* validate attachments
-* validate modules
-* validate records
-* measure recovery timing
+Results:
 
-Required output:
-docs/operations/RESTORE_DRILL.md
+* Drill 1 — PARTIAL PASS (plain format, ir_attachment 0/875)
+* R-01 — backup architecture hardened (pg_dump -F c, pg_restore --disable-triggers)
+* Drill 2 — FULL PASS (ir_attachment 875/875, PDFs 16/16, images 844/844)
+* PDF served via Odoo UI: HTTP 200, 47,172 bytes
+* Measured RTO: ≈ 43 seconds
+* 83 Odoo modules loaded, 0 errors
 
-Core principle:
-A backup is only trusted after a successful restore.
+See: docs/operations/RESTORE_DRILL.md
 
 ---
 
-# PRIORITY 2 — OPERATIONAL ERP MATURITY
+# PRIORITY 1 — PROCUREMENT MATURITY
 
 Focus areas:
 
-* procurement maturity
-* QC maturity
-* maintenance
-* dispatch
-* weighbridge
-* fleet
-* anti-fraud operational controls
-* operational traceability
+* RFQ workflows
+* purchase approvals
+* vendor management
+* vendor pricing
+* landed costs
+* procurement traceability
 
 ---
 
-# PRIORITY 3 — KPI & OPERATIONAL ANALYTICS LAYER
+# PRIORITY 2 — SALES WORKFLOW MATURITY
+
+Focus areas:
+
+* quotations
+* sales orders
+* invoicing
+* receivables
+* customer pricing
+* dispatch validation
+
+---
+
+# PRIORITY 3 — DISPATCH & LOGISTICS MATURITY
+
+Focus areas:
+
+* fleet tracking
+* weighbridge integration
+* dispatch validation
+* trip monitoring
+
+---
+
+# PRIORITY 4 — MAINTENANCE MATURITY
+
+Focus areas:
+
+* preventive maintenance
+* breakdown maintenance
+* spare parts management
+* maintenance scheduling
+
+---
+
+# PRIORITY 5 — BARCODE & WAREHOUSE OPERATIONS
+
+Focus areas:
+
+* barcode workflows
+* warehouse scanning
+* operational validation
+
+---
+
+# PRIORITY 6 — OFF-MACHINE SURVIVABILITY ACTIVATION
+
+Focus areas:
+
+* rclone installation
+* Google Drive sync activation
+* off-machine restore validation
+* cross-machine recovery test
+
+---
+
+# PRIORITY 7 — KPI & OPERATIONAL ANALYTICS LAYER
 
 Future operational visibility layer:
 
@@ -364,7 +422,7 @@ Future operational visibility layer:
 
 ---
 
-# PRIORITY 4 — REGULATORY & COMPLIANCE MATURITY
+# PRIORITY 8 — REGULATORY & COMPLIANCE MATURITY
 
 Future compliance architecture:
 
@@ -378,7 +436,7 @@ Future compliance architecture:
 
 ---
 
-# PRIORITY 5 — INDUSTRIAL INFRASTRUCTURE & UTILITIES
+# PRIORITY 9 — INDUSTRIAL INFRASTRUCTURE & UTILITIES
 
 Future utilities architecture:
 
@@ -390,7 +448,7 @@ Future utilities architecture:
 
 ---
 
-# PRIORITY 6 — INDUSTRIAL INTELLIGENCE LAYER
+# PRIORITY 10 — INDUSTRIAL INTELLIGENCE LAYER
 
 Only after operational stability:
 
@@ -403,7 +461,15 @@ Operational truth must exist before intelligence.
 
 ---
 
-# PRIORITY 7 — MULTI-INDUSTRY TEMPLATE EXPANSION
+# PRIORITY 11 — QUARTERLY RESTORE GOVERNANCE
+
+Schedule quarterly restore drills.
+Document recovery SOP improvements after each drill.
+Track RTO progression over time.
+
+---
+
+# PRIORITY 12 — MULTI-INDUSTRY TEMPLATE EXPANSION
 
 Future reusable templates:
 
@@ -456,9 +522,11 @@ Mandatory:
 
 Current risks:
 
-* restore drill not yet validated
+* off-machine backup sync not yet operationally activated (rclone not installed)
+* restore process still partially operator-driven (manual invocation of restore_famoil.sh)
 * founder dependency still exists
-* premature expansion risk
+* premature multi-template expansion risk
+* operational complexity growth
 * overengineering risk
 
 ---
@@ -484,9 +552,9 @@ industry templates
 
 Current focus remains:
 
-* operational maturity
+* procurement maturity
+* operational workflow expansion
 * governance survivability
-* restore validation
 * ERP quality
 
 ---

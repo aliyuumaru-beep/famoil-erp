@@ -1,5 +1,5 @@
 # FamOil ERP Operational Roadmap
-Version: 1.0 | Last Updated: 2026-05-28
+Version: 1.1 | Last Updated: 2026-05-28
 
 PURPOSE
 This document defines:
@@ -32,9 +32,9 @@ This is:
 	•	reusable industrial implementation framework.
 
 2. CURRENT IMPLEMENTATION STATUS
-Overall status: | Operationally stable core industrial ERP foundation.
-Current maturity: | Mid-stage industrial ERP operational maturity.
-Current strategic priority: | Commercial MVP completion.
+Overall status: | Operationally stable core industrial ERP foundation. Restore survivability validated.
+Current maturity: | Mid-stage industrial ERP operational maturity. Infrastructure phase complete.
+Current strategic priority: | Procurement Maturity & Operational Workflow Expansion.
 
 3. COMPLETED PHASES
 
@@ -98,7 +98,7 @@ Implemented:
 	•	secret scanning
 	•	documentation linting
 	•	PR governance
-	•	backup governance
+	•	backup governance (pg_dump -F c, pg_restore --disable-triggers)
 	•	offsite backup automation
 	•	launchd scheduling
 	•	Google Drive sync
@@ -106,7 +106,10 @@ Implemented:
 	•	decision logs
 	•	implementation history
 	•	roadmap institutionalization
-Outcome: | Governance operationally enforced.
+	•	restore drill governance (scripts/restore_famoil.sh)
+	•	restore validation — FULL PASS (Drill 2, 2026-05-28)
+Milestone: | v1.5.0-restore-validated
+Outcome: | Governance operationally enforced. Production-grade recoverability validated.
 
 4. CURRENT ERP MODULE STATUS
 
@@ -202,36 +205,39 @@ Required:
 Current status: | NOT YET IMPLEMENTED
 
 6. EXACT CURRENT IMPLEMENTATION PRIORITY
-CURRENT ACTIVE PHASE: | Operational ERP Maturity
+CURRENT ACTIVE PHASE: | Procurement Maturity & Operational Workflow Expansion
+Restore drill: COMPLETE (v1.5.0-restore-validated)
 Exact next priority order:
-	1	Restore drill validation
-	2	Procurement maturity
-	3	Quality control maturity
-	4	Sales & dispatch maturity
-	5	Maintenance basics
-	6	Weighbridge & logistics
-	7	Barcode operations
-	8	KPI dashboards
-	9	IoT integration
+	1	Procurement maturity
+	2	Sales workflow maturity
+	3	Dispatch & logistics maturity
+	4	Maintenance maturity
+	5	Barcode & warehouse operations
+	6	Off-machine survivability activation
+	7	Quarterly restore governance
+	8	Multi-template expansion
 
 7. EXACT NEXT PHASE TO EXECUTE
-NEXT PHASE: | Restore Drill & Recovery Validation
-This is the single highest-priority infrastructure milestone.
-Reason: | Current backup systems are operational but not yet restore-validated.
+NEXT PHASE: | Procurement Maturity
+This is the current highest-priority ERP workflow milestone.
+Reason: | Infrastructure and survivability are validated. Commercial MVP requires operational procurement.
 Objectives:
-	•	restore PostgreSQL dump
-	•	restore filestore
-	•	restore attachments
-	•	validate records
-	•	validate modules
-	•	measure recovery timing
-	•	validate backup integrity
+	•	RFQ workflow configuration
+	•	purchase order approvals
+	•	vendor management and pricing
+	•	landed cost configuration
+	•	procurement traceability validation
 Required deliverables:
-	•	docs/operations/RESTORE_DRILL.md
-	•	restore checklist
-	•	recovery timing metrics
-	•	recovery SOP
-Core principle: | A backup is only trusted after a successful restore.
+	•	fully functional purchase workflow
+	•	vendor pricing applied to raw material POs
+	•	landed cost validated on SoyaBean procurement
+	•	procurement documentation updated
+
+RESTORE DRILL — COMPLETED (2026-05-28)
+Milestone: v1.5.0-restore-validated
+RTO: ≈ 43 seconds
+Validation: ir_attachment 875/875, PDFs 16/16, 83 modules, 0 errors
+See: docs/operations/RESTORE_DRILL.md
 
 8. IMPLEMENTATION PHILOSOPHY
 Mandatory principles:
@@ -252,7 +258,8 @@ Priority order:
 
 9. KNOWN RISKS
 Current risks:
-	•	restore process unvalidated
+	•	off-machine backup sync not yet operationally activated (rclone not installed)
+	•	restore process still partially operator-driven
 	•	founder dependency
 	•	premature multi-template expansion
 	•	overengineering risk
@@ -265,7 +272,7 @@ Future expansion targets:
 	•	PalmOil template
 FamOil remains the primary reference implementation until:
 	•	commercial MVP stabilizes,
-	•	restore governance matures,
+	•	off-machine survivability is fully activated,
 	•	operational maturity improves.
 
 11. AI / HUMAN ONBOARDING INSTRUCTIONS

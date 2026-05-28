@@ -245,6 +245,51 @@ Odoo 17 Community (and Enterprise) does not support per-BOM-line source location
 
 ---
 
+## DEC-011 — Backup Format: PostgreSQL Custom Format (-F c) over Plain Text (-F p)
+
+**Decision:** Migrate backup from `pg_dump -F p` (plain text, `Famoil.sql`) to
+`pg_dump -F c` (custom format, `Famoil.dump`). Restore via `pg_restore --disable-triggers`.
+
+**Rationale:**
+- Plain format restore produced circular FK violations between `account_move` and
+  `ir_attachment`, leaving all 875 attachment records unrestored (Drill 1 — 2026-05-28).
+- Custom format with `pg_restore --disable-triggers` disables FK constraint triggers
+  during data load, fully resolving the circular dependency.
+- Custom format is also self-compressed (~6MB vs ~17MB plain), restores in parallel
+  (`-j 4`), and supports selective table restoration.
+
+**Trigger:**
+Restore Drill 1 failure — `ir_attachment` 0/875 recovered. Root cause: plain pg_dump
+COPY ordering conflict. Decision made immediately after root cause was confirmed.
+
+**Validation:**
+Restore Drill 2 — FULL PASS: `ir_attachment` 875/875, PDFs 16/16, images 844/844,
+PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
+
+**Alternatives Considered:**
+- Keep plain format, strip `\restrict` and use `ON_ERROR_STOP=0`: produces FK errors,
+  ir_attachment remains empty, attachments inaccessible. Rejected.
+- Use Odoo web backup ZIP (dump.sql + filestore): same FK ordering issue, and ties
+  restore to Odoo web interface. Rejected.
+- Restore with `SET session_replication_role = 'replica'`: equivalent to
+  `--disable-triggers` but more obscure and harder to document. Deferred.
+
+**Trade-offs:**
+- `.dump` files require `pg_restore` (not `psql`) — operators must use
+  `scripts/restore_famoil.sh` rather than raw psql commands.
+- `--disable-triggers` requires `odoo` PostgreSQL user to be superuser (confirmed).
+- Parallel restore (`-j 4`) opens multiple connections — fine for local Mac, review
+  if moving to resource-constrained server.
+
+**Revisit Conditions:**
+- If `odoo` PostgreSQL role is ever downgraded from superuser — use
+  `SET session_replication_role = 'replica'` as an alternative.
+- If backup storage cost becomes significant — custom format is already compressed;
+  consider archiving older backups.
+- On Odoo major version upgrade — re-run restore drill to confirm format compatibility.
+
+---
+
 ## DEC-010 — Separate Operation Types per Manufacturing Stage
 
 **Decision:** Create three distinct operation types (Extraction Manufacturing, Refining Manufacturing, Packaging Manufacturing) rather than using a single shared "Manufacturing" operation type for all stages.

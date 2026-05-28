@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## v1.6.0 — 2026-05-28 — Backup Architecture Upgrade and Restore Validation
+
+- Upgraded backup format from `pg_dump -F p` (plain text) to `pg_dump -F c` (custom):
+  - Resolves `ir_attachment` restore failure (875/875 attachments now restored)
+  - Dump file: `Famoil.dump` (6MB, self-compressed) replaces `Famoil.sql` (17MB)
+  - Restore: `pg_restore --disable-triggers -j 4` — requires `odoo` superuser role (confirmed)
+- Created `scripts/restore_famoil.sh`:
+  - Full restore procedure in one script (DB drop/create, pg_restore, filestore, validation)
+  - Built-in validation: ir_attachment count, PDF count, image count, filestore integrity
+  - `--production` flag with `CONFIRM` prompt for production restores
+  - Backward-compatible: auto-detects `.dump` vs `.sql` and warns on legacy format
+- Restore Drill 1 (plain format): PARTIAL PASS — ir_attachment 0/875, all else 100%
+- Restore Drill 2 (custom format): FULL PASS — ir_attachment 875/875, PDF served HTTP 200
+- Updated `docs/BACKUP_AND_RECOVERY.md` v2.0: new format docs, recovery procedure, drill log
+- Updated `docs/operations/RESTORE_DRILL.md`: Drill 2 full report and summary table
+- Updated `docs/famoil_erp_template/IMPLEMENTATION_HISTORY.md`: milestone recorded
+
 ## v1.5.0 — 2026-05-28 — Two-Level Roadmap Architecture Institutionalized
 
 - Integrated `docs/famoil_erp_template/FAMOIL_ROADMAP.md` (FamOil operational execution roadmap)

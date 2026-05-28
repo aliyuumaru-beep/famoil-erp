@@ -10,11 +10,11 @@
 
 | Field                | Value                                          |
 |---------------------|------------------------------------------------|
-| Last Backup Date     | 2026-05-28 00:33:20                  |
-| Backup Archive Name  | famoil_20260528_0033                           |
-| Backup Location      | /Users/mac/odoo_backups/famoil_20260528_0033                                 |
-| Raw Directory Size   |  47M                            |
-| Compressed Archive   | /Users/mac/odoo_backups/famoil_20260528_0033.tar.gz                    |
+| Last Backup Date     | 2026-05-28 18:14:39                  |
+| Backup Archive Name  | famoil_20260528_1814                           |
+| Backup Location      | /Users/mac/odoo_backups/famoil_20260528_1814                                 |
+| Raw Directory Size   |  36M                            |
+| Compressed Archive   | /Users/mac/odoo_backups/famoil_20260528_1814.tar.gz                    |
 | Archive Size         |  19M                          |
 | Verification Status  | COMPLETED                                     |
 | Odoo Version         | 17.0.1.3 Community                            |
@@ -23,7 +23,7 @@
 
 ## Contents Backed Up
 
-- [x] PostgreSQL database dump (Famoil.sql)
+- [x] PostgreSQL database dump (Famoil.dump — custom format)
 - [x] Odoo filestore
 - [x] odoo.conf (passwords stripped)
 - [x] custom_addons/

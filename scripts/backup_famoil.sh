@@ -3,7 +3,7 @@
 # backup_famoil.sh — Full backup of FamOil Odoo 17 instance
 # =============================================================================
 # Creates a timestamped backup directory containing:
-#   - PostgreSQL plain-text dump
+#   - PostgreSQL custom-format dump (Famoil.dump) — supports full attachment restore
 #   - Odoo filestore
 #   - odoo.conf (passwords stripped)
 #   - custom_addons directory
@@ -15,6 +15,12 @@
 #   - Updates backups/BACKUP_MANIFEST.md in the repository (governance bridge)
 #     so backup_check.yml workflow can validate backup currency
 #   - Produces a retention report (dry-run — identifies candidates, no deletion)
+#
+# Backup format: pg_dump -F c (custom/binary, compressed)
+#   - Resolves circular FK ordering that caused ir_attachment (attachments, PDFs)
+#     to fail with the previous plain-text format (-F p)
+#   - Restore uses: pg_restore --disable-triggers (requires superuser role)
+#   - Use scripts/restore_famoil.sh for the restore procedure
 #
 # Usage:
 #   bash /Users/mac/odoo17/scripts/backup_famoil.sh
@@ -61,11 +67,12 @@ echo "============================================================"
 mkdir -p "${BACKUP_DIR}"/{filestore,custom_addons,docs,scripts}
 
 # ---------------------------------------------------------------------------
-# 1. PostgreSQL dump (plain text)
+# 1. PostgreSQL dump (custom format — resolves ir_attachment FK ordering issue)
 # ---------------------------------------------------------------------------
-echo "[1/6] Dumping database: ${DB_NAME}..."
-pg_dump -U "${DB_USER}" -d "${DB_NAME}" -F p -f "${BACKUP_DIR}/${DB_NAME}.sql"
-echo "      OK — $(du -sh "${BACKUP_DIR}/${DB_NAME}.sql" | cut -f1)"
+echo "[1/6] Dumping database: ${DB_NAME} (custom format)..."
+pg_dump -U "${DB_USER}" -d "${DB_NAME}" -F c -f "${BACKUP_DIR}/${DB_NAME}.dump"
+echo "      OK — $(du -sh "${BACKUP_DIR}/${DB_NAME}.dump" | cut -f1)"
+echo "      Format: custom (-F c) — restore with scripts/restore_famoil.sh"
 
 # ---------------------------------------------------------------------------
 # 2. Filestore
@@ -118,21 +125,23 @@ cat > "${BACKUP_DIR}/BACKUP_MANIFEST.md" <<EOF
 | Backup Path   | ${BACKUP_DIR}                      |
 | DB User       | ${DB_USER}                         |
 | Filestore     | ${FILESTORE}                       |
+| Dump Format   | PostgreSQL custom (-F c)           |
 
 ## Contents
 
-| File/Dir       | Description                        |
-|----------------|------------------------------------|
-| ${DB_NAME}.sql | PostgreSQL plain-text dump         |
-| filestore/     | Odoo binary attachments            |
-| odoo.conf      | Server config (passwords stripped) |
-| custom_addons/ | All custom and third-party modules |
-| docs/          | Documentation snapshot             |
-| scripts/       | Utility scripts                    |
+| File/Dir        | Description                                      |
+|-----------------|--------------------------------------------------|
+| ${DB_NAME}.dump | PostgreSQL custom-format dump (pg_restore ready) |
+| filestore/      | Odoo binary attachments (hashed dirs)            |
+| odoo.conf       | Server config (passwords stripped)               |
+| custom_addons/  | All custom and third-party modules               |
+| docs/           | Documentation snapshot                           |
+| scripts/        | Utility scripts                                  |
 
 ## Restore
 
-See docs/famoil_erp_template/BACKUP_AND_RESTORE.md
+Use: scripts/restore_famoil.sh
+See: docs/BACKUP_AND_RECOVERY.md
 EOF
 
 # ---------------------------------------------------------------------------
@@ -184,7 +193,7 @@ cat > "${BRIDGE_DIR}/BACKUP_MANIFEST.md" <<EOF
 
 ## Contents Backed Up
 
-- [x] PostgreSQL database dump (${DB_NAME}.sql)
+- [x] PostgreSQL database dump (${DB_NAME}.dump — custom format)
 - [x] Odoo filestore
 - [x] odoo.conf (passwords stripped)
 - [x] custom_addons/

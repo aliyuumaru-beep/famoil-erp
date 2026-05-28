@@ -163,3 +163,30 @@ v1.3.0-offsite-backup-operational
   removed — now resolved by two-level roadmap architecture
 - `docs/INDUSTRY_TEMPLATE_GUIDE.md` updated with expansion guard referencing PLATFORM_ROADMAP.md § 7
 - All governance documents now cross-reference the correct roadmap authority for their scope
+
+---
+
+## Post-Phase 4 — Backup Architecture Upgrade and Restore Validation
+
+**Completed:** 2026-05-28
+
+### What was implemented
+
+- Restore Drill 1 executed from `famoil_20260528_0033` (plain format):
+  - Core ERP data 100% restored; critical finding: `ir_attachment` 0/875 failed
+  - Root cause: circular FK between `account_move` and `ir_attachment` in plain `pg_dump -F p`
+- Backup format upgraded to PostgreSQL custom format (`pg_dump -F c`):
+  - `scripts/backup_famoil.sh`: dump now outputs `Famoil.dump` (6MB compressed)
+  - `pg_restore --disable-triggers -j 4` resolves circular FK dependency
+- `scripts/restore_famoil.sh` created: full restore + validation in one script
+- Restore Drill 2 from `famoil_20260528_1814` (custom format): FULL PASS
+  - `ir_attachment`: 875/875 ✓ | PDFs: 16/16 ✓ | Images: 844/844 ✓
+  - PDF served via Odoo `/web/content` endpoint: HTTP 200, 47,172 bytes ✓
+  - 83 modules loaded, 0 errors | RTO: 43 seconds
+- `docs/BACKUP_AND_RECOVERY.md` updated to v2.0
+- `docs/operations/RESTORE_DRILL.md` updated with Drill 2 full report
+
+### Outcome
+
+Backup system is now fully trusted. End-to-end recovery including attachment
+access through the Odoo UI validated.

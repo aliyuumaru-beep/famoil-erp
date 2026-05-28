@@ -1,6 +1,19 @@
 # RESTORE_DRILL.md
-# FamOil Software Factory — Restore Drill Report
-# Version: 1.0 | Executed: 2026-05-28 | Status: COMPLETED WITH FINDINGS
+# FamOil Software Factory — Restore Drill Reports
+# Version: 2.0 | Updated: 2026-05-28 | Status: PASSED (Drill 2)
+
+---
+
+## Drill Summary
+
+| Drill | Date | Format | ir_attachment | Modules | RTO | Outcome |
+|-------|------|--------|--------------|---------|-----|---------|
+| Drill 1 | 2026-05-28 | plain (-F p) | 0/875 FAIL | 83 ✓ | 36s | PARTIAL PASS — format changed |
+| Drill 2 | 2026-05-28 | custom (-F c) | 875/875 ✓ | 83 ✓ | 43s | **FULL PASS — backup trusted** |
+
+---
+
+# Drill 1 — 2026-05-28 (Original — SUPERSEDED)
 
 ---
 
@@ -274,14 +287,14 @@ can be declared fully trusted.**
 
 ---
 
-## 9. Next Actions
+## 9. Next Actions (Drill 1 — RESOLVED)
 
-| Priority | Action | Owner | By |
-|----------|--------|-------|----|
-| HIGH | Fix backup script: change to `pg_dump -F c` (R-01) | Technical Lead | Next session |
-| HIGH | Re-run restore drill after backup format fix | Technical Lead | After R-01 |
-| MEDIUM | Create `scripts/restore_famoil.sh` (R-02) | Technical Lead | Next governance cycle |
-| LOW | Schedule quarterly restore drills (R-03) | Technical Lead | Ongoing |
+| Priority | Action | Status |
+|----------|--------|--------|
+| HIGH | Fix backup script: change to `pg_dump -F c` (R-01) | DONE — 2026-05-28 |
+| HIGH | Re-run restore drill after backup format fix | DONE — Drill 2 PASSED |
+| MEDIUM | Create `scripts/restore_famoil.sh` (R-02) | DONE — 2026-05-28 |
+| LOW | Schedule quarterly restore drills (R-03) | Open |
 
 ---
 
@@ -293,4 +306,138 @@ can be declared fully trusted.**
 | Production database affected | NO |
 | Drill database cleaned up | YES — `FamOilRestoreTest` dropped, filestore removed |
 | Document path | `docs/operations/RESTORE_DRILL.md` |
-| Status | COMPLETED — action required on R-01 |
+| Status | SUPERSEDED — see Drill 2 below |
+
+---
+
+---
+
+# Drill 2 — 2026-05-28 (Custom Format — FULL PASS)
+
+## Summary
+
+Second restore drill executed immediately after upgrading the backup format to
+`pg_dump -F c` (custom format). Restored from backup `famoil_20260528_1814`.
+All 875 `ir_attachment` records restored successfully. PDF file served via
+Odoo `/web/content` endpoint confirmed at HTTP 200.
+
+**Overall result: FULL PASS — backup system is trusted.**
+
+---
+
+## 1. Drill Parameters
+
+| Field | Value |
+|-------|-------|
+| Drill date | 2026-05-28 |
+| Backup used | `famoil_20260528_1814` (2026-05-28 18:14) |
+| Backup age at drill | < 1 minute |
+| Backup format | PostgreSQL custom format (`pg_dump -F c`) |
+| Dump file size | 6MB (vs 17MB for plain format) |
+| Restore script | `scripts/restore_famoil.sh` |
+| Restore target DB | `FamOilRestoreTest` (isolated, dropped after drill) |
+| Production DB | `Famoil` (untouched throughout) |
+
+---
+
+## 2. Recovery Timing
+
+| Step | Duration |
+|------|----------|
+| Create test database | 2s |
+| Restore custom-format dump (`pg_restore -j 4 --disable-triggers`) | 33s |
+| Restore filestore | 1s |
+| Validation checks | <1s |
+| Odoo module load validation | 7s |
+| **Total** | **43s** |
+
+---
+
+## 3. Restore Procedure
+
+```bash
+bash /Users/mac/odoo17/scripts/restore_famoil.sh \
+  /Users/mac/odoo_backups/famoil_20260528_1814
+```
+
+Internally uses:
+```bash
+pg_restore -U odoo -d FamOilRestoreTest \
+  --disable-triggers --no-owner --no-privileges \
+  -j 4 -F c Famoil.dump
+```
+
+---
+
+## 4. Validation Results
+
+### 4.1 Record Count Comparison
+
+| Table | Production | Restored | Match |
+|-------|-----------|----------|-------|
+| `stock_move` | 239 | 239 | ✓ |
+| `mrp_production` | 29 | 29 | ✓ |
+| `stock_quant` | 86 | 86 | ✓ |
+| `product_template` | 72 | 72 | ✓ |
+| `mrp_bom` | 13 | 13 | ✓ |
+| `account_move` | 84 | 84 | ✓ |
+| `stock_location` | 84 | 84 | ✓ |
+| `stock_warehouse` | 4 | 4 | ✓ |
+| `mrp_workcenter` | 14 | 14 | ✓ |
+| `ir_attachment` | 875 | **875** | **✓ FIXED** |
+
+### 4.2 Attachment Breakdown
+
+| Type | Count | Restored |
+|------|-------|----------|
+| Total `ir_attachment` | 875 | 875 ✓ |
+| Filestore refs (`store_fname`) | 874 | 874 ✓ |
+| Inline DB storage (`db_datas`) | 0 | 0 ✓ |
+| PDFs | 16 | 16 ✓ |
+| Images (PNG + JPEG) | 844 | 844 ✓ |
+| Binary/octet-stream | 6 | 6 ✓ |
+| Filestore dirs on disk | 233 | 233 ✓ |
+
+### 4.3 PDF Attachment Access — End-to-End
+
+Odoo started on port 8070 against `FamOilRestoreTest`. Authenticated as `admin`.
+PDF attachment (`id=899`, `in_invoice_yourcompany_demo.pdf`) fetched via
+`/web/content/899`:
+
+```
+HTTP 200 | Content-Type: application/pdf | Bytes served: 47,172
+ATTACHMENT ACCESS: PASS
+```
+
+### 4.4 Odoo Module Load
+
+```
+83 modules loaded in 2.15s, 0 queries
+Registry loaded in 2.962s
+```
+
+Result: All 83 modules loaded with **zero errors**.
+
+---
+
+## 5. Findings
+
+No critical findings. The custom format with `--disable-triggers` fully resolves
+the `ir_attachment` circular FK dependency identified in Drill 1.
+
+Minor observation: total RTO increased from 36s (Drill 1) to 43s (Drill 2) due to
+the additional `pg_restore` overhead and validation. Both are well within the
+target RTO of 30 minutes.
+
+---
+
+## 6. Drill Sign-Off
+
+| Field | Value |
+|-------|-------|
+| Drill executed by | Claude Code (operator supervised) |
+| Production database affected | NO |
+| Drill database cleaned up | YES — `FamOilRestoreTest` dropped, filestore removed |
+| Odoo test instance | Stopped cleanly (PID 42079) |
+| Document path | `docs/operations/RESTORE_DRILL.md` |
+| Status | **FULL PASS — backup system trusted** |

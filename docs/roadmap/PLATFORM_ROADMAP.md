@@ -458,7 +458,6 @@ Current risks:
 
 * restore drill not yet validated
 * founder dependency still exists
-* roadmap intelligence partially centralized
 * premature expansion risk
 * overengineering risk
 

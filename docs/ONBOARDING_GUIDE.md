@@ -26,7 +26,8 @@ It contains:
 ### If you are a new developer:
 - [ ] Read `CLAUDE.md` — this is the session memory anchor; read it first, always
 - [ ] Read `docs/IMPLEMENTATION_STANDARDS.md` — understand the 12 rules before touching anything
-- [ ] Read `docs/roadmap/PLATFORM_ROADMAP.md` — understand where the platform is going and what the current priorities are
+- [ ] Read `docs/roadmap/PLATFORM_ROADMAP.md` — understand platform vision and current priorities
+- [ ] Read `docs/famoil_erp_template/FAMOIL_ROADMAP.md` — understand FamOil ERP module status and next phases
 - [ ] Read `docs/famoil_erp_template/KNOWN_ISSUES.md` — know what is already broken and fixed
 - [ ] Read `docs/famoil_erp_template/DECISION_LOG.md` — understand why things are configured as they are
 - [ ] Run the backup script before making any changes: `bash scripts/backup_famoil.sh`
@@ -35,9 +36,10 @@ It contains:
 ### If you are a new Claude Code session:
 1. `CLAUDE.md` is read automatically at session start (SessionStart hook)
 2. Read `CLAUDE.md` carefully — it contains the current phase, known issues, and DO NOT rules
-3. Read `docs/roadmap/PLATFORM_ROADMAP.md` — it defines current priorities, sequencing, and next steps
-4. Do not proceed without understanding the ACTIVE PHASE and CRITICAL RULES sections
-5. Check `logs/audit_trail.log` to understand what was done in previous sessions
+3. Read `docs/roadmap/PLATFORM_ROADMAP.md` — platform vision, priorities, sequencing, and next steps
+4. Read `docs/famoil_erp_template/FAMOIL_ROADMAP.md` — FamOil ERP module status and phase-level execution detail
+5. Do not proceed without understanding the ACTIVE PHASE and CRITICAL RULES sections
+6. Check `logs/audit_trail.log` to understand what was done in previous sessions
 
 ---
 
@@ -64,6 +66,7 @@ Company: FamOil FTZ (company id=2)
 |----------|-------------------|-----------|
 | `CLAUDE.md` | Current project state, active phase, known issues | Every session, first |
 | `docs/roadmap/PLATFORM_ROADMAP.md` | Platform vision, priorities, MVP definition, sequencing | After CLAUDE.md, before deciding what to work on |
+| `docs/famoil_erp_template/FAMOIL_ROADMAP.md` | FamOil ERP module status, operational priorities, phase-level detail | After PLATFORM_ROADMAP.md, before any FamOil ERP work |
 | `docs/IMPLEMENTATION_STANDARDS.md` | The 12 rules you must follow | Before any work |
 | `docs/famoil_erp_template/MANUFACTURING_FLOW.md` | The 3-stage production pipeline | Before touching manufacturing |
 | `docs/famoil_erp_template/DECISION_LOG.md` | Why things are configured as they are | Before changing any configuration |

@@ -46,7 +46,7 @@ that future sessions maintain the same standards without relying on memory.
 ```
 CLAUDE.md                        ← Session anchor: always read first (operational cockpit)
 │
-├── docs/roadmap/PLATFORM_ROADMAP.md   ← Authoritative roadmap and sequencing
+├── docs/roadmap/PLATFORM_ROADMAP.md   ← Authoritative platform roadmap and sequencing
 │
 ├── docs/IMPLEMENTATION_STANDARDS.md   ← The 12 rules
 │
@@ -58,6 +58,7 @@ CLAUDE.md                        ← Session anchor: always read first (operatio
 │   └── GOVERNANCE_ENGINE.md           ← Hook and CI/CD enforcement map
 │
 ├── docs/famoil_erp_template/          ← FamOil-specific knowledge
+│   ├── FAMOIL_ROADMAP.md              ← FamOil operational execution roadmap
 │   ├── MANUFACTURING_FLOW.md          ← 3-stage pipeline
 │   ├── DECISION_LOG.md                ← Why things are as they are
 │   ├── KNOWN_ISSUES.md                ← Issues and fixes
@@ -81,18 +82,20 @@ CLAUDE.md                        ← Session anchor: always read first (operatio
 
 ## 4. Roadmap and Sequencing Authority
 
-The authoritative source for:
-- long-term platform vision,
-- implementation sequencing and priority,
-- commercial MVP definition,
-- current next steps,
-- and future repository evolution
+**Platform-level authority** — long-term vision, implementation sequencing, commercial MVP definition,
+current priorities, and future repository evolution:
 
-is: **`docs/roadmap/PLATFORM_ROADMAP.md`**
+**`docs/roadmap/PLATFORM_ROADMAP.md`**
+
+**Template-level authority** — FamOil ERP module status, operational priority sequence,
+phase-specific execution detail, and FamOil-specific onboarding instructions:
+
+**`docs/famoil_erp_template/FAMOIL_ROADMAP.md`**
 
 `CLAUDE.md` is the operational cockpit (current phase, known issues, governance status).
 `PLATFORM_ROADMAP.md` is the strategic sequencing source.
-These are complementary, not duplicate.
+`FAMOIL_ROADMAP.md` is the FamOil operational execution source.
+These three are complementary, not duplicate.
 
 ---
 
@@ -137,11 +140,12 @@ principles before proposing major architectural changes or custom code.
 1. Read `CLAUDE.md` (read automatically at session start via hooks)
 2. Read `docs/ONBOARDING_GUIDE.md`
 3. Read `docs/IMPLEMENTATION_STANDARDS.md`
-4. Read `docs/roadmap/PLATFORM_ROADMAP.md` — understand where the project is going
-5. Check `CLAUDE.md → ACTIVE PHASE`
-6. Check `CLAUDE.md → KNOWN ISSUES`
-7. Take a backup before any changes: `bash scripts/backup_famoil.sh`
-8. Proceed only within the current approved phase
+4. Read `docs/roadmap/PLATFORM_ROADMAP.md` — understand platform priorities and sequencing
+5. Read `docs/famoil_erp_template/FAMOIL_ROADMAP.md` — understand FamOil-specific execution state
+6. Check `CLAUDE.md → ACTIVE PHASE`
+7. Check `CLAUDE.md → KNOWN ISSUES`
+8. Take a backup before any changes: `bash scripts/backup_famoil.sh`
+9. Proceed only within the current approved phase
 
 A new session must never make assumptions about the current state.
 Read the documents. Trust the documents. Update the documents after every change.

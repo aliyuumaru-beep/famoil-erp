@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## v1.4.0 — 2026-05-28 — Roadmap Institutionalization and Governance Maturity
+
+- Created `docs/roadmap/PLATFORM_ROADMAP.md` — authoritative platform roadmap converted
+  from `.docx` to governed markdown; establishes vision, sequencing, MVP definition,
+  current priorities, and future repository evolution
+- Clarified governance document architecture:
+  `PLATFORM_ROADMAP.md` (roadmap authority) vs `CLAUDE.md` (operational cockpit) vs
+  `IMPLEMENTATION_HISTORY.md` (historical timeline) vs `DECISION_LOG.md` (reasoning record)
+- Updated `CLAUDE.md` v1.1.0: stripped roadmap data, added roadmap pointer, fixed stale
+  backup status, resolved stale KNOWN ISSUE "no remote connected", updated repo structure
+- Updated `PROJECT_FACTORY_MANUAL.md` v1.2.0: added Roadmap and Sequencing Authority section
+  (§ 4), updated document relationship map, updated phase table to reflect all phases
+  complete, renumbered sections, added PLATFORM_ROADMAP.md to onboarding sequence
+- Updated `docs/ONBOARDING_GUIDE.md` v1.1: added PLATFORM_ROADMAP.md to developer and
+  AI session reading lists, added to key documents table, updated stale "no remote" rule,
+  updated repo structure diagram
+- Updated `docs/IMPLEMENTATION_STANDARDS.md` v1.2: added PLATFORM_ROADMAP.md as
+  implementation sequencing authority reference in preamble
+- Created `docs/famoil_erp_template/IMPLEMENTATION_HISTORY.md`: historical implementation
+  timeline covering Phases 1–4 and post-Phase 4 governance maturity
+- Duplication removed: roadmap phase tables no longer stored in CLAUDE.md; priority list
+  no longer scattered across multiple documents; single authoritative source established
+
 ## v1.3.0 — 2026-05-27 — Phase 3 Backup Automation
 
 - Created `scripts/sync_backup_to_gdrive.sh`: rclone-based Google Drive sync;

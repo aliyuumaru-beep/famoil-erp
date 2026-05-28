@@ -1,0 +1,108 @@
+AI ONBOARDING INSTRUCTIONS — FAMOIL SOFTWARE FACTORY
+Version: 2.0 | Created: 2026-05-28
+=======================================================
+
+PURPOSE
+-------
+This file is read by AI agents (Claude Code and other AI systems) at the start
+of a session to establish correct operating context before any work begins.
+
+It is a companion to CLAUDE.md. CLAUDE.md is the session cockpit.
+This file is the AI-specific onboarding sequence.
+
+=======================================================
+MANDATORY READING SEQUENCE FOR AI AGENTS
+=======================================================
+
+Step 1 — Read the session anchor:
+  CLAUDE.md
+  (Read automatically at session start via SessionStart hook)
+
+Step 2 — Read the authoritative platform roadmap:
+  docs/roadmap/PLATFORM_ROADMAP.md
+  (Defines strategic direction, implementation sequencing, current priorities,
+  commercial MVP definition, and future platform evolution)
+
+Step 3 — Read the FamOil operational roadmap:
+  docs/famoil_erp_template/FAMOIL_ROADMAP.md
+  (Defines FamOil-specific implementation priority order and current ERP state)
+
+Step 4 — Read implementation standards:
+  docs/IMPLEMENTATION_STANDARDS.md
+  (12 rules governing all implementation activity — mandatory compliance)
+
+Step 5 — Read architectural principles:
+  docs/architecture/ARCHITECTURAL_PRINCIPLES.md
+  (Decision philosophy — consult before any major architectural proposal)
+
+Step 6 — Read historical context:
+  docs/famoil_erp_template/IMPLEMENTATION_HISTORY.md
+  (Historical implementation timeline — what was done and when)
+
+Step 7 — Read decision rationale:
+  docs/famoil_erp_template/DECISION_LOG.md
+  (Why things are configured as they are — consult before changing any configuration)
+
+Step 8 — Check active known issues:
+  docs/famoil_erp_template/KNOWN_ISSUES.md
+
+=======================================================
+AI OPERATING RULES
+=======================================================
+
+1. Never push directly to main. All changes go through a PR and CI checks.
+
+2. Never modify core Odoo files under odoo/.
+
+3. Never expose passwords, API keys, database credentials, or secrets in output.
+
+4. Never delete committed files without explicit operator approval.
+
+5. Never proceed to the next implementation priority without operator approval.
+
+6. Always take a backup before making changes:
+   bash scripts/backup_famoil.sh
+
+7. Always update CLAUDE.md after any significant change.
+
+8. When unsure: STOP and ask the operator. Never take a destructive action
+   to resolve ambiguity.
+
+9. All implementation activity must comply with IMPLEMENTATION_STANDARDS.md
+   and ARCHITECTURAL_PRINCIPLES.md.
+
+10. The current active priority is defined in:
+    docs/roadmap/PLATFORM_ROADMAP.md — Section 7 (Current High-Priority Next Steps)
+
+=======================================================
+GOVERNANCE ENGINE
+=======================================================
+
+This repository has an active two-layer governance engine:
+
+Layer 1 — Session Hooks (.claude/settings.json):
+  Blocks dangerous bash commands (pre_tool_guard.sh)
+  Blocks writes outside the repo (file_protection_guard.sh)
+  Validates written files (post_tool_validator.sh)
+  Logs all commands (audit_logger.sh)
+  Loads context at session start (session_start_loader.sh)
+  Reports session summary (session_end_reporter.sh)
+
+Layer 2 — GitHub Actions (.github/workflows/):
+  ci_review.yml     — Claude governance review on every PR
+  doc_lint.yml      — documentation completeness check
+  security_scan.yml — secret and credential scan
+  backup_check.yml  — weekly backup currency validation
+
+=======================================================
+ESCALATION
+=======================================================
+
+If a hook blocks an action you believe is legitimate:
+1. Check logs/blocked_commands.log
+2. Get operator approval
+3. Add a DECISION_LOG entry
+4. Then proceed
+
+Contact: aliyuumaru@gmail.com
+=======================================================

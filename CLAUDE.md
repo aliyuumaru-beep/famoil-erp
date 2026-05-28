@@ -1,6 +1,6 @@
 # CLAUDE.md — Software Factory Session Anchor
 # FamOil Industrial ERP Framework
-# Version: 1.0.1 | Last updated: 2026-05-27
+# Version: 1.1.0 | Last updated: 2026-05-28
 
 > This file is read automatically by Claude Code at the start of every session.
 > It is the single source of truth for project state. Keep it current.
@@ -34,16 +34,14 @@ python odoo/odoo-bin -d Famoil -r odoo \
 
 ## ACTIVE PHASE
 
-| Phase | Description                               | Status   | Date       | Approved By |
-|------|-------------------------------------------|----------|------------|-------------|
-| 1    | Inspection, Backup & Repository Foundation | COMPLETE | 2026-05-22 | Operator    |
-| 2    | Configuration Validation & Pipeline Setup  | COMPLETE | 2026-05-24 | Operator    |
-| 3    | Commercialisation Framework                | COMPLETE | 2026-05-24 | Operator    |
-| 4    | CI/CD Governance Engine                    | COMPLETE | 2026-05-27 | Operator    |
+**Current phase:** Phase 4 — COMPLETE. All phases 1–4 operational.
 
-**Current phase:** Phase 4 — COMPLETE. GitHub remote connected, Actions active, branch protection on main enabled.
+**Next priority:** Restore Drill (Priority 1) — see `docs/roadmap/PLATFORM_ROADMAP.md` § 7.
 
-**Governance engine:** Phase 1 hooks created 2026-05-27. See GOVERNANCE ENGINE STATUS below.
+> Full roadmap, phase history, MVP definition, and implementation sequencing:
+> **`docs/roadmap/PLATFORM_ROADMAP.md`** — authoritative source.
+
+**Governance engine:** Phase 1 hooks active since 2026-05-27. See GOVERNANCE ENGINE STATUS below.
 
 ---
 
@@ -132,12 +130,11 @@ Deodorization (id=23)
 - DO NOT commit ERP backup archives (SQL, filestore, tar.gz) to the repository — only `backups/BACKUP_MANIFEST.md` metadata is tracked
 
 **Backup status:**
-- Last backup: 2026-05-22 11:33 — `/Users/mac/odoo_backups/famoil_20260522_1133/`
+- Last backup: 2026-05-28 00:33 — `/Users/mac/odoo_backups/famoil_20260528_0033/`
 - Backup script: `scripts/backup_famoil.sh` (Phase 2 enhanced — compression + governance bridge)
 - Governance bridge: `backups/BACKUP_MANIFEST.md` (must be committed after each run)
-- **A fresh backup is overdue** — 5 days of changes since last backup; run before next change
-- Automated scheduling: launchd plists created — install per MACOS_BACKUP_AUTOMATION.md
-- Cloud offsite sync: sync script created — requires `brew install rclone` + `rclone config gdrive`
+- Automated scheduling: launchd plists created — install per `docs/deployment/MACOS_BACKUP_AUTOMATION.md`
+- Cloud offsite sync: sync script ready — requires `brew install rclone` + `rclone config gdrive`
 
 ---
 
@@ -172,7 +169,7 @@ Deodorization (id=23)
 - Cost method not set on Raw Materials category
 - Consumables (Hexane, Lubricant Oil) missing from BOM 10
 - Spare parts/consumables list_price = ₦1 (placeholder)
-- No remote git repository connected (Phase 4 blocked)
+- Restore drill not yet performed (Priority 1 — see PLATFORM_ROADMAP.md)
 
 ---
 
@@ -190,7 +187,7 @@ Deodorization (id=23)
 ├── .github/
 │   └── workflows/                   ← CI/CD workflows (pending remote)
 ├── docs/
-│   ├── IMPLEMENTATION_STANDARDS.md  ← 11 core engineering rules
+│   ├── IMPLEMENTATION_STANDARDS.md  ← 12 core engineering rules
 │   ├── DEPLOYMENT_GUIDE.md
 │   ├── TESTING_GUIDE.md
 │   ├── CSV_STANDARDS.md
@@ -203,9 +200,11 @@ Deodorization (id=23)
 │   ├── architecture/
 │   │   ├── ARCHITECTURAL_PRINCIPLES.md
 │   │   └── GOVERNANCE_ENGINE.md
+│   ├── roadmap/
+│   │   └── PLATFORM_ROADMAP.md      ← authoritative roadmap and sequencing
 │   ├── sops/
 │   │   └── CI_CD_RUNBOOK.md
-│   └── famoil_erp_template/         ← FamOil-specific docs (14 files)
+│   └── famoil_erp_template/         ← FamOil-specific docs
 ├── csv_templates/                   ← 9 reusable import templates
 ├── custom_addons/                   ← 11 installed modules
 ├── scripts/                         ← 4 operational scripts

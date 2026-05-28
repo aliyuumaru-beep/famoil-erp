@@ -1,12 +1,13 @@
 # Implementation Standards
 # FamOil Software Factory — Core Engineering Rules
-# Version: 1.1 | Created: 2026-05-27 | Updated: 2026-05-27
+# Version: 1.2 | Created: 2026-05-27 | Updated: 2026-05-28
 
 > These rules govern all implementation activity on this project.
 > They are enforced at two layers: this document (Layer 1 — documentation)
 > and `.claude/hooks/` + `.github/workflows/` (Layer 2 — technical enforcement).
 > See `docs/architecture/GOVERNANCE_ENGINE.md` for the enforcement mapping.
 > All implementation decisions must comply with `docs/architecture/ARCHITECTURAL_PRINCIPLES.md`.
+> Implementation sequencing and priority order are defined in `docs/roadmap/PLATFORM_ROADMAP.md`.
 
 ---
 

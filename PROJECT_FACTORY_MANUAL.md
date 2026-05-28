@@ -1,6 +1,6 @@
 # Project Factory Manual
 # FamOil Software Factory
-# Version: 1.1 | Created: 2026-05-27 | Updated: 2026-05-27
+# Version: 1.2 | Created: 2026-05-27 | Updated: 2026-05-28
 
 ---
 
@@ -44,9 +44,11 @@ that future sessions maintain the same standards without relying on memory.
 ## 3. Relationship Between Documents
 
 ```
-CLAUDE.md                        ← Session anchor: always read first
+CLAUDE.md                        ← Session anchor: always read first (operational cockpit)
 │
-├── docs/IMPLEMENTATION_STANDARDS.md   ← The 11 rules
+├── docs/roadmap/PLATFORM_ROADMAP.md   ← Authoritative roadmap and sequencing
+│
+├── docs/IMPLEMENTATION_STANDARDS.md   ← The 12 rules
 │
 ├── docs/architecture/ARCHITECTURAL_PRINCIPLES.md   ← Architecture doctrine
 │
@@ -60,6 +62,7 @@ CLAUDE.md                        ← Session anchor: always read first
 │   ├── DECISION_LOG.md                ← Why things are as they are
 │   ├── KNOWN_ISSUES.md                ← Issues and fixes
 │   ├── COSTING_VALIDATION.md          ← Cost model
+│   ├── IMPLEMENTATION_HISTORY.md      ← Historical implementation timeline
 │   ├── IMPLEMENTATION_PLAYBOOK.md     ← Deployment guide (replicate)
 │   └── [Phase 3 commercial docs]      ← Framework for new clients
 │
@@ -76,7 +79,24 @@ CLAUDE.md                        ← Session anchor: always read first
 
 ---
 
-## 4. Architectural Governance
+## 4. Roadmap and Sequencing Authority
+
+The authoritative source for:
+- long-term platform vision,
+- implementation sequencing and priority,
+- commercial MVP definition,
+- current next steps,
+- and future repository evolution
+
+is: **`docs/roadmap/PLATFORM_ROADMAP.md`**
+
+`CLAUDE.md` is the operational cockpit (current phase, known issues, governance status).
+`PLATFORM_ROADMAP.md` is the strategic sequencing source.
+These are complementary, not duplicate.
+
+---
+
+## 5. Architectural Governance
 
 All implementation decisions must comply with:
 
@@ -88,6 +108,7 @@ complexity control.
 
 The practical relationship is:
 
+- `PLATFORM_ROADMAP.md` defines where the factory is going and in what order
 - `ARCHITECTURAL_PRINCIPLES.md` defines what the factory believes
 - `IMPLEMENTATION_STANDARDS.md` defines how the factory executes
 - `CLAUDE.md` tells Claude Code the current session state and where to look
@@ -100,33 +121,34 @@ principles before proposing major architectural changes or custom code.
 
 ## 5. Phase Structure
 
-| Phase | Name                                    | Gate Protocol                          |
-|------|-----------------------------------------|----------------------------------------|
-| 1    | Inspection, Backup & Repo Foundation    | Complete → present to operator → approve Phase 2 |
-| 2    | Configuration Validation & Pipeline     | Complete → present to operator → approve Phase 3 |
-| 3    | Commercialisation Framework             | Complete → present to operator → approve Phase 4 |
-| 4    | CI/CD Governance Engine                 | Requires GitHub remote — confirm before starting |
+| Phase | Name                                    | Status              |
+|------|-----------------------------------------|---------------------|
+| 1    | Inspection, Backup & Repo Foundation    | COMPLETE 2026-05-22 |
+| 2    | Configuration Validation & Pipeline     | COMPLETE 2026-05-24 |
+| 3    | Commercialisation Framework             | COMPLETE 2026-05-24 |
+| 4    | CI/CD Governance Engine                 | COMPLETE 2026-05-27 |
 
-**Current status:** Phases 1–3 complete. Phase 4 pending GitHub remote connection.
+**Current status:** All phases complete. See `docs/roadmap/PLATFORM_ROADMAP.md` for priority next steps, MVP definition, and implementation sequencing.
 
 ---
 
-## 6. How to Onboard a New Developer or AI Session
+## 7. How to Onboard a New Developer or AI Session
 
 1. Read `CLAUDE.md` (read automatically at session start via hooks)
 2. Read `docs/ONBOARDING_GUIDE.md`
 3. Read `docs/IMPLEMENTATION_STANDARDS.md`
-4. Check `CLAUDE.md → ACTIVE PHASE`
-5. Check `CLAUDE.md → KNOWN ISSUES`
-6. Take a backup before any changes: `bash scripts/backup_famoil.sh`
-7. Proceed only within the current approved phase
+4. Read `docs/roadmap/PLATFORM_ROADMAP.md` — understand where the project is going
+5. Check `CLAUDE.md → ACTIVE PHASE`
+6. Check `CLAUDE.md → KNOWN ISSUES`
+7. Take a backup before any changes: `bash scripts/backup_famoil.sh`
+8. Proceed only within the current approved phase
 
 A new session must never make assumptions about the current state.
 Read the documents. Trust the documents. Update the documents after every change.
 
 ---
 
-## 7. Governance Architecture Summary
+## 8. Governance Architecture Summary
 
 Two layers of governance are active:
 
@@ -142,7 +164,7 @@ rules. Provides team-wide enforcement independent of local sessions.
 
 ---
 
-## 8. Adding a New Client or Industry Fork
+## 9. Adding a New Client or Industry Fork
 
 1. Read `docs/famoil_erp_template/TEMPLATE_VERSIONING.md` for naming convention
 2. Read `docs/famoil_erp_template/INDUSTRY_VARIATION_MATRIX.md` for adaptation scope

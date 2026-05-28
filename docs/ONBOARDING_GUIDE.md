@@ -1,6 +1,6 @@
 # Onboarding Guide
 # FamOil Software Factory — New Developer / New AI Session
-# Version: 1.0 | Created: 2026-05-27
+# Version: 1.1 | Created: 2026-05-27 | Updated: 2026-05-28
 
 > Goal: A new developer or AI session should be productive within 30 minutes
 > using only this repository. No prior context required.
@@ -25,7 +25,8 @@ It contains:
 
 ### If you are a new developer:
 - [ ] Read `CLAUDE.md` — this is the session memory anchor; read it first, always
-- [ ] Read `docs/IMPLEMENTATION_STANDARDS.md` — understand the 11 rules before touching anything
+- [ ] Read `docs/IMPLEMENTATION_STANDARDS.md` — understand the 12 rules before touching anything
+- [ ] Read `docs/roadmap/PLATFORM_ROADMAP.md` — understand where the platform is going and what the current priorities are
 - [ ] Read `docs/famoil_erp_template/KNOWN_ISSUES.md` — know what is already broken and fixed
 - [ ] Read `docs/famoil_erp_template/DECISION_LOG.md` — understand why things are configured as they are
 - [ ] Run the backup script before making any changes: `bash scripts/backup_famoil.sh`
@@ -34,8 +35,9 @@ It contains:
 ### If you are a new Claude Code session:
 1. `CLAUDE.md` is read automatically at session start (SessionStart hook)
 2. Read `CLAUDE.md` carefully — it contains the current phase, known issues, and DO NOT rules
-3. Do not proceed without understanding the ACTIVE PHASE and CRITICAL RULES sections
-4. Check `logs/audit_trail.log` to understand what was done in previous sessions
+3. Read `docs/roadmap/PLATFORM_ROADMAP.md` — it defines current priorities, sequencing, and next steps
+4. Do not proceed without understanding the ACTIVE PHASE and CRITICAL RULES sections
+5. Check `logs/audit_trail.log` to understand what was done in previous sessions
 
 ---
 
@@ -61,7 +63,8 @@ Company: FamOil FTZ (company id=2)
 | Document | What it tells you | Read when |
 |----------|-------------------|-----------|
 | `CLAUDE.md` | Current project state, active phase, known issues | Every session, first |
-| `docs/IMPLEMENTATION_STANDARDS.md` | The 11 rules you must follow | Before any work |
+| `docs/roadmap/PLATFORM_ROADMAP.md` | Platform vision, priorities, MVP definition, sequencing | After CLAUDE.md, before deciding what to work on |
+| `docs/IMPLEMENTATION_STANDARDS.md` | The 12 rules you must follow | Before any work |
 | `docs/famoil_erp_template/MANUFACTURING_FLOW.md` | The 3-stage production pipeline | Before touching manufacturing |
 | `docs/famoil_erp_template/DECISION_LOG.md` | Why things are configured as they are | Before changing any configuration |
 | `docs/famoil_erp_template/KNOWN_ISSUES.md` | Active bugs and resolved issues | Before troubleshooting |
@@ -81,9 +84,10 @@ Company: FamOil FTZ (company id=2)
 ├── .claude/hooks/               ← 6 enforcement scripts
 ├── .github/workflows/           ← CI/CD workflows (pending remote)
 ├── docs/
-│   ├── IMPLEMENTATION_STANDARDS.md  ← 11 rules
+│   ├── IMPLEMENTATION_STANDARDS.md  ← 12 rules
 │   ├── DEPLOYMENT_GUIDE.md
 │   ├── ONBOARDING_GUIDE.md      ← this document
+│   ├── roadmap/PLATFORM_ROADMAP.md  ← authoritative roadmap
 │   ├── architecture/GOVERNANCE_ENGINE.md
 │   ├── sops/CI_CD_RUNBOOK.md
 │   └── famoil_erp_template/     ← FamOil-specific docs
@@ -116,11 +120,11 @@ If a hook blocks an action you believe is legitimate:
 
 ## 7. What NOT to Do
 
-- Do NOT push to any remote repository (no remote is currently connected)
+- Do NOT push directly to `main` — all changes go through a PR and CI checks
 - Do NOT modify files under `odoo/` (Odoo core application)
 - Do NOT expose passwords or credentials in any output
 - Do NOT delete committed files without operator approval
-- Do NOT progress to the next phase without operator approval
+- Do NOT progress to the next priority without operator approval
 - Do NOT run `git commit --amend` on already-shared commits
 
 ---

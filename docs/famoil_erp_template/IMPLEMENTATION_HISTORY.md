@@ -190,3 +190,45 @@ v1.3.0-offsite-backup-operational
 
 Backup system is now fully trusted. End-to-end recovery including attachment
 access through the Odoo UI validated.
+
+---
+
+## Post-Phase 4 — Governance Synchronization and Roadmap Refresh
+
+**Completed:** 2026-05-28 | **Tag:** v1.5.0-restore-validated (at f083a9a)
+
+### What was implemented
+
+- `CLAUDE.md` updated to v1.2.0:
+  - Active phase updated to "Procurement Maturity & Operational Workflow Expansion"
+  - RESTORE VALIDATION STATUS governance table added (Drill 2 results, RTO, PDF access)
+  - Backup status updated to `famoil_20260528_1814` (custom format)
+  - Stale known issue removed; off-machine sync risk added
+  - Scripts count updated (4→5); workflow status corrected (pending→active)
+- `docs/roadmap/PLATFORM_ROADMAP.md` updated to v1.2:
+  - Phase 4 milestones: `v1.4.0-roadmap-institutionalization`, `v1.5.0-restore-validated` added
+  - Restore drill marked COMPLETE in Section 7; priorities renumbered (Procurement is Priority 1)
+  - Risks updated: removed stale "restore drill not yet validated"; added off-machine sync risk
+  - Section 11 current focus: "restore validation" removed; procurement and workflow expansion added
+- `docs/famoil_erp_template/FAMOIL_ROADMAP.md` updated to v1.1:
+  - Current strategic priority updated to Procurement Maturity & Operational Workflow Expansion
+  - Phase 4 block updated with restore drill outcome and milestone
+  - Section 6 priority order: Procurement #1 (restore drill replaced)
+  - Section 7 next phase: Procurement Maturity replaces Restore Drill
+  - Risks updated: stale restore risk replaced with off-machine sync risk
+- `AI_ONBOARDING_V2.txt` updated to v2.1:
+  - Rule 10 updated with current active phase and restore validation status
+- `docs/famoil_erp_template/DECISION_LOG.md`: DEC-011 added — backup format
+  architectural decision (pg_dump -F c rationale, validation, alternatives, trade-offs,
+  revisit conditions)
+- `CHANGELOG.md`: v1.7.0 entry added documenting all governance sync changes
+
+### Key decisions made
+
+- DEC-011: Backup format upgrade from pg_dump -F p to pg_dump -F c
+
+### Outcome
+
+All governance documents synchronized to post-restore operational reality.
+Stale "restore drill pending" references removed across all documents.
+Procurement Maturity established as current Priority 1 across all authorities.

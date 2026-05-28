@@ -1,5 +1,5 @@
 AI ONBOARDING INSTRUCTIONS — FAMOIL SOFTWARE FACTORY
-Version: 2.0 | Created: 2026-05-28
+Version: 2.1 | Created: 2026-05-28 | Updated: 2026-05-28
 =======================================================
 
 PURPOSE
@@ -73,6 +73,8 @@ AI OPERATING RULES
 
 10. The current active priority is defined in:
     docs/roadmap/PLATFORM_ROADMAP.md — Section 7 (Current High-Priority Next Steps)
+    Current phase: Procurement Maturity & Operational Workflow Expansion
+    Restore validation: COMPLETE (v1.5.0-restore-validated, Drill 2 full pass, RTO ≈ 43s)
 
 =======================================================
 GOVERNANCE ENGINE

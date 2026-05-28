@@ -143,3 +143,23 @@ v1.3.0-offsite-backup-operational
 - References updated in: `CLAUDE.md`, `PROJECT_FACTORY_MANUAL.md`,
   `docs/ONBOARDING_GUIDE.md`, `docs/IMPLEMENTATION_STANDARDS.md`
 - Stale content resolved: remote connection status, backup currency, phase statuses
+
+---
+
+## Post-Phase 4 — Two-Level Roadmap Architecture
+
+**Completed:** 2026-05-28
+
+### What was implemented
+
+- `docs/famoil_erp_template/FAMOIL_ROADMAP.md` integrated into full governance architecture:
+  - Duplicate plain-text header removed; U+2028 LINE SEPARATOR characters replaced
+  - Added to all governance document reading sequences (ONBOARDING_GUIDE, PROJECT_FACTORY_MANUAL,
+    AI_ONBOARDING_V2, CLAUDE.md)
+- Two-level roadmap authority established:
+  - `PLATFORM_ROADMAP.md` → platform-level vision, sequencing, and commercial MVP definition
+  - `FAMOIL_ROADMAP.md` → FamOil template operational state, ERP module status, phase priorities
+- Stale risk resolved: `PLATFORM_ROADMAP.md` Risk 3 ("roadmap intelligence partially centralized")
+  removed — now resolved by two-level roadmap architecture
+- `docs/INDUSTRY_TEMPLATE_GUIDE.md` updated with expansion guard referencing PLATFORM_ROADMAP.md § 7
+- All governance documents now cross-reference the correct roadmap authority for their scope

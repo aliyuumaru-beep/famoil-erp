@@ -36,10 +36,13 @@ python odoo/odoo-bin -d Famoil -r odoo \
 
 **Current phase:** Phase 4 — COMPLETE. All phases 1–4 operational.
 
-**Next priority:** Restore Drill (Priority 1) — see `docs/roadmap/PLATFORM_ROADMAP.md` § 7.
+**Next priority:** Restore Drill (Priority 1) — see `docs/roadmap/PLATFORM_ROADMAP.md` § 7 and `docs/famoil_erp_template/FAMOIL_ROADMAP.md` § 7.
 
-> Full roadmap, phase history, MVP definition, and implementation sequencing:
-> **`docs/roadmap/PLATFORM_ROADMAP.md`** — authoritative source.
+> Full platform roadmap, phase history, MVP definition, and implementation sequencing:
+> **`docs/roadmap/PLATFORM_ROADMAP.md`** — authoritative platform source.
+>
+> FamOil-specific operational roadmap, ERP module status, and phase-level priorities:
+> **`docs/famoil_erp_template/FAMOIL_ROADMAP.md`** — FamOil template execution source.
 
 **Governance engine:** Phase 1 hooks active since 2026-05-27. See GOVERNANCE ENGINE STATUS below.
 

@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## v1.5.0 — 2026-05-28 — Two-Level Roadmap Architecture Institutionalized
+
+- Integrated `docs/famoil_erp_template/FAMOIL_ROADMAP.md` (FamOil operational execution roadmap)
+  into full governance architecture alongside `docs/roadmap/PLATFORM_ROADMAP.md`
+- Fixed `FAMOIL_ROADMAP.md`: removed duplicate plain-text header; replaced U+2028 LINE SEPARATOR
+  characters with proper pipe delimiters throughout
+- Updated `docs/roadmap/PLATFORM_ROADMAP.md` § 10: removed stale Risk 3
+  ("roadmap intelligence partially centralized") — now resolved by two-level roadmap architecture
+- Updated `CLAUDE.md`: ACTIVE PHASE section now references both PLATFORM_ROADMAP.md and
+  FAMOIL_ROADMAP.md, with distinct roles documented
+- Updated `PROJECT_FACTORY_MANUAL.md` v1.3: § 3 document map adds FAMOIL_ROADMAP.md;
+  § 4 Roadmap Authority distinguishes platform-level vs template-level authority;
+  § 7 onboarding sequence adds FAMOIL_ROADMAP.md at step 5
+- Updated `docs/ONBOARDING_GUIDE.md` v1.2: developer checklist, Claude session checklist,
+  and key documents table all include FAMOIL_ROADMAP.md with correct read-order position
+- Updated `docs/INDUSTRY_TEMPLATE_GUIDE.md` v1.1: added roadmap reference block pointing
+  to PLATFORM_ROADMAP.md § 7 (multi-industry expansion strategy) with expansion guard
+- Updated `docs/famoil_erp_template/IMPLEMENTATION_HISTORY.md`: recorded two-level roadmap
+  architecture milestone
+- Duplication resolved: PLATFORM_ROADMAP.md is platform authority; FAMOIL_ROADMAP.md is
+  template execution authority; CLAUDE.md is operational cockpit — roles are now distinct,
+  documented, and cross-referenced consistently across all governance documents
+
 ## v1.4.0 — 2026-05-28 — Roadmap Institutionalization and Governance Maturity
 
 - Created `docs/roadmap/PLATFORM_ROADMAP.md` — authoritative platform roadmap converted

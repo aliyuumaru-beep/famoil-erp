@@ -1,6 +1,5 @@
 # FamOil ERP Operational Roadmap
-FamOil ERP Operational Roadmap
-Version: 1.0 Last Updated: 2026-05-28
+Version: 1.0 | Last Updated: 2026-05-28
 
 PURPOSE
 This document defines:
@@ -17,10 +16,10 @@ This document defines:
 This document is the authoritative operational execution roadmap for the FamOil template.
 
 1. PROJECT CONTEXT
-PROJECT: FamOil ERP
-INDUSTRY: Soybean oil processing
-PLATFORM: Odoo 17 Community Edition
-PURPOSE: Reference industrial ERP template for reusable agro-processing ERP deployments.
+PROJECT: | FamOil ERP
+INDUSTRY: | Soybean oil processing
+PLATFORM: | Odoo 17 Community Edition
+PURPOSE: | Reference industrial ERP template for reusable agro-processing ERP deployments.
 This is NOT:
 	•	a generic ERP implementation,
 	•	or a simple Odoo setup.
@@ -33,9 +32,9 @@ This is:
 	•	reusable industrial implementation framework.
 
 2. CURRENT IMPLEMENTATION STATUS
-Overall status: Operationally stable core industrial ERP foundation.
-Current maturity: Mid-stage industrial ERP operational maturity.
-Current strategic priority: Commercial MVP completion.
+Overall status: | Operationally stable core industrial ERP foundation.
+Current maturity: | Mid-stage industrial ERP operational maturity.
+Current strategic priority: | Commercial MVP completion.
 
 3. COMPLETED PHASES
 
@@ -52,7 +51,7 @@ Implemented:
 	•	product categories
 	•	repository initialization
 	•	governance framework
-Outcome: Stable ERP implementation foundation established.
+Outcome: | Stable ERP implementation foundation established.
 
 PHASE 2 — EXTRACTION MANUFACTURING
 STATUS: COMPLETE / STABLE
@@ -71,7 +70,7 @@ Outputs:
 	•	Crude Soya Oil
 	•	Soya Cake
 	•	Production Waste
-Outcome: Industrial extraction flow stabilized.
+Outcome: | Industrial extraction flow stabilized.
 
 PHASE 3 — REFINING & PACKAGING
 STATUS: COMPLETE / STABLE
@@ -88,7 +87,7 @@ Major issues resolved:
 	•	routing conflicts
 	•	reservation conflicts
 	•	source location conflicts
-Outcome: Industrial refining and packaging flow operational.
+Outcome: | Industrial refining and packaging flow operational.
 
 PHASE 4 — GOVERNANCE & SURVIVABILITY
 STATUS: COMPLETE / OPERATIONAL
@@ -107,7 +106,7 @@ Implemented:
 	•	decision logs
 	•	implementation history
 	•	roadmap institutionalization
-Outcome: Governance operationally enforced.
+Outcome: | Governance operationally enforced.
 
 4. CURRENT ERP MODULE STATUS
 
@@ -149,7 +148,7 @@ Required:
 	•	vendor management
 	•	vendor pricing
 	•	landed costs
-Current status: PARTIALLY IMPLEMENTED
+Current status: | PARTIALLY IMPLEMENTED
 
 QUALITY CONTROL
 Required:
@@ -158,7 +157,7 @@ Required:
 	•	finished goods QC
 	•	batch traceability
 	•	lab workflows
-Current status: PARTIALLY IMPLEMENTED
+Current status: | PARTIALLY IMPLEMENTED
 
 SALES & FMCG OPERATIONS
 Required:
@@ -169,7 +168,7 @@ Required:
 	•	customer pricing
 	•	distributor workflows
 	•	dispatch validation
-Current status: PARTIALLY IMPLEMENTED
+Current status: | PARTIALLY IMPLEMENTED
 
 MAINTENANCE
 Required:
@@ -177,7 +176,7 @@ Required:
 	•	breakdown maintenance
 	•	spare parts
 	•	maintenance scheduling
-Current status: NOT YET MATURE
+Current status: | NOT YET MATURE
 
 FLEET & LOGISTICS
 Required:
@@ -185,14 +184,14 @@ Required:
 	•	dispatch
 	•	weighbridge integration
 	•	trip monitoring
-Current status: EARLY STAGE
+Current status: | EARLY STAGE
 
 BARCODE & SCANNING
 Required:
 	•	barcode workflows
 	•	warehouse scanning
 	•	operational validation
-Current status: NOT YET IMPLEMENTED
+Current status: | NOT YET IMPLEMENTED
 
 UTILITIES & OPERATIONS
 Required:
@@ -200,10 +199,10 @@ Required:
 	•	fuel monitoring
 	•	utility cost tracking
 	•	power monitoring
-Current status: NOT YET IMPLEMENTED
+Current status: | NOT YET IMPLEMENTED
 
 6. EXACT CURRENT IMPLEMENTATION PRIORITY
-CURRENT ACTIVE PHASE: Operational ERP Maturity
+CURRENT ACTIVE PHASE: | Operational ERP Maturity
 Exact next priority order:
 	1	Restore drill validation
 	2	Procurement maturity
@@ -216,9 +215,9 @@ Exact next priority order:
 	9	IoT integration
 
 7. EXACT NEXT PHASE TO EXECUTE
-NEXT PHASE: Restore Drill & Recovery Validation
+NEXT PHASE: | Restore Drill & Recovery Validation
 This is the single highest-priority infrastructure milestone.
-Reason: Current backup systems are operational but not yet restore-validated.
+Reason: | Current backup systems are operational but not yet restore-validated.
 Objectives:
 	•	restore PostgreSQL dump
 	•	restore filestore
@@ -232,7 +231,7 @@ Required deliverables:
 	•	restore checklist
 	•	recovery timing metrics
 	•	recovery SOP
-Core principle: A backup is only trusted after a successful restore.
+Core principle: | A backup is only trusted after a successful restore.
 
 8. IMPLEMENTATION PHILOSOPHY
 Mandatory principles:

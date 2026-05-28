@@ -1,6 +1,12 @@
 # Industry Template Guide
 # FamOil Software Factory — How to Fork for a New Industry
-# Version: 1.0 | Created: 2026-05-27
+# Version: 1.1 | Created: 2026-05-27 | Updated: 2026-05-28
+
+> Multi-industry expansion strategy and priority sequencing:
+> `docs/roadmap/PLATFORM_ROADMAP.md` § 7 (Priority 7 — Multi-Industry Template Expansion)
+>
+> FamOil remains the primary reference implementation until commercial MVP stabilizes.
+> Do not begin new industry templates before the FamOil template reaches operational maturity.
 
 ---
 

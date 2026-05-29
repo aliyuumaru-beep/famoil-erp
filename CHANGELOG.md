@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v1.8.0 — 2026-05-29 — Procurement Maturity: PO Approval Workflow
+
+- Configured PO approval workflow (two-step validation) on FamOil FTZ company:
+  - `po_double_validation = 'two_step'` (was already set; confirmed active)
+  - `po_double_validation_amount` updated from ₦500,000 → ₦200,000
+  - Threshold rationale: captures all SoyaBean batch purchases (₦710k/batch) and
+    most raw material orders for anti-fraud control
+- Workflow validated end-to-end via Odoo Python shell:
+  - PO above threshold (demo user) → state = `to approve` ✓
+  - Admin approves → state = `purchase` ✓
+  - PO below threshold (demo user) → state = `purchase` directly ✓
+- User role assignments confirmed: admin = Purchase Administrator (approver),
+  demo = Purchase User (requester)
+- CLAUDE.md: backup status updated; procurement progress checklist added
+- Backup: `famoil_20260529_0726` (post-configuration, custom format)
+
 ## v1.7.0 — 2026-05-28 — Post-Restore Governance Synchronization
 
 - CLAUDE.md v1.2.0: updated active phase to "Procurement Maturity & Operational Workflow

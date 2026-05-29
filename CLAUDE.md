@@ -42,7 +42,7 @@ python odoo/odoo-bin -d Famoil -r odoo \
 - [x] PO approval workflow — CONFIGURED & VALIDATED (two-step, ₦200,000 threshold)
 - [x] RFQ workflow — CONFIGURED & VALIDATED (draft→sent→to approve→purchase)
 - [x] Vendor pricelists — 3 SoyaBean vendors configured (Kaduna ₦710, Niger ₦705, Benue ₦718)
-- [ ] Landed cost configuration
+- [x] Landed costs — CONFIGURED: stock_landed_costs installed; account 570000 created; 2 service products; stock_landed_cost_po_check module active
 - [ ] Procurement traceability validation
 
 **Priority order:**
@@ -167,7 +167,7 @@ Deodorization (id=23)
 - DO NOT commit ERP backup archives (SQL, filestore, tar.gz) to the repository — only `backups/BACKUP_MANIFEST.md` metadata is tracked
 
 **Backup status:**
-- Last backup: 2026-05-29 07:43 — `/Users/mac/odoo_backups/famoil_20260529_0743/`
+- Last backup: 2026-05-29 07:53 — `/Users/mac/odoo_backups/famoil_20260529_0753/`
 - Backup format: `pg_dump -F c` (custom format — `Famoil.dump`, 6MB) — resolves ir_attachment FK issue
 - Restore script: `scripts/restore_famoil.sh` — full restore + validation in one script
 - Governance bridge: `backups/BACKUP_MANIFEST.md` (must be committed after each run)

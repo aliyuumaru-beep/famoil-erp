@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="auto_landed_cost_reminder" model="base.automation">
+            <field name="name">Landed Cost Reminder on Receipt Validation</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="trigger">on_write</field>
+            <field name="filter_pre_domain">[('state', '!=', 'done')]</field>
+            <field name="filter_domain">[('state', '=', 'done'), ('picking_type_code', '=', 'incoming')]</field>
+        </record>
+
+        <record id="action_landed_cost_reminder" model="ir.actions.server">
+            <field name="name">Landed Cost Reminder — Schedule Activity</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="base_automation_id" ref="auto_landed_cost_reminder"/>
+            <field name="state">code</field>
+            <field name="code">
+for record in records:
+    if record.move_ids.filtered(lambda m: m.purchase_line_id):
+        record.activity_schedule(
+            'mail.mail_activity_data_todo',
+            note='Receipt %s validated. Enter landed costs (freight / weighbridge) via: Inventory > Operations > Landed Costs.' % record.name,
+            user_id=record.env.uid,
+        )
+            </field>
+        </record>
+
+    </data>
+</odoo>

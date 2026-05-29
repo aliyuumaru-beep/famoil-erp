@@ -38,6 +38,13 @@ python odoo/odoo-bin -d Famoil -r odoo \
 
 **Current active phase:** Procurement Maturity & Operational Workflow Expansion.
 
+**Procurement maturity progress:**
+- [x] PO approval workflow — CONFIGURED & VALIDATED (two-step, ₦200,000 threshold)
+- [ ] RFQ workflow configuration
+- [ ] Vendor pricing (supplier pricelists on SoyaBean vendors)
+- [ ] Landed cost configuration
+- [ ] Procurement traceability validation
+
 **Priority order:**
 1. Procurement maturity (RFQs, approvals, vendor management, landed costs)
 2. Sales workflow maturity
@@ -160,7 +167,7 @@ Deodorization (id=23)
 - DO NOT commit ERP backup archives (SQL, filestore, tar.gz) to the repository — only `backups/BACKUP_MANIFEST.md` metadata is tracked
 
 **Backup status:**
-- Last backup: 2026-05-28 18:14 — `/Users/mac/odoo_backups/famoil_20260528_1814/`
+- Last backup: 2026-05-29 07:26 — `/Users/mac/odoo_backups/famoil_20260529_0726/`
 - Backup format: `pg_dump -F c` (custom format — `Famoil.dump`, 6MB) — resolves ir_attachment FK issue
 - Restore script: `scripts/restore_famoil.sh` — full restore + validation in one script
 - Governance bridge: `backups/BACKUP_MANIFEST.md` (must be committed after each run)

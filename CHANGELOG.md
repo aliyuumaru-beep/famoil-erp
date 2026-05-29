@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v1.10.0 — 2026-05-29 — Procurement Maturity: Landed Costs and Integrity Module
+
+- Installed `stock_landed_costs` (native Odoo, LGPL-3) — 88 modules now loaded
+- Created account `570000 — Freight & Haulage Expense` (type=expense, company=FamOil FTZ)
+- Created landed cost service products (via UI):
+  - `SoyaBean Freight & Haulage` — split method: By Quantity — account 570000
+  - `Weighbridge Fee` — split method: Equal — account 570000
+- Created custom module `stock_landed_cost_po_check` v17.0.1.0.0:
+  - Constraint on `button_validate`: blocks landed costs on non-PO receipts and
+    outgoing/internal transfers — prevents wrong-receipt assignment
+  - Automated activity on receipt validation: schedules "todo" task reminding
+    operator to enter landed costs for every validated SoyaBean PO receipt
+  - Depends: stock_landed_costs, purchase_stock, base_automation, mail
+  - 3-test suite: all pass (valid PO allowed, non-PO blocked, outgoing blocked)
+- Workflow: haulage vendor bill (separate from goods vendor) → Create Landed Costs
+  → link receipt → validate → SoyaBean unit cost absorbs freight automatically
+- CLAUDE.md: procurement checklist and backup status updated
+
 ## v1.9.0 — 2026-05-29 — Procurement Maturity: RFQ Workflow and Vendor Pricelists
 
 - Configured vendor pricelists (product.supplierinfo) for SoyaBean on 3 vendors:

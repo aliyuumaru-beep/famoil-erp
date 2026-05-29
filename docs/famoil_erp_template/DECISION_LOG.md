@@ -290,6 +290,66 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 
 ---
 
+## DEC-012 — Custom Module for Landed Cost Receipt Integrity
+
+**Decision:** Build `stock_landed_cost_po_check` to enforce that landed costs can
+only be applied to receipts that originated from a Purchase Order.
+
+**Context:**
+Odoo 17 Community places no restriction on which receipts an operator can link to a
+landed cost. The only native filters are company isolation and the presence of stock
+valuation layers — neither prevents an operator from accidentally selecting the wrong
+receipt (e.g., linking Kaduna haulage costs to a Niger State SoyaBean receipt).
+Native options were fully researched before this decision was taken.
+
+**Rationale:**
+- Costing errors from wrong-receipt assignment are silent and cumulative — the
+  numbers appear plausible but unit costs are distorted in every downstream MO.
+- The haulage vendor (ABC Logistics) and the goods vendor (Kaduna Soybean Traders)
+  are separate entities; a vendor-match constraint is therefore inappropriate. The
+  correct constraint is purchase order origin, not vendor identity.
+- The implementation follows the existing `stock_crude_oil_tank_restriction` pattern
+  already proven stable in this codebase — low risk, low maintenance.
+- Partner consent obtained before implementation.
+
+**Alternatives Considered:**
+- Native Odoo domain (`picking_ids` field): only filters by company and valuation
+  layer — no PO-origin check available. Rejected — insufficient.
+- Operator training + SOP alone: costing errors are silent; training cannot prevent
+  accidental selection. Rejected for production use.
+- Vendor-match constraint (landed cost bill vendor = receipt vendor): incorrect for
+  FamOil because goods vendor ≠ haulage vendor. Researched and ruled out.
+- Automated activity only (soft reminder): leaves the error path open. Implemented
+  as a companion to the hard constraint, not a replacement.
+
+**What the module enforces (on `button_validate`):**
+1. Every selected receipt must be of type `incoming` (not internal or outgoing).
+2. Every selected receipt must have at least one move linked to a Purchase Order
+   (`purchase_line_id` is set).
+
+**Validation:**
+3-test automated suite — all pass:
+- Valid PO receipt: allowed ✓
+- Incoming receipt with no PO origin: blocked ✓
+- Internal transfer / outgoing delivery: blocked ✓
+
+**Trade-offs:**
+- Adds upgrade maintenance — `button_validate` on `stock.landed.cost` must be
+  verified compatible after each Odoo major version upgrade.
+- Module footprint is minimal (~25 lines Python + XML automation) — low burden.
+- Does not prevent an operator from selecting the wrong PO receipt if multiple
+  receipts from the same vendor exist on the same day. Process discipline and
+  the automated activity reminder address this residual risk.
+
+**Revisit Conditions:**
+- On Odoo major version upgrade — re-run 3-test suite to confirm constraint fires.
+- If a second constraint is needed (e.g., date-range validation) — extend
+  `_check_po_receipt()` in the same module rather than creating a new one.
+- If `purchase_line_id` field is renamed or moved in a future Odoo version —
+  update the filtered lambda accordingly.
+
+---
+
 ## DEC-010 — Separate Operation Types per Manufacturing Stage
 
 **Decision:** Create three distinct operation types (Extraction Manufacturing, Refining Manufacturing, Packaging Manufacturing) rather than using a single shared "Manufacturing" operation type for all stages.

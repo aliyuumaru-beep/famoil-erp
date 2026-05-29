@@ -232,3 +232,54 @@ access through the Odoo UI validated.
 All governance documents synchronized to post-restore operational reality.
 Stale "restore drill pending" references removed across all documents.
 Procurement Maturity established as current Priority 1 across all authorities.
+
+---
+
+## Procurement Maturity — Phase 1 Implementation
+
+**Completed:** 2026-05-29
+
+### What was implemented
+
+**PO Approval Workflow:**
+- Two-step validation confirmed active on FamOil FTZ company
+- Approval threshold set to ₦200,000 — captures all SoyaBean batch purchases
+- Role assignments: admin = Purchase Administrator (approver), demo = Purchase User
+- Workflow validated end-to-end: non-manager PO above threshold → `to approve` →
+  manager approves → `purchase`
+
+**RFQ Workflow and Vendor Pricelists:**
+- Vendor pricelists configured on SoyaBean for 3 suppliers:
+  - Kaduna Soybean Traders Ltd: ₦710/kg, min 500 kg, 3-day lead
+  - Niger State Farmers Cooperative: ₦705/kg, min 1,000 kg, 5-day lead
+  - Benue Agro Aggregators Ltd: ₦718/kg, min 500 kg, 7-day lead
+- Stale demo pricelist (Industrial Consumables Ltd) removed
+- RFQ state machine validated: draft → sent → to approve → purchase
+
+**Landed Cost Infrastructure:**
+- `stock_landed_costs` (native Odoo, LGPL-3) installed — 88 modules total
+- Account `570000 — Freight & Haulage Expense` created (FamOil FTZ)
+- Service products created: `SoyaBean Freight & Haulage` (By Quantity),
+  `Weighbridge Fee` (Equal)
+- Workflow established: haulage vendor bill (separate from goods vendor) →
+  Create Landed Costs → link PO receipt → validate → SoyaBean FIFO layer
+  absorbs freight, increasing true unit cost
+
+**Custom Module — `stock_landed_cost_po_check` v17.0.1.0.0:**
+- Constraint on `button_validate`: blocks landed costs on non-PO receipts and
+  non-incoming transfers — prevents wrong-receipt cost assignment
+- Automated activity: schedules "Enter landed costs" todo on every validated
+  SoyaBean PO receipt
+- 3-test suite: all pass
+- Decision: DEC-012
+
+### Key decisions made
+
+- DEC-012: Custom module for landed cost receipt integrity (native options
+  researched and confirmed insufficient; partner consent obtained)
+
+### Outcome
+
+Procurement Maturity Phase 1 complete. Core procurement workflow operational:
+RFQ → approval → receipt → landed cost absorption. Cost integrity enforced by
+custom module. Remaining: procurement traceability validation.

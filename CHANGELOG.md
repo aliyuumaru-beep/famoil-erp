@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v1.11.0 — 2026-05-29 — Warehouse Hygiene: Putaway Rule and Demo Warehouse Archival
+
+- Added putaway rule: SoyaBean → `Famoil/Stock/RM Warehouse` (was missing; SoyaBean was landing at `Famoil/Stock` parent)
+- All 7 putaway rules now cover full product routing (Crude Soya Oil, Refined Soya Oil, SoapStock, Soya Cake, RSO 5L, RSO 25L, SoyaBean)
+- Archived Chicago 1 warehouse (FamOil FTZ company) + 2 associated picking types
+- Archived YourCompany warehouse (My Company San Francisco) + 4 associated picking types
+- Cancelled 26 open demo/test pickings and 3 demo MOs (furniture — Desk Combination, Table, Table Top) prior to archival
+- Moved 1,960 kg SoyaBean from CHIC1/Stock → Famoil/Stock/RM Warehouse (stock correction for test POs that used wrong picking type)
+- Zeroed 32 YourCompany demo stock quants (furniture demo data) via inventory adjustment
+- Active warehouses now: FamOilWH (FamOil FTZ) and NG Company only
+- Removed "Demo warehouses not yet archived" from CLAUDE.md known issues
+
 ## v1.10.0 — 2026-05-29 — Procurement Maturity: Landed Costs and Integrity Module
 
 - Installed `stock_landed_costs` (native Odoo, LGPL-3) — 88 modules now loaded

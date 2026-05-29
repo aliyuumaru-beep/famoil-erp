@@ -1,6 +1,6 @@
 # CLAUDE.md — Software Factory Session Anchor
 # FamOil Industrial ERP Framework
-# Version: 1.2.0 | Last updated: 2026-05-28
+# Version: 1.3.0 | Last updated: 2026-05-29
 
 > This file is read automatically by Claude Code at the start of every session.
 > It is the single source of truth for project state. Keep it current.
@@ -202,8 +202,7 @@ Deodorization (id=23)
 > Full log: see docs/famoil_erp_template/KNOWN_ISSUES.md (13 issues documented)
 
 **Active open issues:**
-- Demo warehouses (Chicago 1, YourCompany) not yet archived
-- Demo company "My Company (San Francisco)" not archived
+- Demo company "My Company (San Francisco)" not archived (warehouse archived; company still active)
 - Cost method not set on Raw Materials category
 - Consumables (Hexane, Lubricant Oil) missing from BOM 10
 - Spare parts/consumables list_price = ₦1 (placeholder)

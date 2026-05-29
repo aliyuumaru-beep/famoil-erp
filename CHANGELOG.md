@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.9.0 — 2026-05-29 — Procurement Maturity: RFQ Workflow and Vendor Pricelists
+
+- Configured vendor pricelists (product.supplierinfo) for SoyaBean on 3 vendors:
+  - Kaduna Soybean Traders Ltd: ₦710/kg, min 500 kg, 3-day lead
+  - Niger State Farmers Cooperative: ₦705/kg, min 1,000 kg, 5-day lead
+  - Benue Agro Aggregators Ltd: ₦718/kg, min 500 kg, 7-day lead
+- Removed stale demo supplierinfo entry (Industrial Consumables Ltd at ₦660/kg)
+- RFQ workflow validated end-to-end via Odoo Python shell (6 tests):
+  - Vendor price auto-fills on RFQ creation from pricelist ✓
+  - RFQ draft → sent (email dispatch) → to approve → purchase ✓
+  - Niger State min_qty=1,000 enforced (no seller below threshold) ✓
+  - Full approval gate integration confirmed ✓
+- CLAUDE.md: backup status and procurement checklist updated
+
 ## v1.8.0 — 2026-05-29 — Procurement Maturity: PO Approval Workflow
 
 - Configured PO approval workflow (two-step validation) on FamOil FTZ company:

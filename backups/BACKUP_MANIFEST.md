@@ -10,12 +10,12 @@
 
 | Field                | Value                                          |
 |---------------------|------------------------------------------------|
-| Last Backup Date     | 2026-05-29 07:26:23                  |
-| Backup Archive Name  | famoil_20260529_0726                           |
-| Backup Location      | /Users/mac/odoo_backups/famoil_20260529_0726                                 |
-| Raw Directory Size   |  37M                            |
-| Compressed Archive   | /Users/mac/odoo_backups/famoil_20260529_0726.tar.gz                    |
-| Archive Size         |  20M                          |
+| Last Backup Date     | 2026-05-29 07:44:04                  |
+| Backup Archive Name  | famoil_20260529_0743                           |
+| Backup Location      | /Users/mac/odoo_backups/famoil_20260529_0743                                 |
+| Raw Directory Size   |  36M                            |
+| Compressed Archive   | /Users/mac/odoo_backups/famoil_20260529_0743.tar.gz                    |
+| Archive Size         |  19M                          |
 | Verification Status  | COMPLETED                                     |
 | Odoo Version         | 17.0.1.3 Community                            |
 | Database             | Famoil                                    |

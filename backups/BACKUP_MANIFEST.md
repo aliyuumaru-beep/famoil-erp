@@ -10,11 +10,11 @@
 
 | Field                | Value                                          |
 |---------------------|------------------------------------------------|
-| Last Backup Date     | 2026-05-29 07:44:04                  |
-| Backup Archive Name  | famoil_20260529_0743                           |
-| Backup Location      | /Users/mac/odoo_backups/famoil_20260529_0743                                 |
-| Raw Directory Size   |  36M                            |
-| Compressed Archive   | /Users/mac/odoo_backups/famoil_20260529_0743.tar.gz                    |
+| Last Backup Date     | 2026-05-30 23:16:01                  |
+| Backup Archive Name  | famoil_20260530_2315                           |
+| Backup Location      | /Users/mac/odoo_backups/famoil_20260530_2315                                 |
+| Raw Directory Size   |  38M                            |
+| Compressed Archive   | /Users/mac/odoo_backups/famoil_20260530_2315.tar.gz                    |
 | Archive Size         |  19M                          |
 | Verification Status  | COMPLETED                                     |
 | Odoo Version         | 17.0.1.3 Community                            |
@@ -40,6 +40,6 @@ See: docs/famoil_erp_template/BACKUP_AND_RESTORE.md
 After each backup run, commit this file to maintain workflow continuity:
 
   git add backups/BACKUP_MANIFEST.md
-  git commit -m "chore: update backup manifest 2026-05-29"
+  git commit -m "chore: update backup manifest 2026-05-30"
 
 The backup_check.yml workflow fails if this file is not updated within 7 days.

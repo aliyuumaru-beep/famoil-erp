@@ -1,6 +1,6 @@
 # Module Registry
 # FamOil Software Factory — Installed Modules Inventory
-# Version: 1.0 | Created: 2026-05-27
+# Version: 1.1 | Created: 2026-05-27 | Updated: 2026-05-30
 
 ---
 
@@ -25,6 +25,18 @@
 | Mechanism | Overrides `_button_mark_done_sanity_checks` on `mrp.production` |
 | Override point | `mrp.production._button_mark_done_sanity_checks()` |
 | Upgrade risk | MEDIUM — sanity check method may change across Odoo versions |
+| Known conflicts | None |
+
+### stock_landed_cost_po_check
+| Field | Value |
+|-------|-------|
+| Version | 17.0.1.0.0 |
+| Purpose | Blocks landed cost validation if any linked receipt was not created from a Purchase Order; schedules automated activity reminder on every validated SoyaBean receipt |
+| Mechanism | Overrides `button_validate` on `stock.landed.cost`; raises `UserError` if `picking_type_code != 'incoming'` or `move_ids.filtered('purchase_line_id')` is empty. Automated action fires on `stock.picking` state → done to schedule a todo activity |
+| Override point | `stock.landed.cost.button_validate()` |
+| Depends | `stock_landed_costs`, `purchase_stock`, `base_automation`, `mail` |
+| Decision | DEC-012 |
+| Upgrade risk | LOW — constraint logic is simple; re-run 3-test suite after any Odoo upgrade |
 | Known conflicts | None |
 
 ---
@@ -85,6 +97,7 @@ None currently identified. Monitor after every Odoo version upgrade.
 When upgrading Odoo version:
 1. Test `stock_crude_oil_tank_restriction` — `button_validate` override must still work
 2. Test `mrp_component_availability_check` — `_button_mark_done_sanity_checks` must still exist
-3. Check all OCA module compatibility with new Odoo version on https://github.com/OCA
-4. Check `om_*` modules for version compatibility
-5. Run full manufacturing test (Test A and B from `docs/TESTING_GUIDE.md`) before go-live
+3. Test `stock_landed_cost_po_check` — run 3-test suite; verify `purchase_line_id` still exists on `stock.move`
+4. Check all OCA module compatibility with new Odoo version on https://github.com/OCA
+5. Check `om_*` modules for version compatibility
+6. Run full manufacturing test (Test A and B from `docs/TESTING_GUIDE.md`) before go-live

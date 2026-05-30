@@ -1,6 +1,6 @@
 # CLAUDE.md — Software Factory Session Anchor
 # FamOil Industrial ERP Framework
-# Version: 1.3.0 | Last updated: 2026-05-29
+# Version: 1.4.0 | Last updated: 2026-05-30
 
 > This file is read automatically by Claude Code at the start of every session.
 > It is the single source of truth for project state. Keep it current.
@@ -36,7 +36,7 @@ python odoo/odoo-bin -d Famoil -r odoo \
 
 **Current phase:** Phase 4 — COMPLETE. All phases 1–4 operational. Restore validation COMPLETE.
 
-**Current active phase:** Procurement Maturity & Operational Workflow Expansion.
+**Current active phase:** Sales Workflow Maturity.
 
 **Procurement maturity progress:**
 - [x] PO approval workflow — CONFIGURED & VALIDATED (two-step, ₦200,000 threshold)
@@ -45,11 +45,27 @@ python odoo/odoo-bin -d Famoil -r odoo \
 - [x] Landed costs — CONFIGURED: stock_landed_costs installed; account 570000 created; 2 service products; stock_landed_cost_po_check module active
 - [ ] Procurement traceability validation
 
+**Sales workflow progress:**
+- [x] Product list prices — set at 30% markup on cost (RSO 25L ₦127k, RSO 5L ₦24k, Soya Cake ₦500/kg, Crude Soya Oil ₦4,500/kg)
+- [x] Invoice policy — delivery (invoice only on confirmed delivery, not on SO)
+- [x] Demo products cleaned — 45 demo furniture products disabled from sales
+- [x] Distributor pricelist — "Distributor NGN (5% Discount)" created
+- [x] Customers — Frank Oil Distributor, Sahad Oil Traders, Reno Hotel
+- [x] Customer terms — Sahad: 30-day credit; Frank Oil + Reno: Immediate Payment
+- [x] Discount column — enabled on SO lines (group_discount_per_so_line)
+- [x] End-to-end SO → 3-step delivery → invoice flow: VALIDATED
+- [ ] SO → Invoice → Payment end-to-end with real stock (requires FG stock)
+- [ ] Credit limit control for Sahad (not native in Community — design decision pending)
+
+**Known pricing gaps:**
+- 5L Jerrycan cost = ₦0 (placeholder) — RSO 5L price understated; update when real cost known
+- 1L Jerrycan + Labels = ₦0 (placeholder)
+
 **Priority order:**
-1. Procurement maturity (RFQs, approvals, vendor management, landed costs)
-2. Sales workflow maturity
-3. Dispatch & logistics maturity
-4. Maintenance maturity
+1. Sales workflow maturity (current)
+2. Dispatch & logistics maturity
+3. Maintenance maturity
+4. Procurement traceability validation
 5. Barcode & warehouse operations
 6. Off-machine survivability activation (rclone + Google Drive)
 7. Quarterly restore governance
@@ -207,6 +223,9 @@ Deodorization (id=23)
 - Consumables (Hexane, Lubricant Oil) missing from BOM 10
 - Spare parts/consumables list_price = ₦1 (placeholder)
 - Off-machine backup sync not yet activated (rclone not installed)
+- 5L Jerrycan, 1L Jerrycan, and Labels have ₦0 cost — RSO 5L/1L prices understated
+- Sahad Oil Traders credit limit not enforced (no native credit limit in Odoo Community)
+- GitHub ruleset gaps: 0 required reviewers, all merge methods, claude-review not required (G-5/G-6)
 
 ---
 

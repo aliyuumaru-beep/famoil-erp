@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## v1.12.0 — 2026-05-30 — Sales Workflow MVP: Pricing, Customers, Pricelist
+
+- Set product list prices at 30% markup on production cost (chain-computed from BOM):
+  - Crude Soya Oil: ₦4,500/kg | Refined Soya Oil bulk: ₦5,200/kg
+  - Refined Soya Oil 25L: ₦127,000/unit | Refined Soya Oil 5L: ₦24,000/unit
+  - Soya Cake: ₦500/kg | SoapStock: ₦200/kg
+- Set invoice_policy = 'delivery' on all FamOil products (invoice on delivered qty, not order qty)
+- Disabled sale_ok on 45 demo furniture/office products (no longer pollute sales product dropdown)
+- Created pricelist "Distributor NGN (5% Discount)": 5% off all products, NGN, company=FamOil FTZ
+- Enabled discount per SO line column (group_discount_per_so_line)
+- Created 3 customers:
+  - Frank Oil Distributor — Distributor pricelist, Immediate Payment
+  - Sahad Oil Traders — Distributor pricelist, 30-day credit
+  - Reno Hotel — Default NGN pricelist, Immediate Payment
+- Set admin and demo users default company → FamOil FTZ (was My Company SF)
+- End-to-end SO → 3-step delivery (Pick/Pack/Ship) → invoice flow validated
+- Known gap: 5L/1L Jerrycan and Labels cost = ₦0 (placeholder); RSO 5L/1L prices understated
+- Known gap: Sahad credit limit not enforceable natively in Odoo Community
+
 ## v1.11.0 — 2026-05-29 — Warehouse Hygiene: Putaway Rule and Demo Warehouse Archival
 
 - Added putaway rule: SoyaBean → `Famoil/Stock/RM Warehouse` (was missing; SoyaBean was landing at `Famoil/Stock` parent)

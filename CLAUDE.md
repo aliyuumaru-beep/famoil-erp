@@ -1,6 +1,6 @@
 # CLAUDE.md — Software Factory Session Anchor
 # FamOil Industrial ERP Framework
-# Version: 1.4.0 | Last updated: 2026-05-30
+# Version: 1.5.0 | Last updated: 2026-05-30
 
 > This file is read automatically by Claude Code at the start of every session.
 > It is the single source of truth for project state. Keep it current.
@@ -54,8 +54,9 @@ python odoo/odoo-bin -d Famoil -r odoo \
 - [x] Customer terms — Sahad: 30-day credit; Frank Oil + Reno: Immediate Payment
 - [x] Discount column — enabled on SO lines (group_discount_per_so_line)
 - [x] End-to-end SO → 3-step delivery → invoice flow: VALIDATED
+- [x] Credit limit — Sahad Oil Traders: ₦1,500,000 enforced via base.automation (blocks SO confirmation)
+- [x] RSO 1L BOM (BOM 210): 0.92 kg RSO + 1L Jerrycan; RSO 5L repriced ₦33,000; RSO 1L ₦8,700
 - [ ] SO → Invoice → Payment end-to-end with real stock (requires FG stock)
-- [ ] Credit limit control for Sahad (not native in Community — design decision pending)
 
 **Known pricing gaps:**
 - 5L Jerrycan cost = ₦0 (placeholder) — RSO 5L price understated; update when real cost known
@@ -223,8 +224,8 @@ Deodorization (id=23)
 - Consumables (Hexane, Lubricant Oil) missing from BOM 10
 - Spare parts/consumables list_price = ₦1 (placeholder)
 - Off-machine backup sync not yet activated (rclone not installed)
-- 5L Jerrycan, 1L Jerrycan, and Labels have ₦0 cost — RSO 5L/1L prices understated
-- Sahad Oil Traders credit limit not enforced (no native credit limit in Odoo Community)
+- Labels (5L, 25L, 1L) still at ₦0 cost — minor understatement of packaging cost
+- 25L Labels product in BOM 208 named "1L Labels" — naming inconsistency, functional impact low
 - GitHub ruleset gaps: 0 required reviewers, all merge methods, claude-review not required (G-5/G-6)
 
 ---

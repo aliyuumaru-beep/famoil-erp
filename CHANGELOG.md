@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## v1.13.0 — 2026-05-30 — Sales: Jerrycan Costs, RSO 1L BOM, Credit Limit Enforcement
+
+- Set 5L Jerrycan cost: ₦7,000; created 1L Jerrycan product at ₦3,000
+- Created BOM 210 for RSO 1L: 0.92 kg Refined Soya Oil + 1× 1L Jerrycan
+- Recalculated RSO prices at 30% markup on correct costs:
+  - RSO 5L: ₦24,000 → ₦33,000 (cost ₦25,492 incl. ₦7,000 jerrycan)
+  - RSO 1L: ₦5,200 → ₦8,700 (cost ₦6,698 incl. ₦3,000 jerrycan)
+  - RSO 25L unchanged at ₦127,000 (₦5,000 jerrycan already correct)
+- Credit limit: native `credit_limit` field confirmed on res.partner (account module — no custom field needed)
+- Set Sahad Oil Traders credit_limit: ₦1,500,000
+- Created base.automation rule "Credit Limit: Block SO if Customer Limit Exceeded":
+  - Trigger: on_write, pre-filter state≠sale → filter state=sale
+  - Checks: unpaid invoices + pending confirmed SOs + this order vs credit_limit
+  - Action: raises UserError with full exposure breakdown (limit, invoices, pending, this order, total)
+  - Validation: 10-unit SO (₦1.30M) PASS ✓; 12-unit SO (₦1.56M) cumulative BLOCK ✓
+- Note: credit_limit applies to ALL customers with non-zero limit; Sahad is the only one set
+
 ## v1.12.0 — 2026-05-30 — Sales Workflow MVP: Pricing, Customers, Pricelist
 
 - Set product list prices at 30% markup on production cost (chain-computed from BOM):

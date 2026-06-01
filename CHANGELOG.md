@@ -27,9 +27,15 @@ all BOMs require stage-specific op types 79/127/128 — lookup failed silently.
 - TEST B: Refined Soya Oil replenishment → op type 127, BOM 15, 4 components ✓
 - TEST C: RSO 5L replenishment → op type 128, BOM 209, 3 components ✓
 
-**Op type audit:**
-- Op type 16 ("Manufacturing"): CHIC1-era orphan, no route rules, no open MOs — safe to archive (pending operator approval)
-- Op type 24 ("Manufacturing"): warehouse default, referenced by route rules 29/30 — retained
+**Op type audit and archival:**
+- Op type 16 ("Manufacturing"): CHIC1-era orphan — 2 lingering CHIC1 MOs cancelled (CHIC1/MO/00014 confirmed, CHIC1/MO/00016 draft), op type archived
+- Op type 24 ("Manufacturing"): warehouse default, referenced by route rules 29/30 — retained, no open MOs
+
+**Active manufacturing op types post-remediation:**
+- [24] Manufacturing — warehouse default, route rules 29/30, no open MOs
+- [79] Extraction Manufacturing — route rule 43, legitimate open MOs
+- [127] Refining Manufacturing — route rule 44, legitimate open MOs
+- [128] Packaging Manufacturing — route rule 45, legitimate open MOs
 
 ## v1.12.0 — 2026-05-30 — Sales Workflow MVP: Pricing, Customers, Pricelist
 

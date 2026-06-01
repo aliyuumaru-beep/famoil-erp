@@ -1,6 +1,6 @@
 # CLAUDE.md — Software Factory Session Anchor
 # FamOil Industrial ERP Framework
-# Version: 1.4.0 | Last updated: 2026-05-30
+# Version: 1.6.0 | Last updated: 2026-06-01
 
 > This file is read automatically by Claude Code at the start of every session.
 > It is the single source of truth for project state. Keep it current.
@@ -126,6 +126,23 @@ See: `docs/operations/RESTORE_DRILL.md` for full drill reports.
 `web_theme_classic`, `web_dialog_size`, `web_m2x_options`,
 `web_pivot_computed_measure`, `web_search_with_and`,
 `web_remember_tree_column_width`
+
+---
+
+## MANUFACTURING ROUTE ARCHITECTURE
+
+**Stage-specific manufacture routes (as of v1.14.0):**
+
+| Route | ID | Rule | Op Type | Op Type ID | Product |
+|-------|----|------|---------|------------|---------|
+| Extraction Manufacture | 20 | 43 | Extraction Manufacturing | 79 | Crude Soya Oil |
+| Refining Manufacture | 21 | 44 | Refining Manufacturing | 127 | Refined Soya Oil |
+| Packaging Manufacture | 22 | 45 | Packaging Manufacturing | 128 | RSO 25L/5L/1L |
+
+**Replenishment now creates MOs with correct op type and BOM automatically.**
+Generic Manufacture route (id=9) retained for system use but removed from all FamOil products.
+
+**Op type 16 ("Manufacturing"):** CHIC1-era orphan — safe to archive, pending operator approval.
 
 ---
 

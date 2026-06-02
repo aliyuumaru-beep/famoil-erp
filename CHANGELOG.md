@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## v1.15.0 — 2026-06-02 — Stage-Specific MTO Routes
+
+**Problem:** MTO route (route 1) rule 30 points to generic op type 24. If inventory manager
+triggers Replenish on Order / MTO for any FamOil manufacturing product, the wrong op type
+fires → BOM lookup fails → MO created without BOM or components (same failure mode as v1.14
+incident). Inventory managers can fire MTO independently of scheduler replenishment.
+
+**Solution — 3 stage-specific MTO routes created (make_to_order, propagate_cancel=True):**
+- Route 23 "Extraction MTO" → rule 46 → op type 79 (Extraction Manufacturing), BOM 10 ✓
+- Route 26 "Refining MTO"   → rule 49 → op type 127 (Refining Manufacturing), BOM 15 ✓
+- Route 27 "Packaging MTO"  → rule 50 → op type 128 (Packaging Manufacturing), BOM 208/209/210 ✓
+
+**Product route assignments (final state — both Manufacture + MTO coexist per product):**
+- Crude Soya Oil: Extraction Manufacture (stock) + Extraction MTO (order)
+- Refined Soya Oil: Refining Manufacture (stock) + Refining MTO (order)
+- RSO 25L/5L/1L: Packaging Manufacture (stock) + Packaging MTO (order)
+
+**Validation — BOM match confirmed for all 3 MTO routes:**
+- Extraction MTO rule 46 → op type 79 → BOM 10 found ✓
+- Refining MTO rule 49 → op type 127 → BOM 15 found ✓
+- Packaging MTO rule 50 → op type 128 → BOM 208 found ✓
+
+**Architecture note:** Manufacture routes (make_to_stock) = batch/scheduler replenishment.
+MTO routes (make_to_order) = demand-driven MOs linked to specific SO or downstream MO.
+Both coexist. Inventory manager can use either path; correct op type guaranteed in both cases.
+
+---
+
 ## v1.14.0 — 2026-06-01 — Manufacturing Route Architecture Remediation
 
 **Incident:** CW/MO/00006 (and 00007, 00008) created with no BOM, no components via

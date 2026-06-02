@@ -133,16 +133,26 @@ See: `docs/operations/RESTORE_DRILL.md` for full drill reports.
 
 **Stage-specific manufacture routes (as of v1.14.0):**
 
-| Route | ID | Rule | Op Type | Op Type ID | Product |
-|-------|----|------|---------|------------|---------|
-| Extraction Manufacture | 20 | 43 | Extraction Manufacturing | 79 | Crude Soya Oil |
-| Refining Manufacture | 21 | 44 | Refining Manufacturing | 127 | Refined Soya Oil |
-| Packaging Manufacture | 22 | 45 | Packaging Manufacturing | 128 | RSO 25L/5L/1L |
+| Route | ID | Rule | Op Type | Op Type ID | Product | procure_method |
+|-------|----|------|---------|------------|---------|----------------|
+| Extraction Manufacture | 20 | 43 | Extraction Manufacturing | 79 | Crude Soya Oil | make_to_stock |
+| Refining Manufacture | 21 | 44 | Refining Manufacturing | 127 | Refined Soya Oil | make_to_stock |
+| Packaging Manufacture | 22 | 45 | Packaging Manufacturing | 128 | RSO 25L/5L/1L | make_to_stock |
 
-**Replenishment now creates MOs with correct op type and BOM automatically.**
-Generic Manufacture route (id=9) retained for system use but removed from all FamOil products.
+**Stage-specific MTO routes (as of v1.15.0) — demand-driven, propagate_cancel=True:**
 
-**Op type 16 ("Manufacturing"):** CHIC1-era orphan — safe to archive, pending operator approval.
+| Route | ID | Rule | Op Type | Op Type ID | Product | procure_method |
+|-------|----|------|---------|------------|---------|----------------|
+| Extraction MTO | 23 | 46 | Extraction Manufacturing | 79 | Crude Soya Oil | make_to_order |
+| Refining MTO | 26 | 49 | Refining Manufacturing | 127 | Refined Soya Oil | make_to_order |
+| Packaging MTO | 27 | 50 | Packaging Manufacturing | 128 | RSO 25L/5L/1L | make_to_order |
+
+**Both route types coexist per product:**
+- Manufacture routes (make_to_stock): batch production runs / scheduler replenishment
+- MTO routes (make_to_order): demand-driven MOs linked to specific SO/downstream MO; usable by inventory manager via Replenish on Order
+
+**Generic Manufacture route (id=9):** retained for system use but removed from all FamOil products.
+**Op type 16 ("Manufacturing"):** CHIC1-era orphan — archived.
 
 ---
 

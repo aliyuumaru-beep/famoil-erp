@@ -248,9 +248,51 @@ Replenishment test for all three stages — all passed:
 
 ### Op Type 16 Status
 
-Op type 16 ("Manufacturing", FamOilWH) is a CHIC1-era orphan — no route rules reference it,
-no warehouse claims it as default, all 14 MOs are in done/cancelled state from CHIC1 work.
-Safe to archive when operator approves. No action taken in this remediation.
+Op type 16 ("Manufacturing", FamOilWH): archived — 2 lingering CHIC1 MOs cancelled, op type archived.
+
+---
+
+## Post-Phase 4 — Stage-Specific MTO Routes
+
+**Completed:** 2026-06-02
+
+### Problem
+
+After the Route Architecture Remediation (v1.14.0), a remaining gap existed: the generic
+MTO route (route 1) rule 30 still pointed to op type 24. If an inventory manager triggered
+Replenish on Order (MTO) for any FamOil manufacturing product, the BOM lookup would fail
+silently — the same failure mode as the CW/MO/00006 incident. This gap existed because
+inventory managers can fire MTO independently of the scheduler replenishment path.
+
+### Corrective Architecture
+
+Three stage-specific MTO routes created — each with a manufacture rule set to
+`procure_method=make_to_order` and `propagate_cancel=True`:
+
+| Route | ID | Rule | Op Type | Op Type ID | BOM |
+|-------|----|------|---------|------------|-----|
+| Extraction MTO | 23 | 46 | Extraction Manufacturing | 79 | BOM 10 |
+| Refining MTO   | 26 | 49 | Refining Manufacturing   | 127 | BOM 15 |
+| Packaging MTO  | 27 | 50 | Packaging Manufacturing  | 128 | BOMs 208/209/210 |
+
+Product route assignments (final state):
+- Crude Soya Oil: Extraction Manufacture (id=20) + Extraction MTO (id=23)
+- Refined Soya Oil: Refining Manufacture (id=21) + Refining MTO (id=26)
+- RSO 25L/5L/1L: Packaging Manufacture (id=22) + Packaging MTO (id=27)
+
+### Architecture Note
+
+The two route types serve complementary purposes:
+- **Manufacture routes (make_to_stock):** batch production runs, scheduler-driven
+- **MTO routes (make_to_order):** demand-driven MOs linked to a specific SO or component
+  demand from a downstream MO; cancellable if parent demand is cancelled
+
+### Validation
+
+BOM match verified for all 3 MTO routes:
+- Extraction MTO rule 46 → op type 79 → BOM 10 ✓
+- Refining MTO rule 49 → op type 127 → BOM 15 ✓
+- Packaging MTO rule 50 → op type 128 → BOM 208 ✓
 
 ---
 

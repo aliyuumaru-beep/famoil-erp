@@ -193,6 +193,47 @@ access through the Odoo UI validated.
 
 ---
 
+## Post-Phase 4 — Sales Workflow Maturity
+
+**Completed:** 2026-06-04 | **Version:** v1.16.0
+
+### What was implemented
+
+**Customer master data:**
+- 30-day credit payment term created (id=14, `nb_days=30`, `delay_type=days_after`)
+- Frank Oil Distributor: Distributor NGN pricelist (5% discount, id=4) + Immediate Payment
+- Sahad Oil Traders: Distributor NGN pricelist + 30-day credit + credit_limit=₦1,500,000, `use_partner_credit_limit=True`
+- Reno Hotel: Default NGN pricelist + Immediate Payment
+- Properties set via `res.partner.write()` in FamOil company (id=2) context
+
+**Inventory and cost baselines:**
+- FG stock initialised via `stock.quant.action_apply_inventory()`: 20 × RSO 25L, 40 × RSO 5L in FG Warehouse (location 140)
+- Lot LOT-RSO25L-20260601 (id=27) created for RSO 25L batch and assigned to quant + PICK move line
+- RSO 25L `standard_price=₦97,692`; RSO 5L `standard_price=₦25,385` (reverse 30% from list prices)
+
+**Stage-specific MTO routes (manufacturing):**
+- Extraction MTO (route 23, rule 46, op type 79), Refining MTO (route 26, rule 49, op type 127), Packaging MTO (route 27, rule 50, op type 128)
+- All 5 FamOil manufacturing products carry both make_to_stock + make_to_order routes
+
+**End-to-end sales validation:**
+- SO S00038 / Frank Oil / 5 × RSO 25L @ ₦120,650 (5% distributor discount) = ₦603,250 + 7.5% VAT = ₦648,494
+- 3-step delivery: PICK CW/PICK/00007 → PACK CW/PACK/00007 → OUT CW/OUT/00008 — all validated
+- Invoice INV/2026/00006 posted; Payment PBNK1/2026/00004 (₦648,494) registered; AR cleared to ₦0
+- FG stock decremented from 20 → 15 units RSO 25L ✓
+
+**Credit limit enforcement validated:**
+- `base.automation` (id=632) fires on `sale.order` state transition to `sale`
+- Accumulates: `partner.credit` (outstanding invoices) + pending confirmed SOs + current SO amount
+- Test B (10 units, ₦1,296,988): CONFIRMED — under ₦1.5M limit ✓
+- Test A (12 units, ₦1,556,385 + ₦1.3M pending): BLOCKED — UserError with full ₦ breakdown ✓
+
+### Key decisions made
+
+- DEC-013: Credit limit enforcement via `base.automation` + native `credit_limit` / `use_partner_credit_limit` fields — no custom module required; re-validated as working in Odoo 17 Community
+- Standard costs set as reverse-markup estimates — will be overwritten by first real MO valuation once manufacturing pipeline runs
+
+---
+
 ## Post-Phase 4 — Manufacturing Route Architecture Remediation
 
 **Completed:** 2026-06-01

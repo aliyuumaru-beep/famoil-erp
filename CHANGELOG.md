@@ -1,5 +1,40 @@
 # CHANGELOG
 
+## v1.16.0 — 2026-06-04 — Sales Workflow Maturity COMPLETE
+
+**Sales workflow milestone closed. All items validated end-to-end.**
+
+**Customer master data fixed:**
+- 30-day credit payment term created (id=14, nb_days=30)
+- Frank Oil: Distributor NGN pricelist (id=4) + Immediate Payment (id=1)
+- Sahad Oil Traders: Distributor NGN pricelist (id=4) + 30-day credit (id=14)
+- Reno Hotel: Default NGN pricelist (id=1) + Immediate Payment (id=1)
+- Sahad credit_limit=₦1,500,000; use_partner_credit_limit=True
+
+**Inventory and cost baselines set:**
+- FG stock initialised: 20 units RSO 25L + 40 units RSO 5L via inventory adjustment (FG Warehouse)
+- Lot LOT-RSO25L-20260601 created and assigned to RSO 25L batch
+- RSO 25L standard_price=₦97,692 (reverse 30% markup from ₦127,000 list)
+- RSO 5L standard_price=₦25,385 (reverse 30% markup from ₦33,000 list)
+
+**End-to-end SO → 3-step delivery → invoice → payment — VALIDATED:**
+- S00038 / Frank Oil Distributor / 5 × RSO 25L @ ₦120,650 (5% dist. discount)
+- Subtotal ₦603,250 + VAT 7.5% ₦45,244 = **₦648,494 total**
+- PICK CW/PICK/00007 → PACK CW/PACK/00007 → OUT CW/OUT/00008: all done ✓
+- Invoice INV/2026/00006 posted; Payment PBNK1/2026/00004 (₦648,494) posted ✓
+- FG stock: 20 → 15 units RSO 25L confirmed ✓
+- Frank AR outstanding: ₦0 after payment ✓
+
+**Credit limit enforcement — VALIDATED (Sahad, limit ₦1.5M):**
+- Test B: 10 units (₦1,296,988 incl. VAT) → **CONFIRMED** ✓
+- Test A: 12 units (₦1,556,385 incl. VAT) + ₦1.3M pending = ₦2.85M → **BLOCKED** with full breakdown UserError ✓
+- Enforcement via base.automation on SO confirmation — no custom module required
+
+**Leftover test SO cancelled:**
+- S00037 (Sahad, 10 units, state=sale, no deliveries validated) → cancelled cleanly
+
+---
+
 ## v1.15.0 — 2026-06-02 — Stage-Specific MTO Routes
 
 **Problem:** MTO route (route 1) rule 30 points to generic op type 24. If inventory manager

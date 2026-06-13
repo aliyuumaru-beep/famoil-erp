@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Phase 3 — Scheduled action: auto-assign due preventive maintenance -->
+    <data noupdate="1">
+        <record id="ir_cron_fm_auto_assign_schedule" model="ir.cron">
+            <field name="name">FM: Auto-assign due preventive maintenance schedules</field>
+            <field name="model_id" ref="model_fm_maintenance_schedule"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_auto_assign_due_schedules()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

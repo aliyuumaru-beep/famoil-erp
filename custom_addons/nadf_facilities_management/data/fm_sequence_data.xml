@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Phase 1 — Document number sequences -->
+    <data noupdate="1">
+
+        <record id="seq_fm_job_complaint" model="ir.sequence">
+            <field name="name">FM Job Complaint</field>
+            <field name="code">fm.job.complaint</field>
+            <field name="prefix">FM/COMP/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="seq_fm_job_order" model="ir.sequence">
+            <field name="name">FM Job Order</field>
+            <field name="code">fm.job.order</field>
+            <field name="prefix">FM/JO/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="seq_fm_consumable_request" model="ir.sequence">
+            <field name="name">FM Consumable Request</field>
+            <field name="code">fm.consumable.request</field>
+            <field name="prefix">FM/CR/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="seq_fm_maintenance_plan" model="ir.sequence">
+            <field name="name">FM Maintenance Plan</field>
+            <field name="code">fm.maintenance.plan</field>
+            <field name="prefix">FM/MP/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="seq_fm_maintenance_schedule" model="ir.sequence">
+            <field name="name">FM Maintenance Schedule</field>
+            <field name="code">fm.maintenance.schedule</field>
+            <field name="prefix">FM/MS/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="seq_fm_inventory_report" model="ir.sequence">
+            <field name="name">FM Inventory Report</field>
+            <field name="code">fm.inventory.report</field>
+            <field name="prefix">FM/IR/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="implementation">no_gap</field>
+        </record>
+
+    </data>
+</odoo>

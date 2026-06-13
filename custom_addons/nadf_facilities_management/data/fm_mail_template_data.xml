@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Phase 6 — Email notification templates -->
+    <data noupdate="1">
+
+        <record id="mail_template_fm_job_order_assigned" model="mail.template">
+            <field name="name">FM: Job Order Assigned to Contractor</field>
+            <field name="model_id" ref="model_fm_job_order"/>
+            <field name="subject">Job Order {{ object.name }} Assigned</field>
+            <field name="email_to">{{ object.contractor_id.partner_id.email or '' }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear {{ object.contractor_id.name }},</p>
+                    <p>
+                        Job Order <strong>{{ object.name }}</strong> has been assigned to your
+                        organisation for the branch <strong>{{ object.branch_id.name }}</strong>.
+                    </p>
+                    <p><strong>Job Description:</strong><br/>{{ object.job_description }}</p>
+                    <p>Please log in to the Facilities Management portal to acknowledge and begin work.</p>
+                    <p>Regards,<br/>NADF Facilities Management</p>
+                </div>
+            </field>
+        </record>
+
+        <record id="mail_template_fm_consumable_request_approved" model="mail.template">
+            <field name="name">FM: Consumable Request Approved</field>
+            <field name="model_id" ref="model_fm_consumable_request"/>
+            <field name="subject">Consumable Request {{ object.name }} Approved</field>
+            <field name="email_to">{{ object.contractor_id.partner_id.email or '' }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear {{ object.contractor_id.name }},</p>
+                    <p>
+                        Your consumable request <strong>{{ object.name }}</strong> for job order
+                        <strong>{{ object.job_order_id.name }}</strong> has been approved. Please
+                        collect the approved items from the branch store.
+                    </p>
+                    <p>Regards,<br/>NADF Facilities Management</p>
+                </div>
+            </field>
+        </record>
+
+        <record id="mail_template_fm_monthly_batch_submitted" model="mail.template">
+            <field name="name">FM: Monthly Batch Submitted to HQ</field>
+            <field name="model_id" ref="model_fm_monthly_batch"/>
+            <field name="subject">Monthly Batch {{ object.name }} Submitted for HQ Review</field>
+            <field name="email_to">{{ object._get_hq_officer_emails() }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HQ Procurement Officer,</p>
+                    <p>
+                        Monthly batch <strong>{{ object.name }}</strong> from branch
+                        <strong>{{ object.branch_id.name }}</strong> (period
+                        {{ object.period_month }}/{{ object.period_year }}, total
+                        <strong>{{ '%.2f' % object.total_amount }}</strong>) has been submitted
+                        for review.
+                    </p>
+                    <p>Regards,<br/>NADF Facilities Management</p>
+                </div>
+            </field>
+        </record>
+
+        <record id="mail_template_fm_monthly_batch_returned" model="mail.template">
+            <field name="name">FM: Monthly Batch Returned for Correction</field>
+            <field name="model_id" ref="model_fm_monthly_batch"/>
+            <field name="subject">Monthly Batch {{ object.name }} Returned for Correction</field>
+            <field name="email_to">{{ object._get_desk_officer_emails() }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear Branch Desk Officer,</p>
+                    <p>
+                        Monthly batch <strong>{{ object.name }}</strong> for branch
+                        <strong>{{ object.branch_id.name }}</strong> has been returned by HQ for
+                        correction.
+                    </p>
+                    {{ '<p><strong>HQ Notes:</strong><br/>%s</p>' % object.hq_notes if object.hq_notes else '' }}
+                    <p>Regards,<br/>NADF Facilities Management</p>
+                </div>
+            </field>
+        </record>
+
+        <record id="mail_template_fm_schedule_due" model="mail.template">
+            <field name="name">FM: Preventive Maintenance Due Today</field>
+            <field name="model_id" ref="model_fm_maintenance_schedule"/>
+            <field name="subject">Preventive Maintenance Due: {{ object.name }} ({{ object.equipment_name }})</field>
+            <field name="email_to">{{ object.contractor_id.partner_id.email or '' }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear {{ object.contractor_id.name }},</p>
+                    <p>
+                        Preventive maintenance entry <strong>{{ object.name }}</strong> for
+                        <strong>{{ object.equipment_name }}</strong> (Plan
+                        {{ object.plan_id.name }}, Branch {{ object.plan_id.branch_id.name }})
+                        is due on {{ object.scheduled_date }} and has been auto-assigned.
+                    </p>
+                    <p>Regards,<br/>NADF Facilities Management</p>
+                </div>
+            </field>
+        </record>
+
+    </data>
+</odoo>

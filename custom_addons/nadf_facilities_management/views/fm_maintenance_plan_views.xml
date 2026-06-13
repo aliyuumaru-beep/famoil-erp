@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_fm_maintenance_plan_list" model="ir.ui.view">
+        <field name="name">fm.maintenance.plan.list</field>
+        <field name="model">fm.maintenance.plan</field>
+        <field name="arch" type="xml">
+            <tree string="Maintenance Plans"
+                  decoration-info="state in ('draft', 'submitted')"
+                  decoration-success="state == 'active'"
+                  decoration-muted="state == 'closed'"
+                  decoration-danger="state == 'rejected'">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="plan_type"/>
+                <field name="year"/>
+                <field name="quarter"/>
+                <field name="facilities_manager_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('draft', 'submitted')"
+                       decoration-success="state == 'active'"
+                       decoration-muted="state == 'closed'"
+                       decoration-danger="state == 'rejected'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_fm_maintenance_plan_form" model="ir.ui.view">
+        <field name="name">fm.maintenance.plan.form</field>
+        <field name="model">fm.maintenance.plan</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance Plan">
+                <header>
+                    <button name="action_submit" type="object" string="Submit for Approval"
+                            class="oe_highlight" invisible="state != 'draft'"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="oe_highlight" invisible="state != 'submitted'"
+                            groups="nadf_facilities_management.group_fm_branch_facilities_manager"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state != 'submitted'"
+                            groups="nadf_facilities_management.group_fm_branch_facilities_manager"/>
+                    <button name="action_activate" type="object" string="Activate"
+                            class="oe_highlight" invisible="state != 'approved'"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'active'"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,active,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="plan_type"/>
+                            <field name="year"/>
+                            <field name="quarter" invisible="plan_type != 'quarterly'"/>
+                            <field name="branch_id"/>
+                        </group>
+                        <group>
+                            <field name="desk_officer_id"/>
+                            <field name="facilities_manager_id"/>
+                            <field name="approved_by" readonly="1"/>
+                            <field name="approval_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                    <group string="Rejection Reason" invisible="state != 'rejected'">
+                        <field name="rejection_reason" nolabel="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Planned Spare Parts" name="spare_parts">
+                            <field name="spare_part_line_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="description"/>
+                                    <field name="suggested_quantity" readonly="1"/>
+                                    <field name="quantity_planned"/>
+                                    <field name="uom_id"/>
+                                    <field name="unit_cost"/>
+                                    <field name="total_cost" sum="Total"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Schedule Entries" name="schedules">
+                            <field name="schedule_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="equipment_name"/>
+                                    <field name="equipment_type"/>
+                                    <field name="scheduled_date"/>
+                                    <field name="contractor_id"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Inventory Position" name="inventory_position">
+                            <group>
+                                <field name="last_inventory_report_id" readonly="1"/>
+                            </group>
+                            <field name="inventory_report_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="report_period"/>
+                                    <field name="report_year"/>
+                                    <field name="state"/>
+                                    <field name="discrepancy_flag"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_fm_maintenance_plan_search" model="ir.ui.view">
+        <field name="name">fm.maintenance.plan.search</field>
+        <field name="model">fm.maintenance.plan</field>
+        <field name="arch" type="xml">
+            <search string="Maintenance Plans">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="year"/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Submitted" name="filter_submitted" domain="[('state', '=', 'submitted')]"/>
+                <filter string="Active" name="filter_active" domain="[('state', '=', 'active')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Year" name="group_year" context="{'group_by': 'year'}"/>
+                    <filter string="Quarter" name="group_quarter" context="{'group_by': 'quarter'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fm_maintenance_plan" model="ir.actions.act_window">
+        <field name="name">Maintenance Plans</field>
+        <field name="res_model">fm.maintenance.plan</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_fm_maintenance_plan_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smart_action">
+                Create a new preventive maintenance plan.
+            </p>
+        </field>
+    </record>
+
+</odoo>

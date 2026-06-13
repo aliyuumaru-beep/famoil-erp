@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_fm_inventory_report_list" model="ir.ui.view">
+        <field name="name">fm.inventory.report.list</field>
+        <field name="model">fm.inventory.report</field>
+        <field name="arch" type="xml">
+            <tree string="Quarterly Inventory Reports"
+                  decoration-info="state in ('draft', 'submitted')"
+                  decoration-muted="state == 'archived'"
+                  decoration-danger="discrepancy_flag == True">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="report_period"/>
+                <field name="report_year"/>
+                <field name="report_date"/>
+                <field name="discrepancy_flag"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('draft', 'submitted')"
+                       decoration-warning="state in ('approved', 'hq_acknowledged', 'cost_control')"
+                       decoration-success="state == 'archived'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_fm_inventory_report_form" model="ir.ui.view">
+        <field name="name">fm.inventory.report.form</field>
+        <field name="model">fm.inventory.report</field>
+        <field name="arch" type="xml">
+            <form string="Quarterly Inventory Report">
+                <header>
+                    <button name="action_populate_lines" type="object" string="Populate Lines"
+                            invisible="state != 'draft'"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_submit" type="object" string="Submit"
+                            class="oe_highlight" invisible="state != 'draft'"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="oe_highlight" invisible="state != 'submitted'"
+                            groups="nadf_facilities_management.group_fm_branch_facilities_manager"/>
+                    <button name="action_hq_acknowledge" type="object" string="HQ Acknowledge"
+                            class="oe_highlight" invisible="state != 'approved'"
+                            groups="nadf_facilities_management.group_fm_hq_procurement_officer"/>
+                    <button name="action_forward_cost_control" type="object" string="Forward to Cost Control"
+                            class="oe_highlight" invisible="state != 'hq_acknowledged'"
+                            groups="nadf_facilities_management.group_fm_hq_procurement_officer"/>
+                    <button name="action_archive_report" type="object" string="Archive"
+                            class="oe_highlight" invisible="state != 'cost_control'"
+                            groups="nadf_facilities_management.group_fm_cost_control"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,hq_acknowledged,cost_control,archived"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="not discrepancy_flag">
+                        This report contains stock discrepancies that require review.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="branch_id"/>
+                            <field name="report_period"/>
+                            <field name="report_year"/>
+                            <field name="report_date"/>
+                        </group>
+                        <group>
+                            <field name="desk_officer_id"/>
+                            <field name="contractor_ids" widget="many2many_tags"/>
+                            <field name="approved_by" readonly="1"/>
+                            <field name="discrepancy_flag"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <tree editable="bottom" decoration-danger="discrepancy != 0">
+                            <field name="contractor_id"/>
+                            <field name="product_id"/>
+                            <field name="uom_id"/>
+                            <field name="opening_stock"/>
+                            <field name="issued_this_period"/>
+                            <field name="consumed_this_period"/>
+                            <field name="closing_stock_calculated" readonly="1"/>
+                            <field name="closing_stock_reported"/>
+                            <field name="discrepancy" readonly="1"/>
+                            <field name="discrepancy_notes"/>
+                        </tree>
+                    </field>
+                    <group string="Facilities Manager Notes">
+                        <field name="facilities_manager_notes" nolabel="1"/>
+                    </group>
+                    <group string="HQ Notes">
+                        <field name="hq_notes" nolabel="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_fm_inventory_report_search" model="ir.ui.view">
+        <field name="name">fm.inventory.report.search</field>
+        <field name="model">fm.inventory.report</field>
+        <field name="arch" type="xml">
+            <search string="Quarterly Inventory Reports">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="report_year"/>
+                <filter string="Discrepancies" name="filter_discrepancy" domain="[('discrepancy_flag', '=', True)]"/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Pending HQ" name="filter_pending_hq" domain="[('state', 'in', ('approved', 'hq_acknowledged'))]"/>
+                <filter string="Archived" name="filter_archived" domain="[('state', '=', 'archived')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Year" name="group_year" context="{'group_by': 'report_year'}"/>
+                    <filter string="Period" name="group_period" context="{'group_by': 'report_period'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fm_inventory_report" model="ir.actions.act_window">
+        <field name="name">Quarterly Inventory Reports</field>
+        <field name="res_model">fm.inventory.report</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_fm_inventory_report_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smart_action">
+                Create a new quarterly inventory reconciliation report.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_fm_inventory_report_hq" model="ir.actions.act_window">
+        <field name="name">Inventory Reports</field>
+        <field name="res_model">fm.inventory.report</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_fm_inventory_report_search"/>
+        <field name="domain">[('state', '!=', 'draft')]</field>
+        <field name="context">{'search_default_filter_pending_hq': 1}</field>
+    </record>
+
+</odoo>

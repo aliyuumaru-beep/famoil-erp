@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Phase 6 — Monthly Batch Summary Report -->
+
+    <template id="report_fm_monthly_batch_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>
+                            Monthly Batch <span t-field="doc.name"/>
+                        </h2>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <strong>Branch:</strong> <span t-field="doc.branch_id.name"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Period:</strong>
+                                <span t-esc="doc.period_month"/>/<span t-esc="doc.period_year"/>
+                                | <strong>Status:</strong> <span t-field="doc.state"/>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4">Job Orders</h4>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Contractor</th>
+                                    <th>Job Type</th>
+                                    <th>Completion Date</th>
+                                    <th class="text-end">Total Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.job_order_ids" t-as="jo">
+                                    <td><span t-field="jo.name"/></td>
+                                    <td><span t-field="jo.contractor_id.name"/></td>
+                                    <td>
+                                        <span t-if="jo.complaint_id" t-field="jo.complaint_id.complaint_type"/>
+                                        <span t-else="">Ad-hoc</span>
+                                    </td>
+                                    <td><span t-field="jo.completion_date"/></td>
+                                    <td class="text-end"><span t-field="jo.total_cost"/></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-end"><strong>Grand Total</strong></td>
+                                    <td class="text-end"><strong t-field="doc.total_amount"/></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <h4>Totals by Contractor</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr><th>Contractor</th><th class="text-end">Total Cost</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="doc._get_contractor_totals()" t-as="ct">
+                                            <td><span t-esc="ct['name']"/></td>
+                                            <td class="text-end"><span t-esc="'%.2f' % ct['total']"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <h4>Totals by Job Type</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr><th>Job Type</th><th class="text-end">Total Cost</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="doc._get_job_type_totals()" t-as="jt">
+                                            <td><span t-esc="jt['name']"/></td>
+                                            <td class="text-end"><span t-esc="'%.2f' % jt['total']"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4">Approvals</h4>
+                        <div class="row mt-5 text-center">
+                            <div class="col-3">
+                                <div style="border-top: 1px solid #000; margin-top: 40px;">
+                                    Branch Desk Officer
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div style="border-top: 1px solid #000; margin-top: 40px;">
+                                    HQ Procurement Officer
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div style="border-top: 1px solid #000; margin-top: 40px;">
+                                    Cost Control
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div style="border-top: 1px solid #000; margin-top: 40px;">
+                                    Director
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_fm_monthly_batch" model="ir.actions.report">
+        <field name="name">Monthly Batch Summary Report</field>
+        <field name="model">fm.monthly.batch</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">nadf_facilities_management.report_fm_monthly_batch_document</field>
+        <field name="report_file">nadf_facilities_management.report_fm_monthly_batch_document</field>
+        <field name="print_report_name">'Monthly Batch - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_fm_monthly_batch"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

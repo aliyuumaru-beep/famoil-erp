@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_fm_job_complaint_list" model="ir.ui.view">
+        <field name="name">fm.job.complaint.list</field>
+        <field name="model">fm.job.complaint</field>
+        <field name="arch" type="xml">
+            <tree string="Job Complaints"
+                  decoration-info="state == 'draft'"
+                  decoration-warning="state == 'assigned'"
+                  decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="complaint_date"/>
+                <field name="complaint_type"/>
+                <field name="end_user_id"/>
+                <field name="priority" widget="priority"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'assigned'"
+                       decoration-success="state == 'closed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_fm_job_complaint_form" model="ir.ui.view">
+        <field name="name">fm.job.complaint.form</field>
+        <field name="model">fm.job.complaint</field>
+        <field name="arch" type="xml">
+            <form string="Job Complaint">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,assigned,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="branch_id"/>
+                            <field name="location_detail"/>
+                            <field name="complaint_type"/>
+                            <field name="priority" widget="priority"/>
+                        </group>
+                        <group>
+                            <field name="end_user_id"/>
+                            <field name="complaint_date"/>
+                            <field name="job_order_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_fm_job_complaint_search" model="ir.ui.view">
+        <field name="name">fm.job.complaint.search</field>
+        <field name="model">fm.job.complaint</field>
+        <field name="arch" type="xml">
+            <search string="Job Complaints">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="end_user_id"/>
+                <field name="complaint_type"/>
+                <filter string="Submitted" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Assigned" name="filter_assigned" domain="[('state', '=', 'assigned')]"/>
+                <filter string="Closed" name="filter_closed" domain="[('state', '=', 'closed')]"/>
+                <separator/>
+                <filter string="Urgent / Critical" name="filter_priority"
+                        domain="[('priority', 'in', ('1', '2'))]"/>
+                <filter string="My Complaints" name="filter_my" domain="[('end_user_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Complaint Type" name="group_type" context="{'group_by': 'complaint_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fm_job_complaint" model="ir.actions.act_window">
+        <field name="name">Job Complaints</field>
+        <field name="res_model">fm.job.complaint</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_fm_job_complaint_search"/>
+        <field name="context">{'search_default_filter_my': 0}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smart_action">
+                Log a new facilities maintenance complaint.
+            </p>
+        </field>
+    </record>
+
+</odoo>

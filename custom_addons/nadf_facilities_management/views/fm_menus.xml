@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════ Root application menu ═══════════════════════ -->
+    <menuitem id="menu_fm_root" name="Facilities Management" sequence="76"/>
+
+    <!-- ═══════════════════════ Branch Operations ═══════════════════════ -->
+    <menuitem id="menu_fm_branch_operations" name="Branch Operations"
+              parent="menu_fm_root" sequence="10"/>
+
+    <menuitem id="menu_fm_job_complaint" name="Job Complaints"
+              parent="menu_fm_branch_operations" action="action_fm_job_complaint"
+              groups="nadf_facilities_management.group_fm_end_user" sequence="10"/>
+
+    <menuitem id="menu_fm_job_order" name="Job Orders"
+              parent="menu_fm_branch_operations" action="action_fm_job_order"
+              groups="nadf_facilities_management.group_fm_end_user,nadf_facilities_management.group_fm_tff_contractor"
+              sequence="20"/>
+
+    <menuitem id="menu_fm_consumable_request" name="Consumable Requests"
+              parent="menu_fm_branch_operations" action="action_fm_consumable_request"
+              groups="nadf_facilities_management.group_fm_branch_desk_officer,nadf_facilities_management.group_fm_tff_contractor"
+              sequence="30"/>
+
+    <menuitem id="menu_fm_monthly_batch" name="Monthly Batches"
+              parent="menu_fm_branch_operations" action="action_fm_monthly_batch"
+              groups="nadf_facilities_management.group_fm_branch_desk_officer" sequence="40"/>
+
+    <!-- ═══════════════════════ Preventive Maintenance ═══════════════════════ -->
+    <menuitem id="menu_fm_preventive_maintenance" name="Preventive Maintenance"
+              parent="menu_fm_root" sequence="20"/>
+
+    <menuitem id="menu_fm_maintenance_plan" name="Maintenance Plans"
+              parent="menu_fm_preventive_maintenance" action="action_fm_maintenance_plan"
+              groups="nadf_facilities_management.group_fm_branch_desk_officer" sequence="10"/>
+
+    <menuitem id="menu_fm_maintenance_schedule" name="Maintenance Schedules"
+              parent="menu_fm_preventive_maintenance" action="action_fm_maintenance_schedule"
+              groups="nadf_facilities_management.group_fm_branch_desk_officer,nadf_facilities_management.group_fm_tff_contractor"
+              sequence="20"/>
+
+    <!-- ═══════════════════════ Inventory ═══════════════════════ -->
+    <menuitem id="menu_fm_inventory" name="Inventory"
+              parent="menu_fm_root" sequence="30"/>
+
+    <menuitem id="menu_fm_contractor_inventory" name="Contractor Inventory"
+              parent="menu_fm_inventory" action="action_fm_contractor"
+              groups="nadf_facilities_management.group_fm_branch_desk_officer" sequence="10"/>
+
+    <menuitem id="menu_fm_quarterly_report" name="Quarterly Reports"
+              parent="menu_fm_inventory" action="action_fm_inventory_report"
+              groups="nadf_facilities_management.group_fm_branch_desk_officer,nadf_facilities_management.group_fm_tff_contractor"
+              sequence="20"/>
+
+    <!-- ═══════════════════════ HQ Operations ═══════════════════════ -->
+    <menuitem id="menu_fm_hq_operations" name="HQ Operations"
+              parent="menu_fm_root"
+              groups="nadf_facilities_management.group_fm_hq_procurement_officer,nadf_facilities_management.group_fm_cost_control,nadf_facilities_management.group_fm_director,nadf_facilities_management.group_fm_finance"
+              sequence="40"/>
+
+    <menuitem id="menu_fm_batch_review_hq" name="Batch Review"
+              parent="menu_fm_hq_operations" action="action_fm_monthly_batch_hq"
+              groups="nadf_facilities_management.group_fm_hq_procurement_officer,nadf_facilities_management.group_fm_cost_control,nadf_facilities_management.group_fm_director,nadf_facilities_management.group_fm_finance"
+              sequence="10"/>
+
+    <menuitem id="menu_fm_inventory_report_hq" name="Inventory Reports"
+              parent="menu_fm_hq_operations" action="action_fm_inventory_report_hq"
+              groups="nadf_facilities_management.group_fm_hq_procurement_officer,nadf_facilities_management.group_fm_cost_control,nadf_facilities_management.group_fm_director"
+              sequence="20"/>
+
+    <!-- ═══════════════════════ Configuration ═══════════════════════ -->
+    <menuitem id="menu_fm_configuration" name="Configuration"
+              parent="menu_fm_root"
+              groups="nadf_facilities_management.group_fm_branch_facilities_manager"
+              sequence="100"/>
+
+    <menuitem id="menu_fm_contractor_config" name="Contractors"
+              parent="menu_fm_configuration" action="action_fm_contractor"
+              groups="nadf_facilities_management.group_fm_branch_facilities_manager" sequence="10"/>
+
+</odoo>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Phase 6 — Quarterly Inventory Report -->
+
+    <template id="report_fm_inventory_report_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>
+                            Quarterly Inventory Report <span t-field="doc.name"/>
+                        </h2>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <strong>Branch:</strong> <span t-field="doc.branch_id.name"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Period:</strong> <span t-field="doc.report_period"/>
+                                <span t-esc="doc.report_year"/>
+                                | <strong>Status:</strong> <span t-field="doc.state"/>
+                            </div>
+                        </div>
+
+                        <t t-foreach="doc.contractor_ids" t-as="contractor">
+                            <h4 class="mt-4">
+                                <span t-field="contractor.name"/>
+                            </h4>
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>UoM</th>
+                                        <th class="text-end">Opening</th>
+                                        <th class="text-end">Issued</th>
+                                        <th class="text-end">Consumed</th>
+                                        <th class="text-end">Closing (Reported)</th>
+                                        <th class="text-end">Closing (Calculated)</th>
+                                        <th class="text-end">Discrepancy</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.line_ids.filtered(lambda l: l.contractor_id == contractor)" t-as="line"
+                                        t-attf-class="#{'table-danger' if line.discrepancy else ''}">
+                                        <td><span t-field="line.product_id.name"/></td>
+                                        <td><span t-field="line.uom_id.name"/></td>
+                                        <td class="text-end"><span t-field="line.opening_stock"/></td>
+                                        <td class="text-end"><span t-field="line.issued_this_period"/></td>
+                                        <td class="text-end"><span t-field="line.consumed_this_period"/></td>
+                                        <td class="text-end"><span t-field="line.closing_stock_reported"/></td>
+                                        <td class="text-end"><span t-field="line.closing_stock_calculated"/></td>
+                                        <td class="text-end"><span t-field="line.discrepancy"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <h4 class="mt-4">Certification</h4>
+                        <p>
+                            We certify that the figures above represent a true reconciliation of
+                            contractor-held inventory for the period stated.
+                        </p>
+                        <div class="row mt-5 text-center">
+                            <div class="col-4">
+                                <div style="border-top: 1px solid #000; margin-top: 40px;">
+                                    Branch Desk Officer
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div style="border-top: 1px solid #000; margin-top: 40px;">
+                                    Head of Facilities
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div style="border-top: 1px solid #000; margin-top: 40px;">
+                                    HQ Procurement Officer
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_fm_inventory_report" model="ir.actions.report">
+        <field name="name">Quarterly Inventory Report</field>
+        <field name="model">fm.inventory.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">nadf_facilities_management.report_fm_inventory_report_document</field>
+        <field name="report_file">nadf_facilities_management.report_fm_inventory_report_document</field>
+        <field name="print_report_name">'Inventory Report - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_fm_inventory_report"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Phase 1 — Module category and security groups -->
+    <data noupdate="1">
+
+        <record id="module_category_nadf_facilities" model="ir.module.category">
+            <field name="name">Facilities Management</field>
+            <field name="sequence">76</field>
+        </record>
+
+        <!-- End User: submits job complaints, gives satisfaction feedback -->
+        <record id="group_fm_end_user" model="res.groups">
+            <field name="name">End User</field>
+            <field name="category_id" ref="module_category_nadf_facilities"/>
+        </record>
+
+        <!-- Branch Desk Officer: manages job orders, assigns contractors, closes cases -->
+        <record id="group_fm_branch_desk_officer" model="res.groups">
+            <field name="name">Branch Desk Officer</field>
+            <field name="category_id" ref="module_category_nadf_facilities"/>
+            <field name="implied_ids" eval="[(4, ref('group_fm_end_user'))]"/>
+        </record>
+
+        <!-- Branch Facilities Manager: approves maintenance plans, supervises branch operations -->
+        <record id="group_fm_branch_facilities_manager" model="res.groups">
+            <field name="name">Branch Facilities Manager</field>
+            <field name="category_id" ref="module_category_nadf_facilities"/>
+            <field name="implied_ids" eval="[(4, ref('group_fm_branch_desk_officer'))]"/>
+        </record>
+
+        <!-- TFF / Local Contractor: acknowledges assignments, raises consumable requests, submits reports -->
+        <record id="group_fm_tff_contractor" model="res.groups">
+            <field name="name">TFF / Local Contractor</field>
+            <field name="category_id" ref="module_category_nadf_facilities"/>
+        </record>
+
+        <!-- HQ Procurement Officer: vets and forwards monthly job order compilations -->
+        <record id="group_fm_hq_procurement_officer" model="res.groups">
+            <field name="name">HQ Procurement Officer</field>
+            <field name="category_id" ref="module_category_nadf_facilities"/>
+        </record>
+
+        <!-- Cost Control Officer: reviews/queries/approves forwarded job order batches -->
+        <record id="group_fm_cost_control" model="res.groups">
+            <field name="name">Cost Control Officer</field>
+            <field name="category_id" ref="module_category_nadf_facilities"/>
+        </record>
+
+        <!-- Facilities Director: final approval before Finance -->
+        <record id="group_fm_director" model="res.groups">
+            <field name="name">Facilities Director</field>
+            <field name="category_id" ref="module_category_nadf_facilities"/>
+        </record>
+
+        <!-- Finance Officer: processes contractor payments; read-only on operational records -->
+        <record id="group_fm_finance" model="res.groups">
+            <field name="name">Finance Officer</field>
+            <field name="category_id" ref="module_category_nadf_facilities"/>
+        </record>
+
+    </data>
+
+    <!-- Phase 7 — 7.1: Record rules.
+         DECISION: there is no "branch manager"/"branch officer" field on
+         hr.department itself — branch scoping for the Branch Desk Officer
+         (and, via implied_ids, Branch Facilities Manager) groups is derived
+         from the logged-in user's hr.employee.department_id, matched
+         against the model's branch_id (directly or via a related path).
+         If a user has no hr.employee record, department_id.id evaluates to
+         False, so the rule resolves to ('branch_id', '=', False) — such a
+         user sees only branch-agnostic records (or none, for models where
+         branch_id is required). -->
+    <data>
+
+        <!-- ── Branch Desk Officer / Facilities Manager: branch-scoped ── -->
+
+        <record id="rule_fm_job_complaint_branch" model="ir.rule">
+            <field name="name">FM Job Complaint: own branch only (Desk Officer)</field>
+            <field name="model_id" ref="model_fm_job_complaint"/>
+            <field name="domain_force">[('branch_id', '=', user.employee_id.department_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_branch_desk_officer'))]"/>
+        </record>
+
+        <!-- DECISION: beyond the original rule list — gives an End User
+             (who is not also a Desk Officer) visibility of the complaints
+             they personally raised, consistent with the "create" access
+             already granted to this group in the ACL matrix. -->
+        <record id="rule_fm_job_complaint_end_user" model="ir.rule">
+            <field name="name">FM Job Complaint: own complaints only (End User)</field>
+            <field name="model_id" ref="model_fm_job_complaint"/>
+            <field name="domain_force">[('end_user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_end_user'))]"/>
+        </record>
+
+        <record id="rule_fm_job_order_branch" model="ir.rule">
+            <field name="name">FM Job Order: own branch only (Desk Officer)</field>
+            <field name="model_id" ref="model_fm_job_order"/>
+            <field name="domain_force">[('branch_id', '=', user.employee_id.department_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_branch_desk_officer'))]"/>
+        </record>
+
+        <record id="rule_fm_monthly_batch_branch" model="ir.rule">
+            <field name="name">FM Monthly Batch: own branch only (Desk Officer)</field>
+            <field name="model_id" ref="model_fm_monthly_batch"/>
+            <field name="domain_force">[('branch_id', '=', user.employee_id.department_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_branch_desk_officer'))]"/>
+        </record>
+
+        <record id="rule_fm_maintenance_plan_branch" model="ir.rule">
+            <field name="name">FM Maintenance Plan: own branch only (Desk Officer)</field>
+            <field name="model_id" ref="model_fm_maintenance_plan"/>
+            <field name="domain_force">[('branch_id', '=', user.employee_id.department_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_branch_desk_officer'))]"/>
+        </record>
+
+        <record id="rule_fm_maintenance_schedule_branch" model="ir.rule">
+            <field name="name">FM Maintenance Schedule: own branch only (Desk Officer)</field>
+            <field name="model_id" ref="model_fm_maintenance_schedule"/>
+            <field name="domain_force">[('plan_id.branch_id', '=', user.employee_id.department_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_branch_desk_officer'))]"/>
+        </record>
+
+        <record id="rule_fm_inventory_report_branch" model="ir.rule">
+            <field name="name">FM Inventory Report: own branch only (Desk Officer)</field>
+            <field name="model_id" ref="model_fm_inventory_report"/>
+            <field name="domain_force">[('branch_id', '=', user.employee_id.department_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_branch_desk_officer'))]"/>
+        </record>
+
+        <record id="rule_fm_consumable_request_branch" model="ir.rule">
+            <field name="name">FM Consumable Request: own branch only (Desk Officer)</field>
+            <field name="model_id" ref="model_fm_consumable_request"/>
+            <field name="domain_force">[('branch_id', '=', user.employee_id.department_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_branch_desk_officer'))]"/>
+        </record>
+
+        <!-- DECISION: contractors are not always tied to a branch
+             (contractor_id.branch_id is optional — see fm_contractor.py),
+             so branch-agnostic contractors (branch_id = False) remain
+             visible to every Desk Officer alongside their own branch's
+             contractors. -->
+        <record id="rule_fm_contractor_branch" model="ir.rule">
+            <field name="name">FM Contractor: own branch or branch-agnostic (Desk Officer)</field>
+            <field name="model_id" ref="model_fm_contractor"/>
+            <field name="domain_force">['|', ('branch_id', '=', user.employee_id.department_id.id), ('branch_id', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_branch_desk_officer'))]"/>
+        </record>
+
+        <!-- ── TFF / Local Contractor: own-contractor scoping ──────────── -->
+        <!-- DECISION: fm.contractor.user_ids (Many2many to res.users, added
+             in Phase 2) is the link between a logged-in contractor user and
+             their fm.contractor record. -->
+
+        <record id="rule_fm_job_order_contractor" model="ir.rule">
+            <field name="name">FM Job Order: own contractor only (TFF Contractor)</field>
+            <field name="model_id" ref="model_fm_job_order"/>
+            <field name="domain_force">[('contractor_id.user_ids', 'in', [user.id])]</field>
+            <field name="groups" eval="[(4, ref('group_fm_tff_contractor'))]"/>
+        </record>
+
+        <record id="rule_fm_consumable_request_contractor" model="ir.rule">
+            <field name="name">FM Consumable Request: own contractor only (TFF Contractor)</field>
+            <field name="model_id" ref="model_fm_consumable_request"/>
+            <field name="domain_force">[('contractor_id.user_ids', 'in', [user.id])]</field>
+            <field name="groups" eval="[(4, ref('group_fm_tff_contractor'))]"/>
+        </record>
+
+        <record id="rule_fm_maintenance_schedule_contractor" model="ir.rule">
+            <field name="name">FM Maintenance Schedule: own contractor only (TFF Contractor)</field>
+            <field name="model_id" ref="model_fm_maintenance_schedule"/>
+            <field name="domain_force">[('contractor_id.user_ids', 'in', [user.id])]</field>
+            <field name="groups" eval="[(4, ref('group_fm_tff_contractor'))]"/>
+        </record>
+
+        <!-- DECISION: beyond the original rule list — fm.inventory.report
+             has contractor_ids (Many2many), so a contractor's visibility of
+             quarterly inventory reports is scoped to reports that cover
+             their own contractor record. -->
+        <record id="rule_fm_inventory_report_contractor" model="ir.rule">
+            <field name="name">FM Inventory Report: own contractor only (TFF Contractor)</field>
+            <field name="model_id" ref="model_fm_inventory_report"/>
+            <field name="domain_force">[('contractor_ids.user_ids', 'in', [user.id])]</field>
+            <field name="groups" eval="[(4, ref('group_fm_tff_contractor'))]"/>
+        </record>
+
+        <!-- ── HQ tier: visibility limited to monthly-batch-linked records ── -->
+        <!-- DECISION: HQ Procurement / Cost Control / Director / Finance
+             review records as part of the monthly batch payment cycle, not
+             individual branch operations — so their read access (granted in
+             the ACL matrix) is restricted to records already attached to a
+             monthly batch. fm.monthly.batch itself is intentionally NOT
+             restricted here: HQ-tier users need to see batches across all
+             branches to action the approval chain. fm.maintenance.schedule
+             excludes group_fm_finance, which has no ACL read access on that
+             model. -->
+
+        <record id="rule_fm_job_order_hq_batch" model="ir.rule">
+            <field name="name">FM Job Order: batch-linked only (HQ tier)</field>
+            <field name="model_id" ref="model_fm_job_order"/>
+            <field name="domain_force">[('batch_id', '!=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_hq_procurement_officer')), (4, ref('group_fm_cost_control')), (4, ref('group_fm_director')), (4, ref('group_fm_finance'))]"/>
+        </record>
+
+        <record id="rule_fm_consumable_request_hq_batch" model="ir.rule">
+            <field name="name">FM Consumable Request: batch-linked only (HQ tier)</field>
+            <field name="model_id" ref="model_fm_consumable_request"/>
+            <field name="domain_force">['|', ('job_order_id.batch_id', '!=', False), ('schedule_id.batch_id', '!=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_hq_procurement_officer')), (4, ref('group_fm_cost_control')), (4, ref('group_fm_director')), (4, ref('group_fm_finance'))]"/>
+        </record>
+
+        <record id="rule_fm_maintenance_schedule_hq_batch" model="ir.rule">
+            <field name="name">FM Maintenance Schedule: batch-linked only (HQ tier)</field>
+            <field name="model_id" ref="model_fm_maintenance_schedule"/>
+            <field name="domain_force">[('batch_id', '!=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_fm_hq_procurement_officer')), (4, ref('group_fm_cost_control')), (4, ref('group_fm_director'))]"/>
+        </record>
+
+    </data>
+</odoo>

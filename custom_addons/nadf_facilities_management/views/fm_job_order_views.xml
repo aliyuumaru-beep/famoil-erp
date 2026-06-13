@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════ fm.job.order ═══════════════════════ -->
+
+    <record id="view_fm_job_order_list" model="ir.ui.view">
+        <field name="name">fm.job.order.list</field>
+        <field name="model">fm.job.order</field>
+        <field name="arch" type="xml">
+            <tree string="Job Orders"
+                  decoration-info="state in ('draft', 'assigned')"
+                  decoration-warning="state == 'in_progress'"
+                  decoration-danger="state in ('pending_feedback', 'escalated')"
+                  decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="order_date"/>
+                <field name="contractor_id"/>
+                <field name="desk_officer_id"/>
+                <field name="total_cost" sum="Total"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('draft', 'assigned')"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-danger="state in ('pending_feedback', 'escalated')"
+                       decoration-success="state == 'closed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_fm_job_order_form" model="ir.ui.view">
+        <field name="name">fm.job.order.form</field>
+        <field name="model">fm.job.order</field>
+        <field name="arch" type="xml">
+            <form string="Job Order">
+                <header>
+                    <button name="action_assign" type="object" string="Assign to Contractor"
+                            class="oe_highlight" invisible="state != 'draft'"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_start" type="object" string="Start Work"
+                            class="oe_highlight" invisible="state != 'assigned'"
+                            groups="nadf_facilities_management.group_fm_tff_contractor,nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_submit_completion" type="object" string="Submit Completion Report"
+                            class="oe_highlight" invisible="state != 'in_progress'"
+                            groups="nadf_facilities_management.group_fm_tff_contractor,nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_open_feedback_wizard" type="object" string="Record End-User Feedback"
+                            class="oe_highlight" invisible="state != 'pending_feedback'"
+                            groups="nadf_facilities_management.group_fm_end_user"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'pending_feedback'"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_escalate" type="object" string="Escalate to HQ"
+                            invisible="state in ('closed', 'escalated')"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_add_to_batch" type="object" string="Add to Monthly Batch"
+                            invisible="state != 'closed' or batch_id"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,assigned,in_progress,pending_feedback,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_consumable_requests" type="object"
+                                class="oe_stat_button" icon="fa-list-alt">
+                            <field name="consumable_request_count" widget="statinfo" string="Consumable Requests"/>
+                        </button>
+                        <button name="action_view_batch" type="object"
+                                class="oe_stat_button" icon="fa-money"
+                                invisible="not batch_id">
+                            <div class="o_stat_info">
+                                <field name="batch_id" widget="statinfo" string="Payment Batch" nolabel="1"/>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="branch_id"/>
+                            <field name="contractor_id"/>
+                            <field name="complaint_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="desk_officer_id"/>
+                            <field name="order_date"/>
+                            <field name="total_cost"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Job Details" name="job_details">
+                            <group>
+                                <field name="job_description" nolabel="1"/>
+                            </group>
+                            <group string="Contractor Assessment">
+                                <field name="assessment_notes" nolabel="1"/>
+                            </group>
+                        </page>
+                        <page string="Completion &amp; Feedback" name="completion">
+                            <group>
+                                <group>
+                                    <field name="completion_date" readonly="1"/>
+                                    <field name="satisfaction_state" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Completion Report">
+                                <field name="completion_report" nolabel="1"/>
+                            </group>
+                            <group string="Satisfaction Notes">
+                                <field name="satisfaction_notes" nolabel="1" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_fm_job_order_kanban" model="ir.ui.view">
+        <field name="name">fm.job.order.kanban</field>
+        <field name="model">fm.job.order</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column" default_group_by="state">
+                <field name="name"/>
+                <field name="contractor_id"/>
+                <field name="branch_id"/>
+                <field name="state"/>
+                <field name="total_cost"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click o_kanban_record border-start border-4
+                            #{record.state.raw_value == 'closed' and 'border-success'
+                              or record.state.raw_value == 'in_progress' and 'border-warning'
+                              or record.state.raw_value == 'pending_feedback' and 'border-danger'
+                              or 'border-secondary'} ps-2">
+                            <div class="oe_kanban_content">
+                                <strong><field name="name"/></strong>
+                                <div><field name="contractor_id"/></div>
+                                <div class="text-muted"><field name="branch_id"/></div>
+                                <div>
+                                    <field name="state" widget="label_selection"
+                                           options="{'classes': {'draft': 'default', 'assigned': 'info', 'in_progress': 'warning', 'pending_feedback': 'danger', 'closed': 'success', 'escalated': 'danger'}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_fm_job_order_search" model="ir.ui.view">
+        <field name="name">fm.job.order.search</field>
+        <field name="model">fm.job.order</field>
+        <field name="arch" type="xml">
+            <search string="Job Orders">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="contractor_id"/>
+                <filter string="Open" name="filter_open" domain="[('state', 'not in', ('closed',))]"/>
+                <filter string="Pending Feedback" name="filter_pending_feedback" domain="[('state', '=', 'pending_feedback')]"/>
+                <filter string="Closed" name="filter_closed" domain="[('state', '=', 'closed')]"/>
+                <filter string="Escalated" name="filter_escalated" domain="[('state', '=', 'escalated')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Contractor" name="group_contractor" context="{'group_by': 'contractor_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fm_job_order" model="ir.actions.act_window">
+        <field name="name">Job Orders</field>
+        <field name="res_model">fm.job.order</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_fm_job_order_search"/>
+        <field name="context">{'search_default_filter_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smart_action">
+                Create a new Job Order to dispatch a contractor.
+            </p>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════ fm.monthly.batch ═══════════════════════ -->
+
+    <record id="view_fm_monthly_batch_list" model="ir.ui.view">
+        <field name="name">fm.monthly.batch.list</field>
+        <field name="model">fm.monthly.batch</field>
+        <field name="arch" type="xml">
+            <tree string="Monthly Batches"
+                  decoration-muted="state == 'paid'"
+                  decoration-danger="state == 'returned_branch'">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="period_month"/>
+                <field name="period_year"/>
+                <field name="total_amount" sum="Total"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('draft', 'submitted_hq')"
+                       decoration-warning="state in ('hq_review', 'returned_branch', 'cost_control', 'director_approval', 'finance')"
+                       decoration-success="state == 'paid'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_fm_monthly_batch_form" model="ir.ui.view">
+        <field name="name">fm.monthly.batch.form</field>
+        <field name="model">fm.monthly.batch</field>
+        <field name="arch" type="xml">
+            <form string="Monthly Batch">
+                <header>
+                    <button name="action_submit_to_hq" type="object" string="Submit to HQ"
+                            class="oe_highlight" invisible="state not in ('draft', 'returned_branch')"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_hq_approve" type="object" string="HQ Approve"
+                            class="oe_highlight" invisible="state not in ('submitted_hq', 'hq_review')"
+                            groups="nadf_facilities_management.group_fm_hq_procurement_officer"/>
+                    <button name="action_hq_return" type="object" string="Return to Branch"
+                            invisible="state != 'submitted_hq'"
+                            groups="nadf_facilities_management.group_fm_hq_procurement_officer"/>
+                    <button name="action_cost_control_approve" type="object" string="Cost Control Approve"
+                            class="oe_highlight" invisible="state != 'cost_control'"
+                            groups="nadf_facilities_management.group_fm_cost_control"/>
+                    <button name="action_cost_control_query" type="object" string="Query (Return to HQ)"
+                            invisible="state != 'cost_control'"
+                            groups="nadf_facilities_management.group_fm_cost_control"/>
+                    <button name="action_director_approve" type="object" string="Director Approve"
+                            class="oe_highlight" invisible="state != 'director_approval'"
+                            groups="nadf_facilities_management.group_fm_director"/>
+                    <button name="action_finance_pay" type="object" string="Mark Paid"
+                            class="oe_highlight" invisible="state != 'finance'"
+                            groups="nadf_facilities_management.group_fm_finance"/>
+                    <button name="action_finance_return" type="object" string="Return to Director"
+                            invisible="state != 'finance'"
+                            groups="nadf_facilities_management.group_fm_finance"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted_hq,cost_control,director_approval,finance,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="branch_id"/>
+                            <field name="period_month"/>
+                            <field name="period_year"/>
+                        </group>
+                        <group>
+                            <field name="hq_officer_id"/>
+                            <field name="total_amount"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Job Orders" name="job_orders">
+                            <field name="job_order_ids"
+                                   domain="[('state', '=', 'closed'), ('branch_id', '=', branch_id), '|', ('batch_id', '=', False), ('batch_id', '=', id)]">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="contractor_id"/>
+                                    <field name="completion_date"/>
+                                    <field name="total_cost"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Maintenance Schedule Entries" name="schedule_entries">
+                            <field name="schedule_ids"
+                                   domain="[('state', '=', 'signed_off'), ('plan_id.branch_id', '=', branch_id), '|', ('batch_id', '=', False), ('batch_id', '=', id)]">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="equipment_name"/>
+                                    <field name="contractor_id"/>
+                                    <field name="completion_date"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="HQ Notes" name="hq_notes"
+                              groups="nadf_facilities_management.group_fm_hq_procurement_officer,nadf_facilities_management.group_fm_cost_control,nadf_facilities_management.group_fm_director,nadf_facilities_management.group_fm_finance">
+                            <group>
+                                <field name="hq_notes"/>
+                                <field name="cost_control_notes"/>
+                                <field name="director_notes"/>
+                                <field name="finance_notes"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_fm_monthly_batch_search" model="ir.ui.view">
+        <field name="name">fm.monthly.batch.search</field>
+        <field name="model">fm.monthly.batch</field>
+        <field name="arch" type="xml">
+            <search string="Monthly Batches">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="In Progress" name="filter_in_progress" domain="[('state', 'not in', ('draft', 'paid'))]"/>
+                <filter string="Paid" name="filter_paid" domain="[('state', '=', 'paid')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Period Year" name="group_year" context="{'group_by': 'period_year'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fm_monthly_batch" model="ir.actions.act_window">
+        <field name="name">Monthly Batches</field>
+        <field name="res_model">fm.monthly.batch</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_fm_monthly_batch_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smart_action">
+                Create a new monthly job order payment batch.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_fm_monthly_batch_hq" model="ir.actions.act_window">
+        <field name="name">Batch Review</field>
+        <field name="res_model">fm.monthly.batch</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_fm_monthly_batch_search"/>
+        <field name="domain">[('state', '!=', 'draft')]</field>
+        <field name="context">{'search_default_filter_in_progress': 1}</field>
+    </record>
+
+</odoo>

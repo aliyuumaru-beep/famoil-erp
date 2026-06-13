@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Phase 6 — Job Order Report -->
+
+    <template id="report_fm_job_order_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>
+                            Job Order <span t-field="doc.name"/>
+                        </h2>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <strong>Branch:</strong> <span t-field="doc.branch_id.name"/><br/>
+                                <strong>Order Date:</strong> <span t-field="doc.order_date"/><br/>
+                                <strong>Status:</strong> <span t-field="doc.state"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Contractor:</strong> <span t-field="doc.contractor_id.name"/><br/>
+                                <strong>Desk Officer:</strong> <span t-field="doc.desk_officer_id.name"/>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4">Source Complaint</h4>
+                        <div t-if="doc.complaint_id">
+                            <strong>Reference:</strong> <span t-field="doc.complaint_id.name"/><br/>
+                            <strong>Type:</strong> <span t-field="doc.complaint_id.complaint_type"/><br/>
+                            <strong>Location:</strong> <span t-field="doc.complaint_id.location_detail"/><br/>
+                            <strong>Description:</strong> <span t-field="doc.complaint_id.description"/>
+                        </div>
+                        <p t-else="">Ad-hoc job order — no source complaint.</p>
+
+                        <h4 class="mt-4">Job Description</h4>
+                        <p t-field="doc.job_description"/>
+
+                        <h4 t-if="doc.assessment_notes" class="mt-4">Contractor Assessment</h4>
+                        <p t-if="doc.assessment_notes" t-field="doc.assessment_notes"/>
+
+                        <h4 class="mt-4">Consumables Approved</h4>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Request</th>
+                                    <th>Product</th>
+                                    <th class="text-end">Qty Approved</th>
+                                    <th>UoM</th>
+                                    <th class="text-end">Unit Cost</th>
+                                    <th class="text-end">Total Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.consumable_request_ids.filtered(lambda r: r.state == 'approved')" t-as="request">
+                                    <tr t-foreach="request.line_ids" t-as="line">
+                                        <td><span t-field="request.name"/></td>
+                                        <td><span t-field="line.product_id.name"/></td>
+                                        <td class="text-end"><span t-field="line.quantity_approved"/></td>
+                                        <td><span t-field="line.uom_id.name"/></td>
+                                        <td class="text-end"><span t-field="line.unit_cost"/></td>
+                                        <td class="text-end"><span t-field="line.total_cost"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" class="text-end"><strong>Total</strong></td>
+                                    <td class="text-end"><strong t-field="doc.total_cost"/></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <h4 class="mt-4">Completion</h4>
+                        <p>
+                            <strong>Completion Date:</strong> <span t-field="doc.completion_date"/>
+                        </p>
+                        <p t-field="doc.completion_report"/>
+
+                        <h4 class="mt-4">Sign-off</h4>
+                        <div class="row mt-5 text-center">
+                            <div class="col-4">
+                                <div style="border-top: 1px solid #000; margin-top: 40px;">
+                                    Branch Desk Officer
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div style="border-top: 1px solid #000; margin-top: 40px;">
+                                    Contractor Representative
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div style="border-top: 1px solid #000; margin-top: 40px;">
+                                    End User
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_fm_job_order" model="ir.actions.report">
+        <field name="name">Job Order Report</field>
+        <field name="model">fm.job.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">nadf_facilities_management.report_fm_job_order_document</field>
+        <field name="report_file">nadf_facilities_management.report_fm_job_order_document</field>
+        <field name="print_report_name">'Job Order - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_fm_job_order"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

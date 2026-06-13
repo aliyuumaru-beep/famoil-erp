@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_fm_satisfaction_feedback_wizard_form" model="ir.ui.view">
+        <field name="name">fm.satisfaction.feedback.wizard.form</field>
+        <field name="model">fm.satisfaction.feedback.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Satisfaction Feedback">
+                <group>
+                    <field name="job_order_id" readonly="1"/>
+                    <field name="end_user_id" readonly="1"/>
+                    <field name="satisfaction" widget="radio"/>
+                </group>
+                <group string="Feedback Notes">
+                    <field name="feedback_notes" nolabel="1"/>
+                </group>
+                <footer>
+                    <button name="action_submit_feedback" type="object" string="Submit Feedback" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

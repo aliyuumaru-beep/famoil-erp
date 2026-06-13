@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_fm_maintenance_schedule_list" model="ir.ui.view">
+        <field name="name">fm.maintenance.schedule.list</field>
+        <field name="model">fm.maintenance.schedule</field>
+        <field name="arch" type="xml">
+            <tree string="Maintenance Schedules"
+                  decoration-info="state in ('scheduled', 'assigned', 'acknowledged')"
+                  decoration-warning="state in ('in_progress', 'remediation')"
+                  decoration-success="state in ('completed', 'signed_off')">
+                <field name="name"/>
+                <field name="plan_id"/>
+                <field name="equipment_name"/>
+                <field name="equipment_type"/>
+                <field name="scheduled_date"/>
+                <field name="contractor_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('scheduled', 'assigned', 'acknowledged')"
+                       decoration-warning="state in ('in_progress', 'remediation')"
+                       decoration-success="state in ('completed', 'signed_off')"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_fm_maintenance_schedule_form" model="ir.ui.view">
+        <field name="name">fm.maintenance.schedule.form</field>
+        <field name="model">fm.maintenance.schedule</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance Schedule Entry">
+                <header>
+                    <button name="action_assign" type="object" string="Assign to Contractor"
+                            class="oe_highlight" invisible="state != 'scheduled'"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_acknowledge" type="object" string="Acknowledge"
+                            class="oe_highlight" invisible="state != 'assigned'"
+                            groups="nadf_facilities_management.group_fm_tff_contractor"/>
+                    <button name="action_start" type="object" string="Start Work"
+                            class="oe_highlight" invisible="state != 'acknowledged'"
+                            groups="nadf_facilities_management.group_fm_tff_contractor"/>
+                    <button name="action_submit_completion" type="object" string="Submit Completion Report"
+                            class="oe_highlight" invisible="state not in ('in_progress', 'remediation')"
+                            groups="nadf_facilities_management.group_fm_tff_contractor"/>
+                    <button name="action_sign_off" type="object" string="Sign Off"
+                            class="oe_highlight" invisible="state != 'completed'"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_request_remediation" type="object" string="Request Remediation"
+                            invisible="state != 'completed'"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <button name="action_add_to_batch" type="object" string="Add to Monthly Batch"
+                            invisible="state != 'signed_off' or batch_id"
+                            groups="nadf_facilities_management.group_fm_branch_desk_officer"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="scheduled,assigned,acknowledged,in_progress,completed,signed_off"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_consumable_requests" type="object"
+                                class="oe_stat_button" icon="fa-list-alt">
+                            <field name="consumable_request_count" widget="statinfo" string="Consumable Requests"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="plan_id"/>
+                            <field name="equipment_name"/>
+                            <field name="equipment_type"/>
+                            <field name="scheduled_date"/>
+                            <field name="contractor_id"/>
+                        </group>
+                        <group>
+                            <field name="assigned_date" readonly="1"/>
+                            <field name="acknowledgement_date" readonly="1"/>
+                            <field name="completion_date" readonly="1"/>
+                            <field name="sign_off_by" readonly="1"/>
+                            <field name="sign_off_date" readonly="1"/>
+                            <field name="batch_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Completion Report">
+                        <field name="completion_report" nolabel="1"/>
+                    </group>
+                    <group string="Desk Officer Notes">
+                        <field name="desk_officer_notes" nolabel="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_fm_maintenance_schedule_kanban" model="ir.ui.view">
+        <field name="name">fm.maintenance.schedule.kanban</field>
+        <field name="model">fm.maintenance.schedule</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column" default_group_by="state">
+                <field name="name"/>
+                <field name="equipment_name"/>
+                <field name="contractor_id"/>
+                <field name="scheduled_date"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click o_kanban_record border-start border-4
+                            #{record.state.raw_value in ('completed', 'signed_off') and 'border-success'
+                              or record.state.raw_value in ('in_progress', 'remediation') and 'border-warning'
+                              or 'border-info'} ps-2">
+                            <div class="oe_kanban_content">
+                                <strong><field name="name"/></strong>
+                                <div><field name="equipment_name"/></div>
+                                <div class="text-muted"><field name="contractor_id"/></div>
+                                <div><field name="scheduled_date"/></div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_fm_maintenance_schedule_search" model="ir.ui.view">
+        <field name="name">fm.maintenance.schedule.search</field>
+        <field name="model">fm.maintenance.schedule</field>
+        <field name="arch" type="xml">
+            <search string="Maintenance Schedules">
+                <field name="name"/>
+                <field name="plan_id"/>
+                <field name="equipment_name"/>
+                <field name="contractor_id"/>
+                <filter string="Due / Scheduled" name="filter_scheduled" domain="[('state', '=', 'scheduled')]"/>
+                <filter string="In Progress" name="filter_in_progress" domain="[('state', 'in', ('assigned', 'acknowledged', 'in_progress'))]"/>
+                <filter string="Pending Sign-off" name="filter_completed" domain="[('state', '=', 'completed')]"/>
+                <filter string="Remediation" name="filter_remediation" domain="[('state', '=', 'remediation')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Plan" name="group_plan" context="{'group_by': 'plan_id'}"/>
+                    <filter string="Contractor" name="group_contractor" context="{'group_by': 'contractor_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Equipment Type" name="group_equipment_type" context="{'group_by': 'equipment_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fm_maintenance_schedule" model="ir.actions.act_window">
+        <field name="name">Maintenance Schedules</field>
+        <field name="res_model">fm.maintenance.schedule</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_fm_maintenance_schedule_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smart_action">
+                Create a new equipment maintenance schedule entry.
+            </p>
+        </field>
+    </record>
+
+</odoo>

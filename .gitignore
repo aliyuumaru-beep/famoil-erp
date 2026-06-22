@@ -30,3 +30,6 @@ logs/*.log
 # Legacy template directory (migrated to csv_templates/)
 templates/
 
+
+# Layering guard — NADF (Layer 4) modules belong in nadf_erp, not here (M-C 2026-06-22)
+custom_addons/nadf_*

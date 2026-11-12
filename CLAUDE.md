@@ -1,6 +1,6 @@
 # CLAUDE.md — Software Factory Session Anchor
 # FamOil Industrial ERP Framework
-# Version: 1.6.0 | Last updated: 2026-06-01
+# Version: 1.7.0 | Last updated: 2026-06-04
 
 > This file is read automatically by Claude Code at the start of every session.
 > It is the single source of truth for project state. Keep it current.
@@ -36,7 +36,23 @@ python odoo/odoo-bin -d Famoil -r odoo \
 
 **Current phase:** Phase 4 — COMPLETE. All phases 1–4 operational. Restore validation COMPLETE.
 
-**Current active phase:** Sales Workflow Maturity.
+**Current active phase:** Dispatch & Logistics Maturity.
+
+**Sales workflow progress — COMPLETE (v1.16.0):**
+- [x] Product list prices — RSO 25L ₦127k, RSO 5L ₦33k, Soya Cake ₦500/kg, Crude Soya Oil ₦4,500/kg
+- [x] Invoice policy — delivery (invoice only on confirmed delivery, not on SO)
+- [x] Demo products cleaned — 45 demo furniture products disabled from sales
+- [x] Distributor pricelist — "Distributor NGN (5% Discount)" id=4 (bakes 5% into price_unit)
+- [x] Customers — Frank Oil Distributor (id=138), Sahad Oil Traders (id=139), Reno Hotel (id=140)
+- [x] Customer terms — Sahad: 30-day credit (id=14); Frank Oil + Reno: Immediate Payment (id=1)
+- [x] Discount column — enabled on SO lines (group_discount_per_so_line)
+- [x] RSO standard costs — RSO 25L ₦97,692/unit; RSO 5L ₦25,385/unit
+- [x] Credit limit — Sahad ₦1,500,000 enforced via base.automation; use_partner_credit_limit=True
+- [x] End-to-end SO → 3-step delivery (pick/pack/ship) → invoice → payment: VALIDATED
+  - S00038 / Frank Oil / 5 × RSO 25L / INV/2026/00006 / PBNK1/2026/00004 / ₦648,494
+- [x] Credit limit enforcement validated:
+  - Test B (10 units, ₦1,296,988): CONFIRMED ✓
+  - Test A (12 units, ₦1,556,385): BLOCKED — correct UserError with full breakdown ✓
 
 **Procurement maturity progress:**
 - [x] PO approval workflow — CONFIGURED & VALIDATED (two-step, ₦200,000 threshold)
@@ -45,29 +61,16 @@ python odoo/odoo-bin -d Famoil -r odoo \
 - [x] Landed costs — CONFIGURED: stock_landed_costs installed; account 570000 created; 2 service products; stock_landed_cost_po_check module active
 - [ ] Procurement traceability validation
 
-**Sales workflow progress:**
-- [x] Product list prices — set at 30% markup on cost (RSO 25L ₦127k, RSO 5L ₦24k, Soya Cake ₦500/kg, Crude Soya Oil ₦4,500/kg)
-- [x] Invoice policy — delivery (invoice only on confirmed delivery, not on SO)
-- [x] Demo products cleaned — 45 demo furniture products disabled from sales
-- [x] Distributor pricelist — "Distributor NGN (5% Discount)" created
-- [x] Customers — Frank Oil Distributor, Sahad Oil Traders, Reno Hotel
-- [x] Customer terms — Sahad: 30-day credit; Frank Oil + Reno: Immediate Payment
-- [x] Discount column — enabled on SO lines (group_discount_per_so_line)
-- [x] End-to-end SO → 3-step delivery → invoice flow: VALIDATED
-- [ ] SO → Invoice → Payment end-to-end with real stock (requires FG stock)
-- [ ] Credit limit control for Sahad (not native in Community — design decision pending)
-
-**Known pricing gaps:**
-- 5L Jerrycan cost = ₦0 (placeholder) — RSO 5L price understated; update when real cost known
-- 1L Jerrycan + Labels = ₦0 (placeholder)
+**Known pricing gaps (non-blocking):**
+- RSO 5L price ₦33k reflects updated cost; 1L Jerrycan + Labels still ₦0 placeholder
+- RSO standard costs are reverse-markup estimates — will be overwritten by first real MO valuation
 
 **Priority order:**
-1. Sales workflow maturity (current)
-2. Dispatch & logistics maturity
-3. Maintenance maturity
-4. Procurement traceability validation
-5. Barcode & warehouse operations
-6. Off-machine survivability activation (rclone + Google Drive)
+1. Dispatch & logistics maturity (current)
+2. Maintenance maturity
+3. Procurement traceability validation
+4. Barcode & warehouse operations
+5. Off-machine survivability activation (rclone + Google Drive)
 7. Quarterly restore governance
 8. Multi-template expansion
 
@@ -133,16 +136,26 @@ See: `docs/operations/RESTORE_DRILL.md` for full drill reports.
 
 **Stage-specific manufacture routes (as of v1.14.0):**
 
-| Route | ID | Rule | Op Type | Op Type ID | Product |
-|-------|----|------|---------|------------|---------|
-| Extraction Manufacture | 20 | 43 | Extraction Manufacturing | 79 | Crude Soya Oil |
-| Refining Manufacture | 21 | 44 | Refining Manufacturing | 127 | Refined Soya Oil |
-| Packaging Manufacture | 22 | 45 | Packaging Manufacturing | 128 | RSO 25L/5L/1L |
+| Route | ID | Rule | Op Type | Op Type ID | Product | procure_method |
+|-------|----|------|---------|------------|---------|----------------|
+| Extraction Manufacture | 20 | 43 | Extraction Manufacturing | 79 | Crude Soya Oil | make_to_stock |
+| Refining Manufacture | 21 | 44 | Refining Manufacturing | 127 | Refined Soya Oil | make_to_stock |
+| Packaging Manufacture | 22 | 45 | Packaging Manufacturing | 128 | RSO 25L/5L/1L | make_to_stock |
 
-**Replenishment now creates MOs with correct op type and BOM automatically.**
-Generic Manufacture route (id=9) retained for system use but removed from all FamOil products.
+**Stage-specific MTO routes (as of v1.15.0) — demand-driven, propagate_cancel=True:**
 
-**Op type 16 ("Manufacturing"):** CHIC1-era orphan — safe to archive, pending operator approval.
+| Route | ID | Rule | Op Type | Op Type ID | Product | procure_method |
+|-------|----|------|---------|------------|---------|----------------|
+| Extraction MTO | 23 | 46 | Extraction Manufacturing | 79 | Crude Soya Oil | make_to_order |
+| Refining MTO | 26 | 49 | Refining Manufacturing | 127 | Refined Soya Oil | make_to_order |
+| Packaging MTO | 27 | 50 | Packaging Manufacturing | 128 | RSO 25L/5L/1L | make_to_order |
+
+**Both route types coexist per product:**
+- Manufacture routes (make_to_stock): batch production runs / scheduler replenishment
+- MTO routes (make_to_order): demand-driven MOs linked to specific SO/downstream MO; usable by inventory manager via Replenish on Order
+
+**Generic Manufacture route (id=9):** retained for system use but removed from all FamOil products.
+**Op type 16 ("Manufacturing"):** CHIC1-era orphan — archived.
 
 ---
 

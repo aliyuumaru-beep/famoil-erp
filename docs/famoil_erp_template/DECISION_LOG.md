@@ -310,3 +310,31 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 **Revisit Conditions:**
 - If a fourth manufacturing stage is added (e.g., blending, flavouring) — create a fourth operation type.
 - If the business wants unified MO numbering across all stages — merge operation types and manage source/destination at MO level.
+
+---
+
+## DEC-013 — Credit Limit Enforcement: base.automation vs Custom Module
+
+**Decision:** Implement Sahad Oil Traders credit limit enforcement using native `res.partner.credit_limit`, `use_partner_credit_limit`, and a `base.automation` server action triggered on SO confirmation — no custom Python module.
+
+**Rationale:**
+- Odoo 17 Community exposes `credit_limit` and `use_partner_credit_limit` fields natively on `res.partner` (from `account` module).
+- `partner.credit` (outstanding receivables) is also native — no custom aggregation needed.
+- `base.automation` with a Python code action can raise `UserError` to block SO confirmation, matching Enterprise behaviour.
+- The enforcement accumulates three exposure components: (1) unpaid invoices, (2) confirmed unfulfilled SOs, (3) current SO — giving accurate total credit exposure.
+
+**Alternatives Considered:**
+- Custom module (e.g., `sale_partner_credit_limit`): full OCA module exists but adds upgrade risk and dependency.
+- Manual process (alert only, no block): unreliable — operators can miss warnings.
+- OCA `sale_credit_limit` module: not verified for Odoo 17 Community at time of decision.
+
+**Trade-offs:**
+- `base.automation` code runs in superuser context — no per-user bypass. Cannot distinguish between "approved override" and "normal confirmation".
+- If credit limit needs to be raised mid-session, a manager must update the partner record directly.
+- No warning-only mode — enforcement is hard block only.
+
+**Validation:** Tested 2026-06-04. Test B (10 units, ₦1.3M < ₦1.5M limit): CONFIRMED. Test A (12 units, ₦1.56M + ₦1.3M pending): BLOCKED with full ₦ breakdown message.
+
+**Revisit Conditions:**
+- If a manager override workflow is needed — consider custom module with approval mechanism.
+- If Sahad adds a second partner contact requiring separate credit tracking — review partner hierarchy.

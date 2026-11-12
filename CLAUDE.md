@@ -1,6 +1,6 @@
 # CLAUDE.md — Software Factory Session Anchor
 # FamOil Industrial ERP Framework
-# Version: 1.2.0 | Last updated: 2026-05-28
+# Version: 1.6.0 | Last updated: 2026-06-01
 
 > This file is read automatically by Claude Code at the start of every session.
 > It is the single source of truth for project state. Keep it current.
@@ -36,13 +36,36 @@ python odoo/odoo-bin -d Famoil -r odoo \
 
 **Current phase:** Phase 4 — COMPLETE. All phases 1–4 operational. Restore validation COMPLETE.
 
-**Current active phase:** Procurement Maturity & Operational Workflow Expansion.
+**Current active phase:** Sales Workflow Maturity.
+
+**Procurement maturity progress:**
+- [x] PO approval workflow — CONFIGURED & VALIDATED (two-step, ₦200,000 threshold)
+- [x] RFQ workflow — CONFIGURED & VALIDATED (draft→sent→to approve→purchase)
+- [x] Vendor pricelists — 3 SoyaBean vendors configured (Kaduna ₦710, Niger ₦705, Benue ₦718)
+- [x] Landed costs — CONFIGURED: stock_landed_costs installed; account 570000 created; 2 service products; stock_landed_cost_po_check module active
+- [ ] Procurement traceability validation
+
+**Sales workflow progress:**
+- [x] Product list prices — set at 30% markup on cost (RSO 25L ₦127k, RSO 5L ₦24k, Soya Cake ₦500/kg, Crude Soya Oil ₦4,500/kg)
+- [x] Invoice policy — delivery (invoice only on confirmed delivery, not on SO)
+- [x] Demo products cleaned — 45 demo furniture products disabled from sales
+- [x] Distributor pricelist — "Distributor NGN (5% Discount)" created
+- [x] Customers — Frank Oil Distributor, Sahad Oil Traders, Reno Hotel
+- [x] Customer terms — Sahad: 30-day credit; Frank Oil + Reno: Immediate Payment
+- [x] Discount column — enabled on SO lines (group_discount_per_so_line)
+- [x] End-to-end SO → 3-step delivery → invoice flow: VALIDATED
+- [ ] SO → Invoice → Payment end-to-end with real stock (requires FG stock)
+- [ ] Credit limit control for Sahad (not native in Community — design decision pending)
+
+**Known pricing gaps:**
+- 5L Jerrycan cost = ₦0 (placeholder) — RSO 5L price understated; update when real cost known
+- 1L Jerrycan + Labels = ₦0 (placeholder)
 
 **Priority order:**
-1. Procurement maturity (RFQs, approvals, vendor management, landed costs)
-2. Sales workflow maturity
-3. Dispatch & logistics maturity
-4. Maintenance maturity
+1. Sales workflow maturity (current)
+2. Dispatch & logistics maturity
+3. Maintenance maturity
+4. Procurement traceability validation
 5. Barcode & warehouse operations
 6. Off-machine survivability activation (rclone + Google Drive)
 7. Quarterly restore governance
@@ -106,6 +129,23 @@ See: `docs/operations/RESTORE_DRILL.md` for full drill reports.
 
 ---
 
+## MANUFACTURING ROUTE ARCHITECTURE
+
+**Stage-specific manufacture routes (as of v1.14.0):**
+
+| Route | ID | Rule | Op Type | Op Type ID | Product |
+|-------|----|------|---------|------------|---------|
+| Extraction Manufacture | 20 | 43 | Extraction Manufacturing | 79 | Crude Soya Oil |
+| Refining Manufacture | 21 | 44 | Refining Manufacturing | 127 | Refined Soya Oil |
+| Packaging Manufacture | 22 | 45 | Packaging Manufacturing | 128 | RSO 25L/5L/1L |
+
+**Replenishment now creates MOs with correct op type and BOM automatically.**
+Generic Manufacture route (id=9) retained for system use but removed from all FamOil products.
+
+**Op type 16 ("Manufacturing"):** CHIC1-era orphan — safe to archive, pending operator approval.
+
+---
+
 ## MANUFACTURING CONTEXT
 
 **3-Stage Production Pipeline:**
@@ -160,7 +200,7 @@ Deodorization (id=23)
 - DO NOT commit ERP backup archives (SQL, filestore, tar.gz) to the repository — only `backups/BACKUP_MANIFEST.md` metadata is tracked
 
 **Backup status:**
-- Last backup: 2026-05-28 18:14 — `/Users/mac/odoo_backups/famoil_20260528_1814/`
+- Last backup: 2026-05-29 07:53 — `/Users/mac/odoo_backups/famoil_20260529_0753/`
 - Backup format: `pg_dump -F c` (custom format — `Famoil.dump`, 6MB) — resolves ir_attachment FK issue
 - Restore script: `scripts/restore_famoil.sh` — full restore + validation in one script
 - Governance bridge: `backups/BACKUP_MANIFEST.md` (must be committed after each run)
@@ -195,12 +235,14 @@ Deodorization (id=23)
 > Full log: see docs/famoil_erp_template/KNOWN_ISSUES.md (13 issues documented)
 
 **Active open issues:**
-- Demo warehouses (Chicago 1, YourCompany) not yet archived
-- Demo company "My Company (San Francisco)" not archived
+- Demo company "My Company (San Francisco)" not archived (warehouse archived; company still active)
 - Cost method not set on Raw Materials category
 - Consumables (Hexane, Lubricant Oil) missing from BOM 10
 - Spare parts/consumables list_price = ₦1 (placeholder)
 - Off-machine backup sync not yet activated (rclone not installed)
+- 5L Jerrycan, 1L Jerrycan, and Labels have ₦0 cost — RSO 5L/1L prices understated
+- Sahad Oil Traders credit limit not enforced (no native credit limit in Odoo Community)
+- GitHub ruleset gaps: 0 required reviewers, all merge methods, claude-review not required (G-5/G-6)
 
 ---
 

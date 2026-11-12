@@ -193,6 +193,67 @@ access through the Odoo UI validated.
 
 ---
 
+## Post-Phase 4 — Manufacturing Route Architecture Remediation
+
+**Completed:** 2026-06-01
+
+### Incident
+
+CW/MO/00006 was created via Replenish → Manufacturing with no BOM, no components,
+and no SoyaBean consumption. 230.12 kg Crude Soya Oil entered stock at ₦0 cost.
+Two additional phantom MOs (CW/MO/00007, CW/MO/00008) were also created in confirmed
+state from the same replenishment session.
+
+### Root Cause
+
+The Manufacture route (id=9) rule 29 was hardwired to op type 24 (generic "Manufacturing").
+All stage-specific BOMs require specific op types (BOM 10→79, BOM 15→127, BOMs 208/209/210→128).
+When replenishment triggered op type 24, BOM lookup returned no match. MOs were created
+without BOMs or components. The warehouse `manu_type_id` was set to 24 from initial setup,
+never updated when stage-specific op types were created in Phase 2.
+
+### Corrective Actions
+
+- CW/MO/00006: inventory adjustment (move 376) removed phantom 230.12 kg — already done
+  by operator before investigation. Stock corrected.
+- CW/MO/00007 and CW/MO/00008: confirmed as phantom (no BOM, no components, op type 24,
+  origin=Manual Replenishment). Cancelled via `action_cancel()`.
+
+### Preventive Architecture
+
+Three stage-specific manufacture routes created, replacing the generic Manufacture route
+for all FamOil manufacturing products:
+
+| Route | ID | Rule | Op Type | Op Type ID |
+|-------|----|------|---------|------------|
+| Extraction Manufacture | 20 | 43 | Extraction Manufacturing | 79 |
+| Refining Manufacture   | 21 | 44 | Refining Manufacturing   | 127 |
+| Packaging Manufacture  | 22 | 45 | Packaging Manufacturing  | 128 |
+
+Product route assignments:
+
+| Product | Route |
+|---------|-------|
+| Crude Soya Oil | Extraction Manufacture only |
+| Refined Soya Oil | Refining Manufacture only |
+| RSO 25L / 5L / 1L | Packaging Manufacture only |
+| SoyaBean | Buy only |
+
+### Validation
+
+Replenishment test for all three stages — all passed:
+- TEST A: Crude Soya Oil → op type 79 (Extraction Manufacturing), BOM 10, 1 component ✓
+- TEST B: Refined Soya Oil → op type 127 (Refining Manufacturing), BOM 15, 4 components ✓
+- TEST C: RSO 5L → op type 128 (Packaging Manufacturing), BOM 209, 3 components ✓
+
+### Op Type 16 Status
+
+Op type 16 ("Manufacturing", FamOilWH) is a CHIC1-era orphan — no route rules reference it,
+no warehouse claims it as default, all 14 MOs are in done/cancelled state from CHIC1 work.
+Safe to archive when operator approves. No action taken in this remediation.
+
+---
+
 ## Post-Phase 4 — Governance Synchronization and Roadmap Refresh
 
 **Completed:** 2026-05-28 | **Tag:** v1.5.0-restore-validated (at f083a9a)

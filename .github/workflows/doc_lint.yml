@@ -17,10 +17,12 @@ jobs:
           FAILED=0
           MANDATORY_DOCS=(
             "CLAUDE.md"
+            "CHANGELOG.md"
             "docs/IMPLEMENTATION_STANDARDS.md"
             "docs/BACKUP_AND_RECOVERY.md"
             "docs/ONBOARDING_GUIDE.md"
-            "docs/CHANGELOG.md"
+            "docs/MODULE_REGISTRY.md"
+            "docs/famoil_erp_template/DECISION_LOG.md"
             ".claude/settings.json"
           )
           for doc in "${MANDATORY_DOCS[@]}"; do

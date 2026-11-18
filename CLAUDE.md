@@ -252,7 +252,7 @@ Deodorization (id=23)
 - Cost method not set on Raw Materials category
 - Consumables (Hexane, Lubricant Oil) missing from BOM 10
 - Spare parts/consumables list_price = ₦1 (placeholder)
-- Off-machine backup sync not yet activated (rclone not installed)
+- Off-machine survivability: Docker packaging ✅ v1.17.0 (DEC-014); rclone offsite sync still pending (rclone not installed)
 - 5L Jerrycan, 1L Jerrycan, and Labels have ₦0 cost — RSO 5L/1L prices understated
 - Sahad Oil Traders credit limit not enforced (no native credit limit in Odoo Community)
 - GitHub ruleset gaps: 0 required reviewers, all merge methods, claude-review not required (G-5/G-6)

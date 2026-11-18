@@ -381,6 +381,11 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 6. `scripts/export_for_docker.sh` — Exports `Famoil` DB (pg_dump custom format) + filestore as a dated archive.
 7. `scripts/import_to_docker.sh` — Imports DB + filestore archive into a running Docker stack.
 8. `docs/deployment/DOCKER_MIGRATION.md` — End-to-end migration and operations guide.
+9. `scripts/docker_smoke_test.sh` — Acceptance gate script: starts the stack, verifies TCP port
+   connectivity + werkzeug HTTP service log entry, records a dated PASS. Added during implementation
+   to close the acceptance loop on deliverable 8 (G3-F7, 2026-11-18).
+10. `docker/entrypoint-wrapper.sh` — Injects `ADMIN_PASSWD` from `.env` into `odoo.conf` at
+    container start (kept out of the baked image for security).
 
 **OCA addons included (10 modules from /Users/aliyuumaru/OdooFolder/oca_web):**
 `web_responsive`, `web_environment_ribbon`, `web_notify`, `web_refresher`,
@@ -405,3 +410,21 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 **Revisit Conditions:**
 - When scaling beyond a single Odoo instance — revisit with Kubernetes or Docker Swarm.
 - When moving to Odoo Enterprise — base image changes; addons path may differ.
+
+---
+
+## DEC-015 — `.gitignore` Layering Guard for `custom_addons/nadf_*`
+
+**Decision:** Add a `.gitignore` rule to prevent NADF-pod modules from being accidentally committed into the FamOil (`ERP-AGRO`) repository.
+
+**Date:** 2026-06-22 (backfilled per G3-E1 finding, 2026-11-18)
+
+**Rationale:**
+- NADF ERP modules (`nadf_*`) belong in the `nadf_erp` repository (POD-NADF), not in `famoil-erp`. Accidental staging can occur when both repos share paths on the developer's machine.
+- The layering guard rule (`custom_addons/nadf_*`) prevents `git add .` from pulling in stray NADF files. It was added manually on 2026-06-22 (commit annotation "M-C 2026-06-22") as a low-friction safeguard.
+- G3 review (round 1, 2026-11-18) flagged the absence of a decision log entry (E1 — scope outside DEC-014). This entry closes that gap.
+
+**Scope:** One `.gitignore` pattern — no code change.
+
+**Revisit Conditions:**
+- If NADF modules are ever intentionally merged into this repo (unlikely — different pod, different client).

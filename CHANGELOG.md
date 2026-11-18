@@ -13,8 +13,10 @@
 **Docker image:**
 - `docker/Dockerfile` — Odoo 17 base image + custom_addons + OCA web addons baked in
 - `docker/docker-compose.yml` — Full stack with PostgreSQL 16, named volumes, healthcheck
-- `docker/odoo.conf` — Docker-tuned config (workers, proxy_mode, security hardening)
+- `docker/odoo.conf` — Docker-tuned config (workers=0 default, proxy_mode, security hardening)
 - `docker/.env.example` — Environment variable template (credentials never committed)
+- `docker/entrypoint-wrapper.sh` — injects `ADMIN_PASSWD` from `.env` into `odoo.conf` at
+  container start; strips `\n`/`\r` to prevent config-file injection
 - `docker/oca_addons/` — 10 OCA web addons committed for self-contained build context:
   `web_responsive`, `web_environment_ribbon`, `web_notify`, `web_refresher`,
   `web_theme_classic`, `web_dialog_size`, `web_m2x_options`, `web_pivot_computed_measure`,
@@ -23,6 +25,7 @@
 **Migration scripts:**
 - `scripts/export_for_docker.sh` — exports DB (pg_dump -F c) + filestore.tar.gz + MANIFEST.txt
 - `scripts/import_to_docker.sh` — imports DB + filestore into running Docker stack
+- `scripts/docker_smoke_test.sh` — acceptance gate: TCP port check + werkzeug log confirmation
 
 **Documentation:**
 - `docs/deployment/DOCKER_MIGRATION.md` — end-to-end guide: build, start, export, migrate,

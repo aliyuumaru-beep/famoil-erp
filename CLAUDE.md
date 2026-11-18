@@ -299,7 +299,7 @@ Deodorization (id=23)
 │   ├── odoo.conf                    ← Docker-tuned Odoo config
 │   ├── .env.example                 ← credential template (never commit .env)
 │   └── oca_addons/                  ← 10 OCA web addons (self-contained)
-├── scripts/                         ← operational scripts (7 total)
+├── scripts/                         ← operational scripts (10 shell + 2 Python + 2 plist)
 ├── prompts/                         ← prompt library
 ├── tests/                           ← test scripts
 └── logs/                            ← local audit logs (git-ignored)

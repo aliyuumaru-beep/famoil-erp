@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# docker_smoke_test.sh — Verify the Docker stack starts and Odoo responds on /web/health
+# docker_smoke_test.sh — Verify the Docker stack starts: TCP port open + werkzeug log entry
 # Run this after docker compose build on the target host, before importing any real data.
 #
 # Usage: ./scripts/docker_smoke_test.sh [--no-cleanup]

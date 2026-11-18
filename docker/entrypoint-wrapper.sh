@@ -8,7 +8,7 @@ ODOO_CONF="${ODOO_RC:-/etc/odoo/odoo.conf}"
 
 if [ -n "${ADMIN_PASSWD:-}" ]; then
     # Strip any embedded newlines (prevents config-file injection via multi-line env vars)
-    ADMIN_PASSWD_CLEAN="${ADMIN_PASSWD//$'\n'/}"
+    ADMIN_PASSWD_CLEAN="${ADMIN_PASSWD//[$'\n'$'\r']/}"
     # Remove existing admin_passwd line (commented or not), then append the real value
     sed -i '/^\s*;*\s*admin_passwd\s*=/d' "${ODOO_CONF}"
     printf 'admin_passwd = %s\n' "${ADMIN_PASSWD_CLEAN}" >> "${ODOO_CONF}"

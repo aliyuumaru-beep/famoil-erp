@@ -264,10 +264,16 @@ Override any `odoo.conf` value via `ODOO_*` env vars passed to the container. Th
 
 ## Part 4 — Production Hardening (before go-live)
 
-> **⚠ WARNING — never `docker commit` a running stack container.** The `entrypoint-wrapper.sh`
-> writes `admin_passwd` in plaintext to `/etc/odoo/odoo.conf` inside the container at start-up.
-> A `docker commit` captures that layer; anyone who pulls the image can read the master password.
-> **Always build from `Dockerfile` only — never from committed containers.**
+> **⚠ WARNING — the master password is readable while the container is live.**
+> `entrypoint-wrapper.sh` writes `admin_passwd` in plaintext to `/etc/odoo/odoo.conf` inside
+> the running container at start-up. Anyone with Docker socket access can read it via:
+> - `docker exec <container> cat /etc/odoo/odoo.conf`
+> - `docker cp <container>:/etc/odoo/odoo.conf .`
+> - `docker export <container>` (captures the whole filesystem as a tar)
+> - `docker commit <container>` → push to registry (embeds it in an image layer)
+>
+> **Mitigations:** restrict Docker socket access to trusted operators; never push a committed
+> container; always build from `Dockerfile` only.
 
 Before exposing Docker Odoo to the internet:
 

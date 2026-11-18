@@ -20,15 +20,18 @@ The database and filestore are **not** inside the image — they live in Docker 
 
 ## Quick Reference
 
+> All `docker compose` commands require `--env-file docker/.env` because compose runs from
+> the project root but `.env` is in the `docker/` subdirectory.
+
 | Task | Command |
 |------|---------|
-| Build image | `docker compose -f docker/docker-compose.yml build` |
-| Start stack | `docker compose -f docker/docker-compose.yml up -d` |
-| Stop stack | `docker compose -f docker/docker-compose.yml down` |
+| Build image | `docker compose -f docker/docker-compose.yml --env-file docker/.env build` |
+| Start stack | `docker compose -f docker/docker-compose.yml --env-file docker/.env up -d` |
+| Stop stack | `docker compose -f docker/docker-compose.yml --env-file docker/.env down` |
 | Export for migration | `./scripts/export_for_docker.sh` |
 | Import on target host | `./scripts/import_to_docker.sh <export_dir>` |
-| View Odoo logs | `docker compose -f docker/docker-compose.yml logs -f odoo` |
-| DB shell | `docker compose -f docker/docker-compose.yml exec db psql -U odoo Famoil` |
+| View Odoo logs | `docker compose -f docker/docker-compose.yml --env-file docker/.env logs -f odoo` |
+| DB shell | `docker compose -f docker/docker-compose.yml --env-file docker/.env exec db psql -U odoo Famoil` |
 
 ---
 
@@ -66,7 +69,7 @@ Edit `docker/.env` and set **all three** required values before starting the sta
 ### 1.3 Build the image
 
 ```bash
-docker compose -f docker/docker-compose.yml build
+docker compose -f docker/docker-compose.yml --env-file docker/.env build
 ```
 
 This builds from `docker/Dockerfile` using the project root as build context. It copies:
@@ -87,7 +90,7 @@ This starts two containers:
 
 Verify they are running:
 ```bash
-docker compose -f docker/docker-compose.yml ps
+docker compose -f docker/docker-compose.yml --env-file docker/.env ps
 ```
 
 ### 1.5 Initial database setup (fresh install only)
@@ -95,7 +98,7 @@ docker compose -f docker/docker-compose.yml ps
 If starting from scratch (no migration), initialise the database:
 
 ```bash
-docker compose -f docker/docker-compose.yml exec odoo odoo \
+docker compose -f docker/docker-compose.yml --env-file docker/.env exec odoo odoo \
   -d Famoil \
   -i base,stock,mrp,account,sale,purchase \
   --without-demo=all \
@@ -104,7 +107,7 @@ docker compose -f docker/docker-compose.yml exec odoo odoo \
 
 Then restart:
 ```bash
-docker compose -f docker/docker-compose.yml restart odoo
+docker compose -f docker/docker-compose.yml --env-file docker/.env restart odoo
 ```
 
 Access: `http://localhost:8069` (or the host's IP).
@@ -174,7 +177,7 @@ Type `CONFIRM` when prompted. The script:
 
 ```bash
 # Check Odoo starts cleanly
-docker compose -f docker/docker-compose.yml logs -f odoo
+docker compose -f docker/docker-compose.yml --env-file docker/.env logs -f odoo
 ```
 
 Look for `HTTP service (werkzeug) running on 0.0.0.0:8069` — this confirms startup.
@@ -209,8 +212,8 @@ Schedule via cron on the host:
 Whenever `custom_addons/` or `docker/oca_addons/` are modified:
 
 ```bash
-docker compose -f docker/docker-compose.yml build --no-cache
-docker compose -f docker/docker-compose.yml up -d
+docker compose -f docker/docker-compose.yml --env-file docker/.env build --no-cache
+docker compose -f docker/docker-compose.yml --env-file docker/.env up -d
 ```
 
 ### Updating Odoo (minor patch)
@@ -222,7 +225,7 @@ docker compose -f docker/docker-compose.yml up -d
 ### Accessing the database directly
 
 ```bash
-docker compose -f docker/docker-compose.yml exec db psql -U odoo Famoil
+docker compose -f docker/docker-compose.yml --env-file docker/.env exec db psql -U odoo Famoil
 ```
 
 ### Environment variables at runtime
@@ -248,11 +251,12 @@ Before exposing Docker Odoo to the internet:
 
 ```
 docker/
-├── Dockerfile          ← Image definition (Odoo 17 + addons)
-├── docker-compose.yml  ← Full stack (Odoo + PostgreSQL 16)
-├── odoo.conf           ← Odoo configuration for Docker
-├── .env.example        ← Environment variable template
-└── oca_addons/         ← 10 OCA web addons (self-contained)
+├── Dockerfile               ← Image definition (Odoo 17 + addons)
+├── docker-compose.yml       ← Full stack (Odoo + PostgreSQL 16)
+├── odoo.conf                ← Odoo configuration for Docker
+├── .env.example             ← Environment variable template
+├── entrypoint-wrapper.sh   ← Injects ADMIN_PASSWD into odoo.conf at container start
+└── oca_addons/              ← 10 OCA web addons (self-contained)
     ├── web_responsive/
     ├── web_environment_ribbon/
     ├── web_notify/

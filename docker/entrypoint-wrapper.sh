@@ -6,10 +6,10 @@ set -e
 
 ODOO_CONF="${ODOO_RC:-/etc/odoo/odoo.conf}"
 
-if [ -n "${ODOO_ADMIN_PASSWD:-}" ]; then
+if [ -n "${ADMIN_PASSWD:-}" ]; then
     # Remove existing admin_passwd line (commented or not), then append the real value
     sed -i '/^\s*;*\s*admin_passwd\s*=/d' "${ODOO_CONF}"
-    echo "admin_passwd = ${ODOO_ADMIN_PASSWD}" >> "${ODOO_CONF}"
+    echo "admin_passwd = ${ADMIN_PASSWD}" >> "${ODOO_CONF}"
 fi
 
 exec /entrypoint.sh "$@"

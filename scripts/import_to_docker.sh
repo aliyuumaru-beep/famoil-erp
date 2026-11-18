@@ -18,6 +18,7 @@ set -euo pipefail
 EXPORT_DIR="${1:-}"
 DB_NAME="${DB_NAME:-Famoil}"
 COMPOSE_FILE="$(dirname "$0")/../docker/docker-compose.yml"
+COMPOSE_ENV="$(dirname "$0")/../docker/.env"
 
 if [[ -z "${EXPORT_DIR}" ]]; then
     echo "Usage: $0 <export_dir>"
@@ -27,6 +28,12 @@ fi
 
 if [[ ! -d "${EXPORT_DIR}" ]]; then
     echo "ERROR: Export directory not found: ${EXPORT_DIR}"
+    exit 1
+fi
+
+# Guard against command injection via DB_NAME before it reaches bash -c strings
+if ! [[ "${DB_NAME}" =~ ^[A-Za-z0-9_-]+$ ]]; then
+    echo "ERROR: DB_NAME '${DB_NAME}' contains invalid characters. Only [A-Za-z0-9_-] allowed."
     exit 1
 fi
 
@@ -53,18 +60,20 @@ fi
 
 # 1. Stop Odoo (keep DB running)
 echo "[1/5] Stopping Odoo service..."
-docker compose -f "${COMPOSE_FILE}" stop odoo
+docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" stop odoo
 
 # 2. Drop + recreate DB
 echo "[2/5] Dropping and recreating database ${DB_NAME}..."
-docker compose -f "${COMPOSE_FILE}" exec -T db psql -U odoo -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${DB_NAME}';" || true
-docker compose -f "${COMPOSE_FILE}" exec -T db psql -U odoo -c "DROP DATABASE IF EXISTS \"${DB_NAME}\";"
-docker compose -f "${COMPOSE_FILE}" exec -T db psql -U odoo -c "CREATE DATABASE \"${DB_NAME}\" OWNER odoo;"
+docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db psql -U odoo -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${DB_NAME}';" || true
+docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db psql -U odoo -c "DROP DATABASE IF EXISTS \"${DB_NAME}\";"
+docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db psql -U odoo -c "CREATE DATABASE \"${DB_NAME}\" OWNER odoo;"
 
 # 3. Restore DB
 echo "[3/5] Restoring database from dump..."
-docker compose -f "${COMPOSE_FILE}" exec -T db pg_restore \
+docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db pg_restore \
     --disable-triggers \
+    --no-owner \
+    --no-privileges \
     -j 4 \
     -U odoo \
     -d "${DB_NAME}" < "${DUMP_FILE}"
@@ -78,7 +87,7 @@ if [[ -n "${FILESTORE_ARCHIVE}" && -f "${FILESTORE_ARCHIVE}" ]]; then
     echo "[4/5] Restoring filestore..."
 
     # Get the stopped container ID and derive its image + volume
-    CONTAINER_ID=$(docker compose -f "${COMPOSE_FILE}" ps -q odoo)
+    CONTAINER_ID=$(docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" ps -q odoo)
     if [[ -z "${CONTAINER_ID}" ]]; then
         echo "      ERROR: could not locate odoo container. Is the stack up (even if stopped)?"
         exit 1
@@ -128,7 +137,7 @@ fi
 
 # 5. Start Odoo
 echo "[5/5] Starting Odoo..."
-docker compose -f "${COMPOSE_FILE}" start odoo
+docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" start odoo
 
 echo ""
 echo "=== Import complete ==="

@@ -29,3 +29,4 @@ jobs:
           POSTGRES_PASSWORD: ci_test_password_not_real
           POSTGRES_USER: odoo
           POSTGRES_DB: Famoil
+          ODOO_ADMIN_PASSWD: ci_test_admin_not_real

@@ -2,8 +2,8 @@
 
 # Software Factory Platform Roadmap
 
-Version: 1.2
-Last Updated: 2026-05-28
+Version: 1.3
+Last Updated: 2026-11-18
 
 ---
 

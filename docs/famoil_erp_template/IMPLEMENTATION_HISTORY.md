@@ -397,6 +397,7 @@ FamOil ERP has been running exclusively on macOS (local deployment). The platfor
   - `oca_addons/` (10 OCA web addons — self-contained build context)
 - `scripts/export_for_docker.sh` — exports DB + filestore for migration
 - `scripts/import_to_docker.sh` — imports into running Docker stack
+- `scripts/docker_smoke_test.sh` — acceptance gate: TCP port + werkzeug log confirmation (passed 2026-11-18 09:22 UTC)
 - `docs/deployment/DOCKER_MIGRATION.md` — end-to-end migration guide
 
 ### Key decisions made

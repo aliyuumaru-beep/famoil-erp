@@ -6,23 +6,28 @@
     "main"
   ],
   "briefing_docs": [
-    "CLAUDE.md"
+    "CLAUDE.md",
+    "docs/famoil_erp_template/FAMOIL_ROADMAP.md",
+    "docs/roadmap/PLATFORM_ROADMAP.md",
+    "docs/famoil_erp_template/KNOWN_ISSUES.md",
+    "docs/famoil_erp_template/DECISION_LOG.md"
   ],
   "code_paths": [
-    "custom_addons/",
-    "addons/",
-    "src/"
+    "custom_addons/"
   ],
   "required_doc_updates": [
     "CHANGELOG.md",
-    "IMPLEMENTATION_HISTORY.md"
+    "docs/famoil_erp_template/IMPLEMENTATION_HISTORY.md",
+    "docs/famoil_erp_template/DECISION_LOG.md"
   ],
   "spec_sources": [
-    "docs",
-    "DECISION_LOG.md",
-    "ROADMAP.md"
+    "docs/famoil_erp_template/DECISION_LOG.md",
+    "docs/famoil_erp_template/FAMOIL_ROADMAP.md",
+    "docs/roadmap/PLATFORM_ROADMAP.md"
   ],
-  "live_databases": [],
+  "live_databases": [
+    "Famoil"
+  ],
   "backup_dirs": [
     "~/OdooFolder/odoo_backups"
   ],

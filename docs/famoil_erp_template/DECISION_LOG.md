@@ -338,3 +338,52 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 **Revisit Conditions:**
 - If a manager override workflow is needed — consider custom module with approval mechanism.
 - If Sahad adds a second partner contact requiring separate credit tracking — review partner hierarchy.
+
+---
+
+## DEC-014 — Docker Containerisation for FamOil ERP (SPEC-DOCKER-01)
+
+**Decision:** Package the FamOil Odoo 17 ERP as a portable Docker image containing the Odoo application, all custom addons, and all OCA web addons, with a docker-compose stack (Odoo + PostgreSQL 16) for one-command deployment on any Linux/cloud host.
+
+**Date:** 2026-11-18
+
+**Rationale:**
+- Current deployment is macOS-local — tied to a single machine. Hardware failure means downtime until a new machine is manually configured.
+- Docker encapsulates Odoo, Python dependencies, and all addons into one image. Combined with a DB dump + filestore archive, the entire ERP can be restored on any Docker-capable host (Linux VPS, cloud VM, on-premise server) in minutes.
+- Provides a clean migration path to production cloud hosting (AWS EC2, DigitalOcean, Hetzner) without bespoke setup.
+- Directly addresses the top platform risk: "off-machine backup sync not yet operationally activated" (PLATFORM_ROADMAP.md § 10).
+- Aligns with FAMOIL_ROADMAP Priority 5 (Off-machine survivability) and closes the macOS-only deployment constraint.
+
+**Scope of work (SPEC-DOCKER-01):**
+1. `docker/Dockerfile` — Odoo 17 image with custom_addons + OCA web addons baked in.
+2. `docker/docker-compose.yml` — Full stack: Odoo service + PostgreSQL 16, named volumes.
+3. `docker/odoo.conf` — Odoo configuration tuned for Docker (workers, paths, DB host).
+4. `docker/.env.example` — Environment variable template (DB credentials, admin password, host port).
+5. `docker/oca_addons/` — The 10 OCA web addons used by FamOil copied into the repo for self-contained build context.
+6. `scripts/export_for_docker.sh` — Exports `Famoil` DB (pg_dump custom format) + filestore as a dated archive.
+7. `scripts/import_to_docker.sh` — Imports DB + filestore archive into a running Docker stack.
+8. `docs/deployment/DOCKER_MIGRATION.md` — End-to-end migration and operations guide.
+
+**OCA addons included (10 modules from /Users/aliyuumaru/OdooFolder/oca_web):**
+`web_responsive`, `web_environment_ribbon`, `web_notify`, `web_refresher`,
+`web_theme_classic`, `web_dialog_size`, `web_m2x_options`, `web_pivot_computed_measure`,
+`web_search_with_and`, `web_remember_tree_column_width`
+
+**Alternatives Considered:**
+- Bare-metal Linux migration (no Docker): eliminates portability — still tied to one machine's OS/dependencies.
+- Odoo.sh (Odoo SaaS): subscription cost; loses local control; OCA addons not supported out of the box.
+- Docker Swarm / Kubernetes: overkill for single-instance ERP at this scale.
+
+**Trade-offs:**
+- OCA addons committed into `docker/oca_addons/`: increases repo size (~5–10 MB). Benefit: fully self-contained build — no external dependency at build time.
+- Addons baked into image: image must be rebuilt when addons change. Acceptable — addons change rarely.
+- DB and filestore are NOT inside the image — they live in Docker named volumes and in separate export archives. Correct separation: application vs data.
+
+**Security:**
+- DB credentials go in `.env` (never committed). `.env.example` committed with placeholder values only.
+- PostgreSQL exposed on internal Docker network only — port 5432 not bound to host.
+- Admin password via `.env` / `odoo.conf` — not hardcoded in image.
+
+**Revisit Conditions:**
+- When scaling beyond a single Odoo instance — revisit with Kubernetes or Docker Swarm.
+- When moving to Odoo Enterprise — base image changes; addons path may differ.

@@ -59,6 +59,11 @@ echo "Filestore   : ${FILESTORE_ARCHIVE:-NOT FOUND}"
 echo "Compose file: ${COMPOSE_FILE}"
 echo ""
 echo "WARNING: This will DROP and recreate the '${DB_NAME}' database inside Docker."
+echo ""
+echo "  >>> IF YOU ARE REIMPORTING INTO AN EXISTING LIVE STACK <<<"
+echo "  Run ./scripts/export_for_docker.sh FIRST to save the current state."
+echo "  Dropped data cannot be recovered without an export archive."
+echo ""
 read -r -p "Type CONFIRM to proceed: " CONFIRM
 if [[ "${CONFIRM}" != "CONFIRM" ]]; then
     echo "Aborted."

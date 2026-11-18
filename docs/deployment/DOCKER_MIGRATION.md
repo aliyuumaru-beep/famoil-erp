@@ -256,7 +256,7 @@ Override any `odoo.conf` value via `ODOO_*` env vars passed to the container. Th
 
 Before exposing Docker Odoo to the internet:
 
-1. **Reverse proxy (Nginx/Traefik):** Put Nginx in front; handle TLS (Let's Encrypt) there. `proxy_mode = True` is already set in `odoo.conf`. **Important:** `proxy_mode = True` is insecure without an actual proxy — it makes Odoo trust `X-Forwarded-For` headers unconditionally. Do not expose port 8069 directly while `proxy_mode = True`.
+1. **Reverse proxy (Nginx/Traefik) — required before changing `proxy_mode`:** Put Nginx in front; handle TLS (Let's Encrypt) there. The default `docker/odoo.conf` ships with `proxy_mode = False` (safe default). Once your reverse proxy is running and tested, change it to `proxy_mode = True` and rebuild. **Never set `proxy_mode = True` without a proxy** — it makes Odoo trust `X-Forwarded-For` unconditionally, enabling client IP spoofing.
 2. **Change default passwords:** Update `POSTGRES_PASSWORD` and `ODOO_ADMIN_PASSWD` in `docker/.env` before go-live.
 3. **Disable database list:** `list_db = False` is already set in `odoo.conf`.
 4. **Workers:** Tune `workers` in `odoo.conf` based on available CPUs (formula: `(CPUs × 2) + 1`). Note: `workers > 0` requires a reverse proxy for long-polling/notifications; use `workers = 0` for local/development testing.

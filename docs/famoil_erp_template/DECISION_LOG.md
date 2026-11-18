@@ -319,7 +319,7 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 
 **Date:** 2026-11-18
 
-**Status:** COMPLETE — `chore/governance-onboarding` branch; pending merge.
+**Status:** COMPLETE — delivered in `feature/docker-migration` branch as a prerequisite for DEC-014.
 
 **Rationale:**
 - SPEC-GOV-ENF-001 requires all `aliyuumaru-beep` repositories to be onboarded before code changes.

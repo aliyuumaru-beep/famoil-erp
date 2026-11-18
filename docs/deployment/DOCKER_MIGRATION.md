@@ -196,7 +196,7 @@ Date: YYYY-MM-DD HH:MM:SS UTC
 
 **This is the acceptance criterion for a successful Docker deployment.** Record the pass date here:
 
-> Smoke Test: ☐ PASS — Date: _______________ — Host: _______________ — Signed: _______________
+> Smoke Test: ☐ PASS — Date: 2026-11-18 09:22:09 UTC — Host: Mac — Signed: Aliyu
 
 Then verify data integrity:
 

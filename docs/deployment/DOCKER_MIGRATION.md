@@ -199,24 +199,24 @@ Expected output ends with:
 Date: YYYY-MM-DD HH:MM:SS UTC
 ```
 
-**This is the acceptance criterion for a successful Docker deployment.** Record the pass date here:
+**Full acceptance requires two steps — both must be recorded:**
 
+**Step A — Automated smoke test** (TCP port + werkzeug log):
 > Smoke Test: ✓ PASS — Date: 2026-11-18 09:22:09 UTC — Host: Mac — Signed: Aliyu
 
-Then verify data integrity:
-
-```bash
-# Check Odoo starts cleanly
-docker compose -f docker/docker-compose.yml --env-file docker/.env logs -f odoo
-```
+**Step B — Manual data verification** (after a live import, not a fresh stack):
 
 Open `http://<host>:8069` and log in with `admin`.
 
-Verify:
+Verify (tick each when confirmed):
 - [ ] Manufacturing → Bills of Materials — 3-stage BOMs present (BOM 10, 15, 208/209)
 - [ ] Inventory → Products — Crude Soya Oil, Refined Soya Oil, RSO 25L, RSO 5L visible
 - [ ] Accounting → Journal Entries — historical entries present
 - [ ] Settings → Technical → Scheduled Actions — automations active
+
+> Manual Verification: ☐ PASS — Date: _______________ — Host: _______________ — Signed: _______________
+
+Both sign-off lines must be completed before the Docker migration is considered production-ready.
 
 ---
 

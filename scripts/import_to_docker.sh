@@ -38,9 +38,13 @@ if [[ ! -d "${EXPORT_DIR}" ]]; then
     exit 1
 fi
 
-# Guard against command injection via DB_NAME before it reaches bash -c strings
+# Guard against command injection via DB_NAME and POSTGRES_USER before they reach bash -c strings
 if ! [[ "${DB_NAME}" =~ ^[A-Za-z0-9_-]+$ ]]; then
     echo "ERROR: DB_NAME '${DB_NAME}' contains invalid characters. Only [A-Za-z0-9_-] allowed."
+    exit 1
+fi
+if ! [[ "${POSTGRES_USER}" =~ ^[A-Za-z0-9_-]+$ ]]; then
+    echo "ERROR: POSTGRES_USER '${POSTGRES_USER}' contains invalid characters. Only [A-Za-z0-9_-] allowed."
     exit 1
 fi
 

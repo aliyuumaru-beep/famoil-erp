@@ -57,20 +57,25 @@
 
 ---
 
-## OCA Web Addons (at /Users/mac/oca_web)
+## OCA Web Addons (embedded in `docker/oca_addons/` — DEC-014 / v1.17.0)
 
-| Module | Purpose |
-|--------|---------|
-| `web_responsive` | Mobile-friendly UI (essential for plant floor tablet use) |
-| `web_environment_ribbon` | Environment label banner (shows DEV/PROD) |
-| `web_notify` | Browser push notifications |
-| `web_refresher` | Auto-refresh list views |
-| `web_theme_classic` | Classic Odoo 16/17 theme |
-| `web_dialog_size` | Resizable dialog boxes |
-| `web_m2x_options` | Many2x field creation options |
-| `web_pivot_computed_measure` | Custom computed measures in pivot tables |
-| `web_search_with_and` | AND logic in search bar |
-| `web_remember_tree_column_width` | Persistent column widths |
+> **Path change:** These modules are now committed to the repository at `docker/oca_addons/`
+> and are baked into the Docker image at build time. The original source was `/Users/mac/oca_web`
+> (local macOS path, non-portable). `docker/oca_addons/` is the canonical, portable location.
+> On non-Docker deployments, add `docker/oca_addons/` to `--addons-path`.
+
+| Module | Repo Path | Purpose |
+|--------|-----------|---------|
+| `web_responsive` | `docker/oca_addons/web_responsive/` | Mobile-friendly UI (essential for plant floor tablet use) |
+| `web_environment_ribbon` | `docker/oca_addons/web_environment_ribbon/` | Environment label banner (shows DEV/PROD) |
+| `web_notify` | `docker/oca_addons/web_notify/` | Browser push notifications |
+| `web_refresher` | `docker/oca_addons/web_refresher/` | Auto-refresh list views |
+| `web_theme_classic` | `docker/oca_addons/web_theme_classic/` | Classic Odoo 16/17 theme |
+| `web_dialog_size` | `docker/oca_addons/web_dialog_size/` | Resizable dialog boxes |
+| `web_m2x_options` | `docker/oca_addons/web_m2x_options/` | Many2x field creation options |
+| `web_pivot_computed_measure` | `docker/oca_addons/web_pivot_computed_measure/` | Custom computed measures in pivot tables |
+| `web_search_with_and` | `docker/oca_addons/web_search_with_and/` | AND logic in search bar |
+| `web_remember_tree_column_width` | `docker/oca_addons/web_remember_tree_column_width/` | Persistent column widths |
 
 ---
 

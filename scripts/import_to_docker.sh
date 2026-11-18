@@ -71,29 +71,56 @@ docker compose -f "${COMPOSE_FILE}" exec -T db pg_restore \
 echo "      DB restored."
 
 # 4. Restore filestore
+# NOTE: Odoo is STOPPED at this point, so `docker compose exec` will fail.
+# We use `docker run --rm -v <volume>` with the already-built Odoo image (no external pull)
+# to manipulate the odoo-data volume directly.
 if [[ -n "${FILESTORE_ARCHIVE}" && -f "${FILESTORE_ARCHIVE}" ]]; then
     echo "[4/5] Restoring filestore..."
-    # Extract the archive locally into a temp directory, then docker cp into the volume.
-    # This avoids pulling an external image (ubuntu:22.04) at restore time.
-    TMPDIR=$(mktemp -d)
-    trap 'rm -rf "${TMPDIR}"' EXIT
 
-    tar -xzf "${FILESTORE_ARCHIVE}" -C "${TMPDIR}"
+    # Get the stopped container ID and derive its image + volume
+    CONTAINER_ID=$(docker compose -f "${COMPOSE_FILE}" ps -q odoo)
+    if [[ -z "${CONTAINER_ID}" ]]; then
+        echo "      ERROR: could not locate odoo container. Is the stack up (even if stopped)?"
+        exit 1
+    fi
+    ODOO_IMAGE=$(docker inspect "${CONTAINER_ID}" --format '{{.Config.Image}}')
+    ODOO_DATA_VOLUME=$(docker inspect "${CONTAINER_ID}" \
+        --format '{{range .Mounts}}{{if eq .Destination "/var/lib/odoo"}}{{.Name}}{{end}}{{end}}')
 
-    # The extracted directory is named after the DB (matches the filestore basename)
-    EXTRACTED_FS=$(find "${TMPDIR}" -maxdepth 1 -mindepth 1 -type d | head -1)
+    if [[ -z "${ODOO_DATA_VOLUME}" ]]; then
+        echo "      ERROR: could not determine odoo-data volume name from container inspect."
+        exit 1
+    fi
+
+    echo "      Using image : ${ODOO_IMAGE}"
+    echo "      Volume name : ${ODOO_DATA_VOLUME}"
+
+    # Extract the archive to a temp directory
+    IMPORT_TMPDIR=$(mktemp -d)
+    trap 'rm -rf "${IMPORT_TMPDIR}"' EXIT
+    tar -xzf "${FILESTORE_ARCHIVE}" -C "${IMPORT_TMPDIR}"
+
+    EXTRACTED_FS=$(find "${IMPORT_TMPDIR}" -maxdepth 1 -mindepth 1 -type d | head -1)
     if [[ -z "${EXTRACTED_FS}" ]]; then
         echo "      ERROR: could not find extracted filestore directory in archive."
         exit 1
     fi
 
-    # Remove old filestore inside the container, then copy the new one in
-    docker compose -f "${COMPOSE_FILE}" exec -T odoo rm -rf "/var/lib/odoo/filestore/${DB_NAME}"
-    docker compose -f "${COMPOSE_FILE}" exec -T odoo mkdir -p /var/lib/odoo/filestore
-    docker cp "${EXTRACTED_FS}/." "$(docker compose -f "${COMPOSE_FILE}" ps -q odoo):/var/lib/odoo/filestore/${DB_NAME}"
-    docker compose -f "${COMPOSE_FILE}" exec -T odoo chown -R odoo:odoo "/var/lib/odoo/filestore/${DB_NAME}"
+    # Remove old filestore from volume using the already-built Odoo image
+    docker run --rm \
+        -v "${ODOO_DATA_VOLUME}:/var/lib/odoo" \
+        "${ODOO_IMAGE}" \
+        bash -c "rm -rf '/var/lib/odoo/filestore/${DB_NAME}' && mkdir -p /var/lib/odoo/filestore"
 
-    rm -rf "${TMPDIR}"
+    # Copy new filestore into the volume and fix ownership (odoo uid=101)
+    docker run --rm \
+        -v "${ODOO_DATA_VOLUME}:/var/lib/odoo" \
+        -v "${EXTRACTED_FS}:/src:ro" \
+        "${ODOO_IMAGE}" \
+        bash -c "cp -a /src/. '/var/lib/odoo/filestore/${DB_NAME}' && \
+                 chown -R odoo:odoo '/var/lib/odoo/filestore/${DB_NAME}'"
+
+    rm -rf "${IMPORT_TMPDIR}"
     echo "      Filestore restored."
 else
     echo "[4/5] No filestore archive found — skipping (OK for a fresh/data-only DB)."

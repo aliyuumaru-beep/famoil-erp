@@ -313,6 +313,24 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 
 ---
 
+## DEC-012 — Governance Onboarding: ERP-AGRO Pod Configuration
+
+**Decision:** Onboard the FamOil ERP repository to the Software Factory Governance engine under pod `ERP-AGRO` with `.governance.json` configuration, `gov_bootstrap.sh` hooks, and G1/G2/G3 CI gates.
+
+**Date:** 2026-11-18
+
+**Status:** COMPLETE — `chore/governance-onboarding` branch; pending merge.
+
+**Rationale:**
+- SPEC-GOV-ENF-001 requires all `aliyuumaru-beep` repositories to be onboarded before code changes.
+- ERP-AGRO pod covers all Odoo agro-processing ERP instances (FamOil, future templates).
+- Briefing docs confirmed: CLAUDE.md, FAMOIL_ROADMAP.md, PLATFORM_ROADMAP.md, KNOWN_ISSUES.md, DECISION_LOG.md.
+
+**Revisit Conditions:**
+- If a second ERP-AGRO template diverges significantly — consider a sub-pod or separate `.governance.json`.
+
+---
+
 ## DEC-013 — Credit Limit Enforcement: base.automation vs Custom Module
 
 **Decision:** Implement Sahad Oil Traders credit limit enforcement using native `res.partner.credit_limit`, `use_partner_credit_limit`, and a `base.automation` server action triggered on SO confirmation — no custom Python module.

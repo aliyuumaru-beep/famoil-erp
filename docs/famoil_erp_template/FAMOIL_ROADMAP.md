@@ -213,7 +213,7 @@ Exact next priority order:
 	3	Dispatch & logistics maturity
 	4	Maintenance maturity
 	5	Barcode & warehouse operations
-	6	Off-machine survivability activation
+	6	Off-machine survivability activation [PARTIAL — Docker packaging ✅ v1.17.0; rclone offsite sync pending]
 	7	Quarterly restore governance
 	8	Multi-template expansion
 

@@ -529,6 +529,8 @@ Current risks:
 * operational complexity growth
 * overengineering risk
 
+**MITIGATED (v1.17.0 / 2026-11-18):** Machine-tied deployment risk — Docker image packaging complete (DEC-014 / SPEC-DOCKER-01). FamOil ERP can now be deployed to any Linux/cloud host via `docker compose up`. Off-machine backup sync (rclone → Google Drive) remains pending.
+
 ---
 
 # 11. FUTURE REPOSITORY EVOLUTION

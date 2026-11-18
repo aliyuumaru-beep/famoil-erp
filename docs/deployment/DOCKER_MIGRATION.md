@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0
 **Date:** 2026-11-18
-**Spec:** DEC-014 / SPEC-DOCKER-01
+**Spec:** DEC-014 / SPEC-DOCKER-01 — see `docs/famoil_erp_template/DECISION_LOG.md` § DEC-014
 
 ---
 
@@ -51,7 +51,17 @@ cd /Users/aliyuumaru/OdooFolder/odoo17
 cp docker/.env.example docker/.env
 ```
 
-Edit `docker/.env` and set a strong `POSTGRES_PASSWORD`. Do not commit `.env`.
+Edit `docker/.env` and set **all three** required values before starting the stack:
+
+| Variable | Requirement |
+|----------|-------------|
+| `POSTGRES_PASSWORD` | Strong password for the PostgreSQL `odoo` user |
+| `ODOO_ADMIN_PASSWD` | Odoo master password (protects `/web/database/` page) |
+| `ODOO_PORT` | Host port (default 8069; change if already in use) |
+
+> **Security gate (mandatory before exposing to any network):** `POSTGRES_PASSWORD` and
+> `ODOO_ADMIN_PASSWD` are required at startup — `docker compose up` will fail fast if either
+> is missing. Do **not** commit `.env` to git.
 
 ### 1.3 Build the image
 

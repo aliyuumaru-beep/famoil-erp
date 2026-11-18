@@ -95,6 +95,11 @@ Verify they are running:
 docker compose -f docker/docker-compose.yml --env-file docker/.env ps
 ```
 
+> **Note — healthcheck status on fresh stack:** The Odoo container's healthcheck (`/web/health`)
+> will show **`unhealthy`** until a database exists. This is expected before running
+> `import_to_docker.sh` (§2.4) or the initial database setup (§1.5). After import or init,
+> `/web/health` returns 200 and the container becomes healthy.
+
 ### 1.5 Initial database setup (fresh install only)
 
 If starting from scratch (no migration), initialise the database:

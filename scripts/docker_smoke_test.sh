@@ -71,6 +71,24 @@ if ! $LOG_OK; then
 fi
 echo "      Odoo HTTP service confirmed running on port ${ODOO_PORT}."
 
+# Check that no ERROR or CRITICAL lines appeared during startup (addon load failures, etc.)
+ERRORS_FOUND=false
+if docker exec "${CONTAINER_ID}" test -f /var/log/odoo/odoo.log 2>/dev/null; then
+    if docker exec "${CONTAINER_ID}" grep -q " ERROR \| CRITICAL " /var/log/odoo/odoo.log 2>/dev/null; then
+        ERRORS_FOUND=true
+    fi
+fi
+docker logs "${CONTAINER_ID}" 2>&1 | grep -q " ERROR \| CRITICAL " && ERRORS_FOUND=true
+
+if $ERRORS_FOUND; then
+    echo "WARNING: ERROR or CRITICAL log lines detected during startup."
+    echo "         Odoo started, but module loading may have failed — check logs."
+    docker exec "${CONTAINER_ID}" grep " ERROR \| CRITICAL " /var/log/odoo/odoo.log 2>/dev/null | head -10 || \
+        docker logs "${CONTAINER_ID}" 2>&1 | grep " ERROR \| CRITICAL " | head -10
+    echo "         Run: docker compose logs odoo (for full output)"
+    echo "         Test will continue — log errors may be expected on a fresh stack (uninitialized DB)."
+fi
+
 if [[ "${CLEANUP}" == "true" ]]; then
     echo "[4/4] Stopping stack (pass --no-cleanup to keep running)..."
     docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" down

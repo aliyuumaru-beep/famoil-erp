@@ -9,6 +9,7 @@
 - `.governance.json` committed: briefing_docs, code_paths, live_databases, required_doc_updates
 - `AGENTS.md` and `.github/workflows/governance.yml` added
 - DEC-014 (Docker containerisation spec) added to DECISION_LOG.md
+- DEC-015 (`.gitignore` layering guard for `custom_addons/nadf_*`) backfilled to close G3-E1
 
 **Docker image:**
 - `docker/Dockerfile` — Odoo 17 base image + custom_addons + OCA web addons baked in

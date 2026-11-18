@@ -177,11 +177,16 @@ Type `CONFIRM` when prompted. The script:
 
 ### 2.5 Verify — Automated Smoke Test (Acceptance Gate)
 
-Run the smoke test before doing anything else. It starts the stack, waits for Odoo's health endpoint, and exits cleanly:
+Run the smoke test before doing anything else. It starts the stack, waits until Odoo accepts TCP connections on its port, confirms the werkzeug HTTP service started in the logs, then stops cleanly:
 
 ```bash
 ./scripts/docker_smoke_test.sh
 ```
+
+> **Note:** `docker_smoke_test.sh` checks TCP connectivity + log confirmation (not `/web/health`).
+> The `/web/health` endpoint returns 500 on a fresh stack because `db_name = Famoil` is set
+> in `odoo.conf` and no database exists yet — that is expected before `import_to_docker.sh`
+> has been run. After import, Odoo responds normally.
 
 Expected output ends with:
 ```

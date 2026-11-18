@@ -5,12 +5,8 @@ FROM odoo:17.0
 
 USER root
 
-# System dependencies for custom modules (lxml, Pillow etc. are already in base image)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
-
 # Custom addons (in-house + third-party)
+# Note: psycopg2, lxml, Pillow and other system deps are already in the odoo:17.0 base image.
 COPY custom_addons/ /mnt/extra-addons/
 
 # OCA web addons (selected modules — self-contained, no external fetch at build time)
@@ -23,8 +19,8 @@ COPY docker/odoo.conf /etc/odoo/odoo.conf
 COPY docker/entrypoint-wrapper.sh /entrypoint-wrapper.sh
 RUN chmod +x /entrypoint-wrapper.sh
 
-# Ensure odoo user owns the addon directories
-RUN chown -R odoo:odoo /mnt/extra-addons /mnt/oca-addons
+# Give odoo user ownership of addons and config dir (wrapper needs to write odoo.conf at startup)
+RUN chown -R odoo:odoo /mnt/extra-addons /mnt/oca-addons /etc/odoo
 
 USER odoo
 

@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## v1.17.0 — 2026-11-18 — Docker Containerisation + Governance Onboarding (DEC-014)
+
+**Docker packaging — full portable image ready for migration.**
+
+**Governance:**
+- Project onboarded to Software Factory governance pod ERP-AGRO (SPEC-GOV-ENF-001)
+- `.governance.json` committed: briefing_docs, code_paths, live_databases, required_doc_updates
+- `AGENTS.md` and `.github/workflows/governance.yml` added
+- DEC-014 (Docker containerisation spec) added to DECISION_LOG.md
+
+**Docker image:**
+- `docker/Dockerfile` — Odoo 17 base image + custom_addons + OCA web addons baked in
+- `docker/docker-compose.yml` — Full stack with PostgreSQL 16, named volumes, healthcheck
+- `docker/odoo.conf` — Docker-tuned config (workers, proxy_mode, security hardening)
+- `docker/.env.example` — Environment variable template (credentials never committed)
+- `docker/oca_addons/` — 10 OCA web addons committed for self-contained build context:
+  `web_responsive`, `web_environment_ribbon`, `web_notify`, `web_refresher`,
+  `web_theme_classic`, `web_dialog_size`, `web_m2x_options`, `web_pivot_computed_measure`,
+  `web_search_with_and`, `web_remember_tree_column_width`
+
+**Migration scripts:**
+- `scripts/export_for_docker.sh` — exports DB (pg_dump -F c) + filestore.tar.gz + MANIFEST.txt
+- `scripts/import_to_docker.sh` — imports DB + filestore into running Docker stack
+
+**Documentation:**
+- `docs/deployment/DOCKER_MIGRATION.md` — end-to-end guide: build, start, export, migrate,
+  verify, day-to-day operations, production hardening checklist
+
+**Deployment impact:** FamOil can now be migrated to any Docker-capable host (Linux VPS,
+cloud VM, on-premise server) with a single `docker compose up` after importing the data export.
+
+---
+
 ## v1.16.0 — 2026-06-04 — Sales Workflow Maturity COMPLETE
 
 **Sales workflow milestone closed. All items validated end-to-end.**

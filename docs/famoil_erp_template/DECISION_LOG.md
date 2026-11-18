@@ -407,6 +407,9 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 - PostgreSQL exposed on internal Docker network only — port 5432 not bound to host.
 - Admin password via `.env` / `odoo.conf` — not hardcoded in image.
 
+**Accepted Risk — Floating Image Tags:**
+`FROM odoo:17.0` and `image: postgres:16` use floating tags. This is the standard operator-maintained pattern for a single-instance local deployment. The risk is acknowledged and documented: `docs/deployment/DOCKER_MIGRATION.md` §Part 4 item 7 gives the inspection command and requires the operator to pin digests before the first production (network-exposed) deployment. Named owner: Aliyu Umaru. This record satisfies the G1 condition (round 5, 2026-11-18) requiring the trade-off to be explicitly logged.
+
 **Revisit Conditions:**
 - When scaling beyond a single Odoo instance — revisit with Kubernetes or Docker Swarm.
 - When moving to Odoo Enterprise — base image changes; addons path may differ.

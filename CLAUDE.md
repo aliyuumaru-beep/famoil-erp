@@ -237,6 +237,8 @@ Deodorization (id=23)
 | GitHub Actions — doc_lint.yml   | ACTIVE                  | Fires on push + PR to main         |
 | GitHub Actions — backup_check.yml | ACTIVE               | Fires every Monday 06:00 UTC       |
 | GitHub Actions — security_scan.yml | ACTIVE              | Fires on push + PR to main         |
+| GitHub Actions — governance.yml | ACTIVE                  | Required gate: fires on every PR; calls governance-gate.yml reusable workflow (G1–G3) |
+| GitHub Actions — docker-build.yml | ACTIVE              | Build-only dry-run: fires on PRs + pushes to main that touch docker/** or custom_addons/** |
 | Branch protection (main)        | ENABLED                 | Applied by operator 2026-05-27     |
 | Last audit log entry            | 2026-05-28              |                                    |
 | Last backup verification        | 2026-05-28 (Drill 2 — FULL PASS) |                             |

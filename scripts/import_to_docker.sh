@@ -20,6 +20,13 @@ DB_NAME="${DB_NAME:-Famoil}"
 COMPOSE_FILE="$(dirname "$0")/../docker/docker-compose.yml"
 COMPOSE_ENV="$(dirname "$0")/../docker/.env"
 
+# Load .env if present so POSTGRES_USER is available for psql calls
+if [[ -f "${COMPOSE_ENV}" ]]; then
+    # shellcheck source=/dev/null
+    set -a; source "${COMPOSE_ENV}"; set +a
+fi
+POSTGRES_USER="${POSTGRES_USER:-odoo}"
+
 if [[ -z "${EXPORT_DIR}" ]]; then
     echo "Usage: $0 <export_dir>"
     echo "  export_dir: path to the directory created by export_for_docker.sh"
@@ -64,9 +71,9 @@ docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" stop odoo
 
 # 2. Drop + recreate DB
 echo "[2/5] Dropping and recreating database ${DB_NAME}..."
-docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db psql -U odoo -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${DB_NAME}';" || true
-docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db psql -U odoo -c "DROP DATABASE IF EXISTS \"${DB_NAME}\";"
-docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db psql -U odoo -c "CREATE DATABASE \"${DB_NAME}\" OWNER odoo;"
+docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db psql -U "${POSTGRES_USER}" -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${DB_NAME}';" || true
+docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db psql -U "${POSTGRES_USER}" -c "DROP DATABASE IF EXISTS \"${DB_NAME}\";"
+docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db psql -U "${POSTGRES_USER}" -c "CREATE DATABASE \"${DB_NAME}\" OWNER \"${POSTGRES_USER}\";"
 
 # 3. Restore DB
 echo "[3/5] Restoring database from dump..."
@@ -75,7 +82,7 @@ docker compose -f "${COMPOSE_FILE}" --env-file "${COMPOSE_ENV}" exec -T db pg_re
     --no-owner \
     --no-privileges \
     -j 4 \
-    -U odoo \
+    -U "${POSTGRES_USER}" \
     -d "${DB_NAME}" < "${DUMP_FILE}"
 echo "      DB restored."
 

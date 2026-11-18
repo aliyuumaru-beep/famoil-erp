@@ -1,6 +1,6 @@
 # Module Registry
 # FamOil Software Factory — Installed Modules Inventory
-# Version: 1.1 | Created: 2026-05-27 | Updated: 2026-05-30
+# Version: 1.2 | Created: 2026-05-27 | Updated: 2026-11-18
 
 ---
 

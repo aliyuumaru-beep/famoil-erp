@@ -27,7 +27,7 @@
 ```bash
 source odoo/venv/bin/activate
 python odoo/odoo-bin -d Famoil -r odoo \
-  --addons-path=odoo/odoo/addons,custom_addons,/Users/mac/oca_web
+  --addons-path=odoo/odoo/addons,custom_addons,docker/oca_addons
 ```
 
 ---
@@ -70,7 +70,7 @@ python odoo/odoo-bin -d Famoil -r odoo \
 2. Maintenance maturity
 3. Procurement traceability validation
 4. Barcode & warehouse operations
-5. Off-machine survivability activation (rclone + Google Drive)
+5. Off-machine survivability activation [PARTIAL — Docker packaging ✅ v1.17.0; rclone offsite sync pending]
 7. Quarterly restore governance
 8. Multi-template expansion
 

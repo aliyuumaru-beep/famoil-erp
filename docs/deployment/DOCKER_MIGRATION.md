@@ -30,6 +30,7 @@ The database and filestore are **not** inside the image — they live in Docker 
 | Stop stack | `docker compose -f docker/docker-compose.yml --env-file docker/.env down` |
 | Export for migration | `./scripts/export_for_docker.sh` |
 | Import on target host | `./scripts/import_to_docker.sh <export_dir>` |
+| Smoke test (acceptance gate) | `./scripts/docker_smoke_test.sh` |
 | View Odoo logs | `docker compose -f docker/docker-compose.yml --env-file docker/.env logs -f odoo` |
 | DB shell | `docker compose -f docker/docker-compose.yml --env-file docker/.env exec db psql -U odoo Famoil` |
 
@@ -173,14 +174,30 @@ Type `CONFIRM` when prompted. The script:
 4. Restores the filestore into the Docker volume
 5. Restarts Odoo
 
-### 2.5 Verify
+### 2.5 Verify — Automated Smoke Test (Acceptance Gate)
+
+Run the smoke test before doing anything else. It starts the stack, waits for Odoo's health endpoint, and exits cleanly:
+
+```bash
+./scripts/docker_smoke_test.sh
+```
+
+Expected output ends with:
+```
+=== SMOKE TEST PASSED ===
+Date: YYYY-MM-DD HH:MM:SS UTC
+```
+
+**This is the acceptance criterion for a successful Docker deployment.** Record the pass date here:
+
+> Smoke Test: ☐ PASS — Date: _______________ — Host: _______________ — Signed: _______________
+
+Then verify data integrity:
 
 ```bash
 # Check Odoo starts cleanly
 docker compose -f docker/docker-compose.yml --env-file docker/.env logs -f odoo
 ```
-
-Look for `HTTP service (werkzeug) running on 0.0.0.0:8069` — this confirms startup.
 
 Open `http://<host>:8069` and log in with `admin`.
 
@@ -238,12 +255,14 @@ Override any `odoo.conf` value via `ODOO_*` env vars passed to the container. Th
 
 Before exposing Docker Odoo to the internet:
 
-1. **Reverse proxy (Nginx/Traefik):** Put Nginx in front; handle TLS (Let's Encrypt) there. Set `proxy_mode = True` in `odoo.conf` (already set).
-2. **Change default passwords:** Update `POSTGRES_PASSWORD` and the Odoo admin master password (`admin_passwd` in `odoo.conf`).
+1. **Reverse proxy (Nginx/Traefik):** Put Nginx in front; handle TLS (Let's Encrypt) there. `proxy_mode = True` is already set in `odoo.conf`. **Important:** `proxy_mode = True` is insecure without an actual proxy — it makes Odoo trust `X-Forwarded-For` headers unconditionally. Do not expose port 8069 directly while `proxy_mode = True`.
+2. **Change default passwords:** Update `POSTGRES_PASSWORD` and `ODOO_ADMIN_PASSWD` in `docker/.env` before go-live.
 3. **Disable database list:** `list_db = False` is already set in `odoo.conf`.
-4. **Workers:** Tune `workers` in `odoo.conf` based on available CPUs (formula: `(CPUs × 2) + 1`).
+4. **Workers:** Tune `workers` in `odoo.conf` based on available CPUs (formula: `(CPUs × 2) + 1`). Note: `workers > 0` requires a reverse proxy for long-polling/notifications; use `workers = 0` for local/development testing.
 5. **Firewall:** Only expose port 80/443 (Nginx). Block port 8069 from the internet; leave it accessible from localhost/internal only.
 6. **Volume backups:** Configure automated export and copy to off-site storage (S3, Backblaze B2, Google Drive via rclone).
+7. **Never `docker commit` a running stack container.** The `entrypoint-wrapper.sh` writes `admin_passwd` in plaintext to `/etc/odoo/odoo.conf` inside the running container at start-up. If you run `docker commit` on that container and push to a registry, the master password is captured in the image layer and will be readable by anyone who pulls it. Always build from `Dockerfile` only — never from committed containers.
+8. **Pin base image digests:** Run `docker inspect --format='{{index .RepoDigests 0}}' odoo:17.0` and `postgres:16` after the first successful build, record the digests, and pin `Dockerfile:4` and `docker-compose.yml:5` to those values before production deployment.
 
 ---
 
@@ -269,8 +288,9 @@ docker/
     └── web_remember_tree_column_width/
 
 scripts/
-├── export_for_docker.sh   ← Export DB + filestore from macOS
-└── import_to_docker.sh    ← Import into Docker stack
+├── export_for_docker.sh    ← Export DB + filestore from macOS
+├── import_to_docker.sh     ← Import into Docker stack
+└── docker_smoke_test.sh    ← Acceptance gate: start stack, verify /web/health returns 200
 ```
 
 ---

@@ -73,17 +73,27 @@ echo "      DB restored."
 # 4. Restore filestore
 if [[ -n "${FILESTORE_ARCHIVE}" && -f "${FILESTORE_ARCHIVE}" ]]; then
     echo "[4/5] Restoring filestore..."
-    # The Docker odoo-data volume mounts at /var/lib/odoo inside the container.
-    # Filestore lives at /var/lib/odoo/filestore/<DB_NAME>/ inside the container.
-    ODOO_CONTAINER=$(docker compose -f "${COMPOSE_FILE}" ps -q odoo)
-    docker run --rm \
-        --volumes-from "${ODOO_CONTAINER}" \
-        -v "${FILESTORE_ARCHIVE}:/tmp/filestore.tar.gz:ro" \
-        ubuntu:22.04 \
-        bash -c "rm -rf /var/lib/odoo/filestore/${DB_NAME} && \
-                 mkdir -p /var/lib/odoo/filestore && \
-                 tar -xzf /tmp/filestore.tar.gz -C /var/lib/odoo/filestore && \
-                 chown -R 101:101 /var/lib/odoo/filestore/${DB_NAME}"
+    # Extract the archive locally into a temp directory, then docker cp into the volume.
+    # This avoids pulling an external image (ubuntu:22.04) at restore time.
+    TMPDIR=$(mktemp -d)
+    trap 'rm -rf "${TMPDIR}"' EXIT
+
+    tar -xzf "${FILESTORE_ARCHIVE}" -C "${TMPDIR}"
+
+    # The extracted directory is named after the DB (matches the filestore basename)
+    EXTRACTED_FS=$(find "${TMPDIR}" -maxdepth 1 -mindepth 1 -type d | head -1)
+    if [[ -z "${EXTRACTED_FS}" ]]; then
+        echo "      ERROR: could not find extracted filestore directory in archive."
+        exit 1
+    fi
+
+    # Remove old filestore inside the container, then copy the new one in
+    docker compose -f "${COMPOSE_FILE}" exec -T odoo rm -rf "/var/lib/odoo/filestore/${DB_NAME}"
+    docker compose -f "${COMPOSE_FILE}" exec -T odoo mkdir -p /var/lib/odoo/filestore
+    docker cp "${EXTRACTED_FS}/." "$(docker compose -f "${COMPOSE_FILE}" ps -q odoo):/var/lib/odoo/filestore/${DB_NAME}"
+    docker compose -f "${COMPOSE_FILE}" exec -T odoo chown -R odoo:odoo "/var/lib/odoo/filestore/${DB_NAME}"
+
+    rm -rf "${TMPDIR}"
     echo "      Filestore restored."
 else
     echo "[4/5] No filestore archive found — skipping (OK for a fresh/data-only DB)."

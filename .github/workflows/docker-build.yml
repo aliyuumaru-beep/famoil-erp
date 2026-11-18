@@ -1,0 +1,31 @@
+name: Docker Build
+
+on:
+  pull_request:
+    paths:
+      - 'docker/**'
+      - 'custom_addons/**'
+      - '.github/workflows/docker-build.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker/**'
+      - 'custom_addons/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (dry-run, no push)
+        run: |
+          docker compose -f docker/docker-compose.yml build --no-cache
+        env:
+          POSTGRES_PASSWORD: ci_test_password_not_real
+          POSTGRES_USER: odoo
+          POSTGRES_DB: Famoil

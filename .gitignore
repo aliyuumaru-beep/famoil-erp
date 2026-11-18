@@ -17,9 +17,10 @@ sessions/
 
 *.DS_Store
 
-odoo.conf
+/odoo.conf
 .env
 .env.*
+!docker/.env.example
 
 **/secrets/
 **/passwords*

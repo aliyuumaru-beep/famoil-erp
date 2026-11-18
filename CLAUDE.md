@@ -293,7 +293,13 @@ Deodorization (id=23)
 │   └── famoil_erp_template/         ← FamOil-specific docs
 ├── csv_templates/                   ← 9 reusable import templates
 ├── custom_addons/                   ← 11 installed modules
-├── scripts/                         ← 5 operational scripts
+├── docker/                          ← Docker packaging (DEC-014 / SPEC-DOCKER-01)
+│   ├── Dockerfile                   ← Odoo 17 + custom_addons + OCA addons
+│   ├── docker-compose.yml           ← Odoo + PostgreSQL 16 stack
+│   ├── odoo.conf                    ← Docker-tuned Odoo config
+│   ├── .env.example                 ← credential template (never commit .env)
+│   └── oca_addons/                  ← 10 OCA web addons (self-contained)
+├── scripts/                         ← operational scripts (7 total)
 ├── prompts/                         ← prompt library
 ├── tests/                           ← test scripts
 └── logs/                            ← local audit logs (git-ignored)

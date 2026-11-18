@@ -62,6 +62,7 @@ Edit `docker/.env` and set **all three** required values before starting the sta
 | `POSTGRES_PASSWORD` | Strong password for the PostgreSQL `odoo` user |
 | `ODOO_ADMIN_PASSWD` | Odoo master password (protects `/web/database/` page) |
 | `ODOO_PORT` | Host port (default 8069; change if already in use) |
+| `POSTGRES_DB` | Database name (default `Famoil`). **If you change this, also update `db_name` in `docker/odoo.conf` and rebuild** (`docker compose build`). |
 
 > **Security gate (mandatory before exposing to any network):** `POSTGRES_PASSWORD` and
 > `ODOO_ADMIN_PASSWD` are required at startup — `docker compose up` will fail fast if either

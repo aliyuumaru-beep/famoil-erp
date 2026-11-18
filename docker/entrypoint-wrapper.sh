@@ -7,9 +7,14 @@ set -e
 ODOO_CONF="${ODOO_RC:-/etc/odoo/odoo.conf}"
 
 if [ -n "${ADMIN_PASSWD:-}" ]; then
+    # Guard against newline injection — a multi-line value would corrupt odoo.conf
+    if printf '%s' "${ADMIN_PASSWD}" | grep -q $'\n'; then
+        echo "ERROR: ADMIN_PASSWD must not contain newline characters." >&2
+        exit 1
+    fi
     # Remove existing admin_passwd line (commented or not), then append the real value
     sed -i '/^\s*;*\s*admin_passwd\s*=/d' "${ODOO_CONF}"
-    echo "admin_passwd = ${ADMIN_PASSWD}" >> "${ODOO_CONF}"
+    printf 'admin_passwd = %s\n' "${ADMIN_PASSWD}" >> "${ODOO_CONF}"
 fi
 
 exec /entrypoint.sh "$@"

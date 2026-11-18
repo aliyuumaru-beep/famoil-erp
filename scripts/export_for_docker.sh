@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 # export_for_docker.sh — Export FamOil DB + filestore as a dated archive
+#
+# PLATFORM: macOS only — the filestore is read from ~/Library/Application Support/Odoo/
+# On Linux, the filestore is at ~/.local/share/Odoo/filestore/ — update FILESTORE_DIR below.
+#
 # Output: odoo_backups/docker_export_YYYYMMDD_HHMM/
 #   famoil_YYYYMMDD_HHMM.dump   — pg_dump custom format
 #   filestore.tar.gz             — Odoo filestore

@@ -1,0 +1,30 @@
+{
+  "pod": "ERP-AGRO",
+  "governance_repo": "aliyuumaru-beep/software-factory-governance",
+  "default_branch": "main",
+  "protected_branches": [
+    "main"
+  ],
+  "briefing_docs": [
+    "CLAUDE.md"
+  ],
+  "code_paths": [
+    "custom_addons/",
+    "addons/",
+    "src/"
+  ],
+  "required_doc_updates": [
+    "CHANGELOG.md",
+    "IMPLEMENTATION_HISTORY.md"
+  ],
+  "spec_sources": [
+    "docs",
+    "DECISION_LOG.md",
+    "ROADMAP.md"
+  ],
+  "live_databases": [],
+  "backup_dirs": [
+    "~/OdooFolder/odoo_backups"
+  ],
+  "backup_max_age_hours": 6
+}

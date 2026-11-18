@@ -1,0 +1,13 @@
+# Software Factory governance gate (SPEC-GOV-ENF-001). Do not edit or remove:
+# `governance / gate` is a required check on main; without it nothing can merge.
+name: governance
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled, ready_for_review]
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  governance:
+    uses: aliyuumaru-beep/software-factory-governance/.github/workflows/governance-gate.yml@main
+    secrets: inherit

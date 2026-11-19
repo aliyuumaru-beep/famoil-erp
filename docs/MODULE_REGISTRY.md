@@ -103,6 +103,6 @@ When upgrading Odoo version:
 1. Test `stock_crude_oil_tank_restriction` — `button_validate` override must still work
 2. Test `mrp_component_availability_check` — `_button_mark_done_sanity_checks` must still exist
 3. Test `stock_landed_cost_po_check` — run 3-test suite; verify `purchase_line_id` still exists on `stock.move`
-4. Check all OCA module compatibility with new Odoo version on https://github.com/OCA
+4. Check all OCA module compatibility with new Odoo version on https://github.com/OCA — note: `web_responsive` and `web_notify` add stored columns to `res.users`; confirm those columns are present after any OCA version change before restarting Odoo
 5. Check `om_*` modules for version compatibility
 6. Run full manufacturing test (Test A and B from `docs/TESTING_GUIDE.md`) before go-live

@@ -180,6 +180,23 @@ Type `CONFIRM` when prompted. The script:
 4. Restores the filestore into the Docker volume
 5. Restarts Odoo
 
+**Recovery if import fails mid-way:** The import is destructive once you type `CONFIRM` — the
+database is dropped and rebuilt. If the script errors after the DROP, re-run it with the same
+export directory:
+
+```bash
+./scripts/import_to_docker.sh /opt/famoil_export/docker_export_YYYYMMDD_HHMM
+```
+
+The script will drop and recreate from scratch again. If you need to roll back to the original
+macOS instance, stop the Docker stack and restart the macOS Odoo process — the macOS database
+was not modified by this script.
+
+> **CI smoke test note:** The `docker-build.yml` CI workflow runs a build-only dry-run (`docker
+> compose build`) — it does not start the stack or run the smoke test. Full startup verification
+> requires a live Docker host (network access to pull `odoo:17.0` and `postgres:16`, and a
+> running Docker daemon). The smoke test must be run manually on the target host per §2.5.
+
 ### 2.5 Verify — Automated Smoke Test (Acceptance Gate)
 
 Run the smoke test before doing anything else. It starts the stack, waits until Odoo accepts TCP connections on its port, confirms the werkzeug HTTP service started in the logs, then stops cleanly:

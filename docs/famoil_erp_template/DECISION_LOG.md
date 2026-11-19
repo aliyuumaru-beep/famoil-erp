@@ -407,12 +407,16 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 - PostgreSQL exposed on internal Docker network only — port 5432 not bound to host.
 - Admin password via `.env` / `odoo.conf` — not hardcoded in image.
 
-**OCA `web_dialog_size` sudo() — Accepted (G3-C1, 2026-11-19):**
-`docker/oca_addons/web_dialog_size/models/ir_config_parameter.py:13` calls `self.sudo().get_param`
-to read the system parameter `web_dialog_size.default_maximize`. Acceptance rationale: (a) the call
-is read-only — `get_param` only; (b) it returns a single boolean UI preference, not sensitive data;
-(c) there is no code path from this method to credentials, PII, or financial records; (d) this is
-an established OCA community pattern used across hundreds of modules. No data is written or escalated.
+**OCA sudo() calls — Accepted for all three modules (G3-C1 extended, 2026-11-19):**
+Three OCA addons use `ir.config_parameter.sudo()` for read-only UI preference lookups:
+- `web_dialog_size/models/ir_config_parameter.py:13` — reads `web_dialog_size.default_maximize` (boolean)
+- `web_environment_ribbon/models/web_environment_ribbon_backend.py:17,31,32` — reads `ribbon.name`, `ribbon.color`, `ribbon.background_color` (UI display strings)
+- `web_m2x_options/models/ir_config_parameter.py:17` and `ir_http.py:8` — reads M2x field option keys (UI behaviour booleans)
+
+Acceptance rationale for all five locations: (a) all calls are read-only (`get_param` / `search_read`);
+(b) all return UI preference values, not sensitive data; (c) no code path leads to credentials, PII,
+or financial records; (d) this is an established OCA community pattern used across hundreds of modules.
+No data is written or escalated. Named owner: Aliyu Umaru.
 
 **Accepted Risk — admin_passwd plaintext in running container (G3-BC-01, 2026-11-19):**
 `docker/entrypoint-wrapper.sh` writes `admin_passwd` in plaintext to `/etc/odoo/odoo.conf` inside

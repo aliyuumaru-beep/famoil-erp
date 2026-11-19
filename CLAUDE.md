@@ -19,11 +19,11 @@
 | Country             | Nigeria                                    |
 | Currency            | NGN (Nigerian Naira, ₦)                    |
 | Deployment          | Local — macOS (MacBook Air)                |
-| Project Directory   | /Users/mac/odoo17                          |
+| Project Directory   | /Users/aliyuumaru/OdooFolder/odoo17        |
 | Company (active)    | FamOil FTZ (id=2)                          |
 | Server              | localhost:8069                             |
 
-**Start command** (run from /Users/mac/odoo17):
+**Start command** (run from /Users/aliyuumaru/OdooFolder/odoo17):
 ```bash
 source odoo/venv/bin/activate
 python odoo/odoo-bin -d Famoil -r odoo \
@@ -125,7 +125,7 @@ See: `docs/operations/RESTORE_DRILL.md` for full drill reports.
 | `om_fiscal_year`                  | Fiscal year management                        | third-party  |
 | `om_recurring_payments`           | Recurring payment automation                  | third-party  |
 
-**OCA Web addons (in /Users/mac/oca_web):**
+**OCA Web addons (in `docker/oca_addons/` — DEC-014 / v1.17.0):**
 `web_responsive`, `web_environment_ribbon`, `web_notify`, `web_refresher`,
 `web_theme_classic`, `web_dialog_size`, `web_m2x_options`,
 `web_pivot_computed_measure`, `web_search_with_and`,
@@ -214,7 +214,7 @@ Deodorization (id=23)
 - DO NOT commit ERP backup archives (SQL, filestore, tar.gz) to the repository — only `backups/BACKUP_MANIFEST.md` metadata is tracked
 
 **Backup status:**
-- Last backup: 2026-05-29 07:53 — `/Users/mac/odoo_backups/famoil_20260529_0753/`
+- Last backup: 2026-05-29 07:53 — `~/OdooFolder/odoo_backups/famoil_20260529_0753/`
 - Backup format: `pg_dump -F c` (custom format — `Famoil.dump`, 6MB) — resolves ir_attachment FK issue
 - Restore script: `scripts/restore_famoil.sh` — full restore + validation in one script
 - Governance bridge: `backups/BACKUP_MANIFEST.md` (must be committed after each run)
@@ -265,7 +265,7 @@ Deodorization (id=23)
 ## REPOSITORY STRUCTURE
 
 ```
-/Users/mac/odoo17/
+/Users/aliyuumaru/OdooFolder/odoo17/
 ├── CLAUDE.md                        ← this file
 ├── CHANGELOG.md                     ← version history
 ├── VERSION                          ← FamOil-Template-v1.0.0

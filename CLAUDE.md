@@ -256,7 +256,7 @@ Deodorization (id=23)
 - Spare parts/consumables list_price = ₦1 (placeholder)
 - Off-machine survivability: Docker packaging ✅ v1.17.0 (DEC-014); rclone offsite sync still pending (rclone not installed)
 - 5L Jerrycan, 1L Jerrycan, and Labels have ₦0 cost — RSO 5L/1L prices understated
-- Sahad Oil Traders credit limit not enforced (no native credit limit in Odoo Community)
+- Sahad Oil Traders credit limit — enforced via base.automation (DEC-013 / v1.16.0); hard block only, no manager-override workflow yet
 - GitHub ruleset gaps: 0 required reviewers, all merge methods, claude-review not required (G-5/G-6)
 
 ---

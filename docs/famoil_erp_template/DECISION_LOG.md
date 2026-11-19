@@ -407,6 +407,13 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 - PostgreSQL exposed on internal Docker network only — port 5432 not bound to host.
 - Admin password via `.env` / `odoo.conf` — not hardcoded in image.
 
+**OCA `web_dialog_size` sudo() — Accepted (G3-C1, 2026-11-19):**
+`docker/oca_addons/web_dialog_size/models/ir_config_parameter.py:13` calls `self.sudo().get_param`
+to read the system parameter `web_dialog_size.default_maximize`. Acceptance rationale: (a) the call
+is read-only — `get_param` only; (b) it returns a single boolean UI preference, not sensitive data;
+(c) there is no code path from this method to credentials, PII, or financial records; (d) this is
+an established OCA community pattern used across hundreds of modules. No data is written or escalated.
+
 **Accepted Risk — Floating Image Tags:**
 `FROM odoo:17.0` and `image: postgres:16` use floating tags. This is the standard operator-maintained pattern for a single-instance local deployment. The risk is acknowledged and documented: `docs/deployment/DOCKER_MIGRATION.md` §Part 4 item 7 gives the inspection command and requires the operator to pin digests before the first production (network-exposed) deployment. Named owner: Aliyu Umaru. This record satisfies the G1 condition (round 5, 2026-11-18) requiring the trade-off to be explicitly logged.
 

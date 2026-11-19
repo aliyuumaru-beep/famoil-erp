@@ -414,6 +414,15 @@ is read-only — `get_param` only; (b) it returns a single boolean UI preference
 (c) there is no code path from this method to credentials, PII, or financial records; (d) this is
 an established OCA community pattern used across hundreds of modules. No data is written or escalated.
 
+**Accepted Risk — admin_passwd plaintext in running container (G3-BC-01, 2026-11-19):**
+`docker/entrypoint-wrapper.sh` writes `admin_passwd` in plaintext to `/etc/odoo/odoo.conf` inside
+the running container at startup. This is an inherent trade-off of runtime credential injection
+without a secrets-management layer (Vault, Kubernetes secrets, etc.). Named owner: Aliyu Umaru.
+Mitigations documented in `docs/deployment/DOCKER_MIGRATION.md §Part 4 ⚠ WARNING`: restrict
+Docker socket access to trusted operators; never `docker commit`, `docker cp`, `docker export`, or
+`docker exec cat /etc/odoo/odoo.conf` on a live stack. Revisit with Vault integration if the
+stack is ever multi-tenant or multi-operator.
+
 **Accepted Risk — Floating Image Tags:**
 `FROM odoo:17.0` and `image: postgres:16` use floating tags. This is the standard operator-maintained pattern for a single-instance local deployment. The risk is acknowledged and documented: `docs/deployment/DOCKER_MIGRATION.md` §Part 4 item 7 gives the inspection command and requires the operator to pin digests before the first production (network-exposed) deployment. Named owner: Aliyu Umaru. This record satisfies the G1 condition (round 5, 2026-11-18) requiring the trade-off to be explicitly logged.
 

@@ -71,6 +71,7 @@ python odoo/odoo-bin -d Famoil -r odoo \
 3. Procurement traceability validation
 4. Barcode & warehouse operations
 5. Off-machine survivability activation [PARTIAL — Docker packaging ✅ v1.17.0; rclone offsite sync pending]
+6. Credit limit workflow maturity (DEC-013 ✅ — hard block; manager-override workflow pending)
 7. Quarterly restore governance
 8. Multi-template expansion
 

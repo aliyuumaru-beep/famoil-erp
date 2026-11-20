@@ -37,6 +37,7 @@ cloud VM, on-premise server) with a single `docker compose up` after importing t
 
 ---
 
+
 ## v1.16.0 — 2026-06-04 — Sales Workflow Maturity COMPLETE
 
 **Sales workflow milestone closed. All items validated end-to-end.**

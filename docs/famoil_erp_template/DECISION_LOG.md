@@ -331,6 +331,7 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 
 ---
 
+
 ## DEC-013 — Credit Limit Enforcement: base.automation vs Custom Module
 
 **Decision:** Implement Sahad Oil Traders credit limit enforcement using native `res.partner.credit_limit`, `use_partner_credit_limit`, and a `base.automation` server action triggered on SO confirmation — no custom Python module.

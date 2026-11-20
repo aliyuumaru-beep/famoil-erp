@@ -55,7 +55,7 @@ cd /Users/aliyuumaru/OdooFolder/odoo17
 cp docker/.env.example docker/.env
 ```
 
-Edit `docker/.env` and set **all three** required values before starting the stack:
+Edit `docker/.env` and set **all required** values before starting the stack (`POSTGRES_PASSWORD` and `ODOO_ADMIN_PASSWD` are mandatory; the others have defaults):
 
 | Variable | Requirement |
 |----------|-------------|

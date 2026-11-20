@@ -43,7 +43,6 @@ jobs:
                    | grep -v "test_password\|dummy_password\|CHANGE_ME" \
                    | grep -Ev "^[^:]+:[0-9]+:[[:space:]]*(;|#)" \
                    | grep -v '\${' \
-                   | grep -Ev "printf[^|]*%s|%s[^|]*printf" \
                    || true)
             if [ -n "$HITS" ]; then
               echo "SECURITY VIOLATION — pattern '$pattern' found:"

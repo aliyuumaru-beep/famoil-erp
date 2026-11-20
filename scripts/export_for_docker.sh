@@ -29,7 +29,7 @@ mkdir -p "${EXPORT_DIR}"
 
 # 1. DB dump
 echo "[1/3] Dumping database..."
-DUMP_FILE="${EXPORT_DIR}/${DB_NAME,,}_${TIMESTAMP}.dump"
+DUMP_FILE="${EXPORT_DIR}/$(echo "${DB_NAME}" | tr '[:upper:]' '[:lower:]')_${TIMESTAMP}.dump"
 pg_dump -F c -U "${DB_USER}" "${DB_NAME}" -f "${DUMP_FILE}"
 echo "      DB dump: $(du -sh "${DUMP_FILE}" | cut -f1)"
 

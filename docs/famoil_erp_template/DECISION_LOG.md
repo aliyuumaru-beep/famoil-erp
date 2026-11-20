@@ -452,3 +452,29 @@ stack is ever multi-tenant or multi-operator.
 
 **Revisit Conditions:**
 - If NADF modules are ever intentionally merged into this repo (unlikely — different pod, different client).
+
+---
+
+## DEC-016 — Landed Cost Enforcement Module: `stock_landed_cost_po_check`
+
+**Decision:** Implement landed cost controls as a custom Odoo module rather than via pure configuration: (1) block landed cost validation if any linked receipt was not created from a Purchase Order; (2) schedule an automated activity reminder on every validated SoyaBean receipt to prompt landed cost entry within the same accounting period.
+
+**Date:** 2026-05-27 (backfilled from MODULE_REGISTRY — DEC number assigned 2026-11-20 when DEC-012 was reassigned to governance onboarding)
+
+**Status:** COMPLETE — `custom_addons/stock_landed_cost_po_check` v17.0.1.0.0 live.
+
+**Rationale:**
+- Odoo 17 Community has no native "PO-only receipt" gate on landed costs. Manual enforcement would be error-prone in a high-volume agro-processing operation.
+- Activity reminders ensure procurement staff enter landed costs (Hexane transport, inbound freight) promptly, keeping COGS accurate for the period.
+- A minimal module override on `stock.landed.cost.button_validate()` is the lowest-friction implementation — no UI changes, no new models.
+
+**Alternatives Considered:**
+- Configuration-only (no module): no mechanism to enforce PO linkage gate in Community edition.
+- Scheduled job / server action: harder to surface a clear `UserError` message at the right moment.
+
+**Trade-offs:**
+- `button_validate` override requires testing after every Odoo upgrade (upgrade risk: LOW — constraint logic is simple).
+
+**Revisit Conditions:**
+- If Odoo adds a native landed cost / PO linkage gate in a later Community version.
+- If the automated activity reminder causes notification fatigue — consider a cron-based consolidation instead.

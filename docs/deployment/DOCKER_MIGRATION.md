@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0
 **Date:** 2026-11-18
-**Spec:** DEC-014 / SPEC-DOCKER-01 — see `docs/famoil_erp_template/DECISION_LOG.md` § DEC-014
+**Spec:** DEC-014 (§ "Scope of work (SPEC-DOCKER-01)" in `docs/famoil_erp_template/DECISION_LOG.md`) — SPEC-DOCKER-01 is not a separate document; the full spec is in DEC-014.
 
 ---
 

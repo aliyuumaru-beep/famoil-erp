@@ -35,7 +35,7 @@
 | Mechanism | Overrides `button_validate` on `stock.landed.cost`; raises `UserError` if `picking_type_code != 'incoming'` or `move_ids.filtered('purchase_line_id')` is empty. Automated action fires on `stock.picking` state → done to schedule a todo activity |
 | Override point | `stock.landed.cost.button_validate()` |
 | Depends | `stock_landed_costs`, `purchase_stock`, `base_automation`, `mail` |
-| Decision | DEC-012 |
+| Decision | DEC-016 |
 | Upgrade risk | LOW — constraint logic is simple; re-run 3-test suite after any Odoo upgrade |
 | Known conflicts | None |
 

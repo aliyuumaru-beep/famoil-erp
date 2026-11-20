@@ -113,3 +113,5 @@ python test_soya.py
 > These scripts test via the Odoo shell (not pytest). Run only against Famoil DB.
 
 New test scripts should be created under `tests/` directory.
+
+> **Acceptance / infrastructure scripts** (e.g., `scripts/docker_smoke_test.sh`) are intentionally placed in `scripts/` rather than `tests/` because they start external services (Docker stack) and require a live environment — they are operational acceptance gates, not unit or integration tests. See `docs/deployment/DOCKER_MIGRATION.md §2.5` for the Docker acceptance procedure.

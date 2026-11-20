@@ -1,6 +1,6 @@
 # Module Registry
 # FamOil Software Factory — Installed Modules Inventory
-# Version: 1.1 | Created: 2026-05-27 | Updated: 2026-05-30
+# Version: 1.2 | Created: 2026-05-27 | Updated: 2026-11-18
 
 ---
 
@@ -35,7 +35,7 @@
 | Mechanism | Overrides `button_validate` on `stock.landed.cost`; raises `UserError` if `picking_type_code != 'incoming'` or `move_ids.filtered('purchase_line_id')` is empty. Automated action fires on `stock.picking` state → done to schedule a todo activity |
 | Override point | `stock.landed.cost.button_validate()` |
 | Depends | `stock_landed_costs`, `purchase_stock`, `base_automation`, `mail` |
-| Decision | DEC-012 |
+| Decision | DEC-016 |
 | Upgrade risk | LOW — constraint logic is simple; re-run 3-test suite after any Odoo upgrade |
 | Known conflicts | None |
 
@@ -57,20 +57,25 @@
 
 ---
 
-## OCA Web Addons (at /Users/mac/oca_web)
+## OCA Web Addons (embedded in `docker/oca_addons/` — DEC-014 / v1.17.0)
 
-| Module | Purpose |
-|--------|---------|
-| `web_responsive` | Mobile-friendly UI (essential for plant floor tablet use) |
-| `web_environment_ribbon` | Environment label banner (shows DEV/PROD) |
-| `web_notify` | Browser push notifications |
-| `web_refresher` | Auto-refresh list views |
-| `web_theme_classic` | Classic Odoo 16/17 theme |
-| `web_dialog_size` | Resizable dialog boxes |
-| `web_m2x_options` | Many2x field creation options |
-| `web_pivot_computed_measure` | Custom computed measures in pivot tables |
-| `web_search_with_and` | AND logic in search bar |
-| `web_remember_tree_column_width` | Persistent column widths |
+> **Path change:** These modules are now committed to the repository at `docker/oca_addons/`
+> and are baked into the Docker image at build time. The original source was `/Users/mac/oca_web`
+> (local macOS path, non-portable). `docker/oca_addons/` is the canonical, portable location.
+> On non-Docker deployments, add `docker/oca_addons/` to `--addons-path`.
+
+| Module | Version (copied 2026-11-18) | Repo Path | Purpose |
+|--------|-----------------------------|-----------|---------|
+| `web_responsive` | 17.0.1.1.11 | `docker/oca_addons/web_responsive/` | Mobile-friendly UI (essential for plant floor tablet use) |
+| `web_environment_ribbon` | 17.0.1.0.3 | `docker/oca_addons/web_environment_ribbon/` | Environment label banner (shows DEV/PROD) |
+| `web_notify` | 17.0.1.1.0 | `docker/oca_addons/web_notify/` | Browser push notifications |
+| `web_refresher` | 17.0.1.1.3 | `docker/oca_addons/web_refresher/` | Auto-refresh list views |
+| `web_theme_classic` | 17.0.1.0.0 | `docker/oca_addons/web_theme_classic/` | Classic Odoo 16/17 theme |
+| `web_dialog_size` | 17.0.1.0.2 | `docker/oca_addons/web_dialog_size/` | Resizable dialog boxes |
+| `web_m2x_options` | 17.0.1.0.8 | `docker/oca_addons/web_m2x_options/` | Many2x field creation options |
+| `web_pivot_computed_measure` | 17.0.1.0.0 | `docker/oca_addons/web_pivot_computed_measure/` | Custom computed measures in pivot tables |
+| `web_search_with_and` | 17.0.1.0.0 | `docker/oca_addons/web_search_with_and/` | AND logic in search bar |
+| `web_remember_tree_column_width` | 17.0.1.0.0 | `docker/oca_addons/web_remember_tree_column_width/` | Persistent column widths |
 
 ---
 
@@ -98,6 +103,6 @@ When upgrading Odoo version:
 1. Test `stock_crude_oil_tank_restriction` — `button_validate` override must still work
 2. Test `mrp_component_availability_check` — `_button_mark_done_sanity_checks` must still exist
 3. Test `stock_landed_cost_po_check` — run 3-test suite; verify `purchase_line_id` still exists on `stock.move`
-4. Check all OCA module compatibility with new Odoo version on https://github.com/OCA
+4. Check all OCA module compatibility with new Odoo version on https://github.com/OCA — note: `web_responsive` adds stored columns to `res.users` (`apps_menu_search_type`, `apps_menu_theme`, `is_redirect_home`); confirm those columns are present after any `web_responsive` version change before restarting Odoo (`web_notify` fields are computed-only — no DB columns)
 5. Check `om_*` modules for version compatibility
 6. Run full manufacturing test (Test A and B from `docs/TESTING_GUIDE.md`) before go-live

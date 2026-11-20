@@ -1,0 +1,37 @@
+{
+  "pod": "ERP-AGRO",
+  "governance_repo": "aliyuumaru-beep/software-factory-governance",
+  "default_branch": "main",
+  "protected_branches": [
+    "main"
+  ],
+  "briefing_docs": [
+    "CLAUDE.md",
+    "docs/famoil_erp_template/FAMOIL_ROADMAP.md",
+    "docs/roadmap/PLATFORM_ROADMAP.md",
+    "docs/famoil_erp_template/KNOWN_ISSUES.md",
+    "docs/famoil_erp_template/DECISION_LOG.md"
+  ],
+  "code_paths": [
+    "custom_addons/",
+    "docker/",
+    "scripts/"
+  ],
+  "required_doc_updates": [
+    "CHANGELOG.md",
+    "docs/famoil_erp_template/IMPLEMENTATION_HISTORY.md",
+    "docs/famoil_erp_template/DECISION_LOG.md"
+  ],
+  "spec_sources": [
+    "docs/famoil_erp_template/DECISION_LOG.md",
+    "docs/famoil_erp_template/FAMOIL_ROADMAP.md",
+    "docs/roadmap/PLATFORM_ROADMAP.md"
+  ],
+  "live_databases": [
+    "Famoil"
+  ],
+  "backup_dirs": [
+    "~/OdooFolder/odoo_backups"
+  ],
+  "backup_max_age_hours": 6
+}

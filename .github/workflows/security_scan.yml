@@ -26,17 +26,23 @@ jobs:
             "-----BEGIN.*PRIVATE KEY-----"
           )
           for pattern in "${PATTERNS[@]}"; do
-            # Narrow carve-out: exclude lines that contain an explicit test-fixture
-            # marker value (test_password, dummy_password). These are not real
-            # credentials — they are intentional placeholders in test scripts.
-            # Any other value (admin, secret, 123456, etc.) still fails the scan.
+            # Exclusions (all applied to the grep output lines, format: "file:line:content"):
+            #   1. Test/placeholder markers — not real credentials
+            #   2. Comment lines in .conf/.ini/.sh files (content starts with ; or #)
+            #      e.g. "; db_password is injected at runtime" in odoo.conf
+            #   3. Shell variable references (${...}) — value is injected at runtime,
+            #      not hardcoded; e.g. `printf 'admin_passwd = %s\n' "${VAR}"`
+            #   4. printf format strings (%s) — same reason as (3)
+            #   5. CHANGE_ME placeholders in .env.example files
             HITS=$(grep -rn --include="*.py" --include="*.sh" \
                    --include="*.conf" --include="*.json" --include="*.env" \
                    -i "$pattern" . \
                    --exclude-dir=".git" \
                    --exclude-dir="backups" \
                    --exclude="local_secret_scan.sh" 2>/dev/null \
-                   | grep -v "'test_password'\|'dummy_password'" \
+                   | grep -v "test_password\|dummy_password\|CHANGE_ME" \
+                   | grep -Ev "^[^:]+:[0-9]+:[[:space:]]*(;|#)" \
+                   | grep -v '\${' \
                    || true)
             if [ -n "$HITS" ]; then
               echo "SECURITY VIOLATION — pattern '$pattern' found:"

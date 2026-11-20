@@ -313,6 +313,25 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 
 ---
 
+## DEC-012 — Governance Onboarding: ERP-AGRO Pod Configuration
+
+**Decision:** Onboard the FamOil ERP repository to the Software Factory Governance engine under pod `ERP-AGRO` with `.governance.json` configuration, `gov_bootstrap.sh` hooks, and G1/G2/G3 CI gates.
+
+**Date:** 2026-11-18
+
+**Status:** COMPLETE — delivered in `feature/docker-migration` branch as a prerequisite for DEC-014.
+
+**Rationale:**
+- SPEC-GOV-ENF-001 requires all `aliyuumaru-beep` repositories to be onboarded before code changes.
+- ERP-AGRO pod covers all Odoo agro-processing ERP instances (FamOil, future templates).
+- Briefing docs confirmed: CLAUDE.md, FAMOIL_ROADMAP.md, PLATFORM_ROADMAP.md, KNOWN_ISSUES.md, DECISION_LOG.md.
+
+**Revisit Conditions:**
+- If a second ERP-AGRO template diverges significantly — consider a sub-pod or separate `.governance.json`.
+
+---
+
+
 ## DEC-013 — Credit Limit Enforcement: base.automation vs Custom Module
 
 **Decision:** Implement Sahad Oil Traders credit limit enforcement using native `res.partner.credit_limit`, `use_partner_credit_limit`, and a `base.automation` server action triggered on SO confirmation — no custom Python module.
@@ -338,3 +357,124 @@ PDF served via Odoo `/web/content` HTTP 200. RTO ≈ 43 seconds.
 **Revisit Conditions:**
 - If a manager override workflow is needed — consider custom module with approval mechanism.
 - If Sahad adds a second partner contact requiring separate credit tracking — review partner hierarchy.
+
+---
+
+## DEC-014 — Docker Containerisation for FamOil ERP (SPEC-DOCKER-01)
+
+**Decision:** Package the FamOil Odoo 17 ERP as a portable Docker image containing the Odoo application, all custom addons, and all OCA web addons, with a docker-compose stack (Odoo + PostgreSQL 16) for one-command deployment on any Linux/cloud host.
+
+**Date:** 2026-11-18
+
+**Rationale:**
+- Current deployment is macOS-local — tied to a single machine. Hardware failure means downtime until a new machine is manually configured.
+- Docker encapsulates Odoo, Python dependencies, and all addons into one image. Combined with a DB dump + filestore archive, the entire ERP can be restored on any Docker-capable host (Linux VPS, cloud VM, on-premise server) in minutes.
+- Provides a clean migration path to production cloud hosting (AWS EC2, DigitalOcean, Hetzner) without bespoke setup.
+- Directly addresses the top platform risk: "off-machine backup sync not yet operationally activated" (PLATFORM_ROADMAP.md § 10).
+- Aligns with FAMOIL_ROADMAP Priority 5 (Off-machine survivability) and closes the macOS-only deployment constraint.
+
+**Scope of work (SPEC-DOCKER-01):**
+1. `docker/Dockerfile` — Odoo 17 image with custom_addons + OCA web addons baked in.
+2. `docker/docker-compose.yml` — Full stack: Odoo service + PostgreSQL 16, named volumes.
+3. `docker/odoo.conf` — Odoo configuration tuned for Docker (workers, paths, DB host).
+4. `docker/.env.example` — Environment variable template (DB credentials, admin password, host port).
+5. `docker/oca_addons/` — The 10 OCA web addons used by FamOil copied into the repo for self-contained build context.
+6. `scripts/export_for_docker.sh` — Exports `Famoil` DB (pg_dump custom format) + filestore as a dated archive.
+7. `scripts/import_to_docker.sh` — Imports DB + filestore archive into a running Docker stack.
+8. `docs/deployment/DOCKER_MIGRATION.md` — End-to-end migration and operations guide.
+9. `scripts/docker_smoke_test.sh` — Acceptance gate script: starts the stack, verifies TCP port
+   connectivity + werkzeug HTTP service log entry, records a dated PASS. Added during implementation
+   to close the acceptance loop on deliverable 8 (G3-F7, 2026-11-18).
+10. `docker/entrypoint-wrapper.sh` — Injects `ADMIN_PASSWD` from `.env` into `odoo.conf` at
+    container start (kept out of the baked image for security).
+
+**OCA addons included (10 modules from /Users/aliyuumaru/OdooFolder/oca_web):**
+`web_responsive`, `web_environment_ribbon`, `web_notify`, `web_refresher`,
+`web_theme_classic`, `web_dialog_size`, `web_m2x_options`, `web_pivot_computed_measure`,
+`web_search_with_and`, `web_remember_tree_column_width`
+
+**Alternatives Considered:**
+- Bare-metal Linux migration (no Docker): eliminates portability — still tied to one machine's OS/dependencies.
+- Odoo.sh (Odoo SaaS): subscription cost; loses local control; OCA addons not supported out of the box.
+- Docker Swarm / Kubernetes: overkill for single-instance ERP at this scale.
+
+**Trade-offs:**
+- OCA addons committed into `docker/oca_addons/`: increases repo size (~5–10 MB). Benefit: fully self-contained build — no external dependency at build time.
+- Addons baked into image: image must be rebuilt when addons change. Acceptable — addons change rarely.
+- DB and filestore are NOT inside the image — they live in Docker named volumes and in separate export archives. Correct separation: application vs data.
+
+**Security:**
+- DB credentials go in `.env` (never committed). `.env.example` committed with placeholder values only.
+- PostgreSQL exposed on internal Docker network only — port 5432 not bound to host.
+- Admin password via `.env` / `odoo.conf` — not hardcoded in image.
+
+**OCA sudo() calls — Accepted for all three modules (G3-C1 extended, 2026-11-19):**
+Three OCA addons use `ir.config_parameter.sudo()` for read-only UI preference lookups:
+- `web_dialog_size/models/ir_config_parameter.py:13` — reads `web_dialog_size.default_maximize` (boolean)
+- `web_environment_ribbon/models/web_environment_ribbon_backend.py:17,31,32` — reads `ribbon.name`, `ribbon.color`, `ribbon.background_color` (UI display strings)
+- `web_m2x_options/models/ir_config_parameter.py:17` and `ir_http.py:8` — reads M2x field option keys (UI behaviour booleans)
+
+Acceptance rationale for all five locations: (a) all calls are read-only (`get_param` / `search_read`);
+(b) all return UI preference values, not sensitive data; (c) no code path leads to credentials, PII,
+or financial records; (d) this is an established OCA community pattern used across hundreds of modules.
+No data is written or escalated. Named owner: Aliyu Umaru.
+
+**Accepted Risk — admin_passwd plaintext in running container (G3-BC-01, 2026-11-19):**
+`docker/entrypoint-wrapper.sh` writes `admin_passwd` in plaintext to `/etc/odoo/odoo.conf` inside
+the running container at startup. This is an inherent trade-off of runtime credential injection
+without a secrets-management layer (Vault, Kubernetes secrets, etc.). Named owner: Aliyu Umaru.
+Mitigations documented in `docs/deployment/DOCKER_MIGRATION.md §Part 4 ⚠ WARNING`: restrict
+Docker socket access to trusted operators; never `docker commit`, `docker cp`, `docker export`, or
+`docker exec cat /etc/odoo/odoo.conf` on a live stack. Revisit with Vault integration if the
+stack is ever multi-tenant or multi-operator.
+
+**Accepted Risk — Floating Image Tags:**
+`FROM odoo:17.0` and `image: postgres:16` use floating tags. This is the standard operator-maintained pattern for a single-instance local deployment. The risk is acknowledged and documented: `docs/deployment/DOCKER_MIGRATION.md` §Part 4 item 7 gives the inspection command and requires the operator to pin digests before the first production (network-exposed) deployment. Named owner: Aliyu Umaru. This record satisfies the G1 condition (round 5, 2026-11-18) requiring the trade-off to be explicitly logged.
+
+**Revisit Conditions:**
+- When scaling beyond a single Odoo instance — revisit with Kubernetes or Docker Swarm.
+- When moving to Odoo Enterprise — base image changes; addons path may differ.
+
+---
+
+## DEC-015 — `.gitignore` Layering Guard for `custom_addons/nadf_*`
+
+**Decision:** Add a `.gitignore` rule to prevent NADF-pod modules from being accidentally committed into the FamOil (`ERP-AGRO`) repository.
+
+**Date:** 2026-06-22 (backfilled per G3-E1 finding, 2026-11-18)
+
+**Rationale:**
+- NADF ERP modules (`nadf_*`) belong in the `nadf_erp` repository (POD-NADF), not in `famoil-erp`. Accidental staging can occur when both repos share paths on the developer's machine.
+- The layering guard rule (`custom_addons/nadf_*`) prevents `git add .` from pulling in stray NADF files. It was added manually on 2026-06-22 (commit annotation "M-C 2026-06-22") as a low-friction safeguard.
+- G3 review (round 1, 2026-11-18) flagged the absence of a decision log entry (E1 — scope outside DEC-014). This entry closes that gap.
+
+**Scope:** One `.gitignore` pattern — no code change.
+
+**Revisit Conditions:**
+- If NADF modules are ever intentionally merged into this repo (unlikely — different pod, different client).
+
+---
+
+## DEC-016 — Landed Cost Enforcement Module: `stock_landed_cost_po_check`
+
+**Decision:** Implement landed cost controls as a custom Odoo module rather than via pure configuration: (1) block landed cost validation if any linked receipt was not created from a Purchase Order; (2) schedule an automated activity reminder on every validated SoyaBean receipt to prompt landed cost entry within the same accounting period.
+
+**Date:** 2026-05-27 (backfilled from MODULE_REGISTRY — DEC number assigned 2026-11-20 when DEC-012 was reassigned to governance onboarding)
+
+**Status:** COMPLETE — `custom_addons/stock_landed_cost_po_check` v17.0.1.0.0 live.
+
+**Rationale:**
+- Odoo 17 Community has no native "PO-only receipt" gate on landed costs. Manual enforcement would be error-prone in a high-volume agro-processing operation.
+- Activity reminders ensure procurement staff enter landed costs (Hexane transport, inbound freight) promptly, keeping COGS accurate for the period.
+- A minimal module override on `stock.landed.cost.button_validate()` is the lowest-friction implementation — no UI changes, no new models.
+
+**Alternatives Considered:**
+- Configuration-only (no module): no mechanism to enforce PO linkage gate in Community edition.
+- Scheduled job / server action: harder to surface a clear `UserError` message at the right moment.
+
+**Trade-offs:**
+- `button_validate` override requires testing after every Odoo upgrade (upgrade risk: LOW — constraint logic is simple).
+
+**Revisit Conditions:**
+- If Odoo adds a native landed cost / PO linkage gate in a later Community version.
+- If the automated activity reminder causes notification fatigue — consider a cron-based consolidation instead.

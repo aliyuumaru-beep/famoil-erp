@@ -2,8 +2,8 @@
 
 # Software Factory Platform Roadmap
 
-Version: 1.2
-Last Updated: 2026-05-28
+Version: 1.3
+Last Updated: 2026-11-18
 
 ---
 
@@ -528,6 +528,8 @@ Current risks:
 * premature multi-template expansion risk
 * operational complexity growth
 * overengineering risk
+
+**MITIGATED (v1.17.0 / 2026-11-18):** Machine-tied deployment risk — Docker image packaging complete (DEC-014 / SPEC-DOCKER-01). FamOil ERP can now be deployed to any Linux/cloud host via `docker compose up`. Off-machine backup sync (rclone → Google Drive) remains pending.
 
 ---
 

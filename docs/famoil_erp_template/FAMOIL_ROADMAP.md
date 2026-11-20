@@ -1,5 +1,5 @@
 # FamOil ERP Operational Roadmap
-Version: 1.1 | Last Updated: 2026-05-28
+Version: 1.2 | Last Updated: 2026-11-18
 
 PURPOSE
 This document defines:
@@ -213,7 +213,7 @@ Exact next priority order:
 	3	Dispatch & logistics maturity
 	4	Maintenance maturity
 	5	Barcode & warehouse operations
-	6	Off-machine survivability activation
+	6	Off-machine survivability activation [PARTIAL — Docker packaging ✅ v1.17.0; rclone offsite sync pending]
 	7	Quarterly restore governance
 	8	Multi-template expansion
 

@@ -378,3 +378,15 @@ Putaway rules then route each product from `Famoil/Stock` to the correct child l
 
 ### Prevention Rule
 > When configuring a multi-stage manufacturing pipeline, define operation type source and destination locations before creating any BOMs or MOs. Use the parent location as source and destination where putaway rules handle child routing — never hardcode a product-specific child location as an operation type destination when multiple product types pass through that stage.
+
+---
+
+## KNOWN-GAP-001 — Security Scan: Comment-Line Exclusion
+
+**Type:** Accepted security-scan gap  
+**Introduced:** v1.17.0 (DEC-014, 2026-11-18)  
+**Governance reference:** G3-C1 (round 10, 2026-11-20)
+
+The `.github/workflows/security_scan.yml` excludes lines where the content starts with `;` or `#` (config file and shell comment markers) from credential pattern matching. This prevents false positives from inline documentation comments in `docker/odoo.conf` (e.g., `; db_password is injected at runtime`) and similar files.
+
+**Accepted gap:** A future operator who writes a real password into a comment line would not be caught by CI. Mitigated by: (a) branch protection requires G1–G3 governance gate on every PR; (b) the exclusion was reviewed against all current files and confirmed non-sensitive; (c) this repo is single-operator with named owner (Aliyu Umaru). Acceptable for single-operator deployments with branch-protection + G1–G3 gate.

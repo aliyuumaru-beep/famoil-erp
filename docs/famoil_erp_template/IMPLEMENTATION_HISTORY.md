@@ -376,3 +376,34 @@ BOM match verified for all 3 MTO routes:
 All governance documents synchronized to post-restore operational reality.
 Stale "restore drill pending" references removed across all documents.
 Procurement Maturity established as current Priority 1 across all authorities.
+
+---
+
+## Milestone — Docker Containerisation (v1.17.0, 2026-11-18)
+
+### Context
+
+FamOil ERP has been running exclusively on macOS (local deployment). The platform risk of machine-dependency was identified in PLATFORM_ROADMAP.md § 10. This milestone closes that risk by producing a fully portable Docker image.
+
+### Work done
+
+- Project onboarded to Software Factory governance pod ERP-AGRO
+- DEC-014 decision recorded in DECISION_LOG.md
+- `docker/` directory created with:
+  - `Dockerfile` (Odoo 17 + custom_addons + OCA addons baked in)
+  - `docker-compose.yml` (Odoo + PostgreSQL 16 stack)
+  - `odoo.conf` (Docker-tuned)
+  - `.env.example` (credential template)
+  - `oca_addons/` (10 OCA web addons — self-contained build context)
+- `scripts/export_for_docker.sh` — exports DB + filestore for migration
+- `scripts/import_to_docker.sh` — imports into running Docker stack
+- `scripts/docker_smoke_test.sh` — acceptance gate: TCP port + werkzeug log confirmation (passed 2026-11-18 09:22 UTC)
+- `docs/deployment/DOCKER_MIGRATION.md` — end-to-end migration guide
+
+### Key decisions made
+
+- DEC-014: Docker containerisation for FamOil ERP — full image (addons baked in) over volume-mount approach
+
+### Outcome
+
+FamOil ERP can now be deployed on any Docker-capable host (Linux VPS, cloud VM, on-premise server) with a single `docker compose up` command after importing the data export. Addresses Platform Risk #1 (machine-tied deployment).

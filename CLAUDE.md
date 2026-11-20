@@ -1,6 +1,6 @@
 # CLAUDE.md — Software Factory Session Anchor
 # FamOil Industrial ERP Framework
-# Version: 1.7.0 | Last updated: 2026-06-04
+# Version: 1.8.0 | Last updated: 2026-11-18
 
 > This file is read automatically by Claude Code at the start of every session.
 > It is the single source of truth for project state. Keep it current.
@@ -19,15 +19,15 @@
 | Country             | Nigeria                                    |
 | Currency            | NGN (Nigerian Naira, ₦)                    |
 | Deployment          | Local — macOS (MacBook Air)                |
-| Project Directory   | /Users/mac/odoo17                          |
+| Project Directory   | /Users/aliyuumaru/OdooFolder/odoo17        |
 | Company (active)    | FamOil FTZ (id=2)                          |
 | Server              | localhost:8069                             |
 
-**Start command** (run from /Users/mac/odoo17):
+**Start command** (run from /Users/aliyuumaru/OdooFolder/odoo17):
 ```bash
 source odoo/venv/bin/activate
 python odoo/odoo-bin -d Famoil -r odoo \
-  --addons-path=odoo/odoo/addons,custom_addons,/Users/mac/oca_web
+  --addons-path=odoo/odoo/addons,custom_addons,docker/oca_addons
 ```
 
 ---
@@ -70,7 +70,8 @@ python odoo/odoo-bin -d Famoil -r odoo \
 2. Maintenance maturity
 3. Procurement traceability validation
 4. Barcode & warehouse operations
-5. Off-machine survivability activation (rclone + Google Drive)
+5. Off-machine survivability activation [PARTIAL — Docker packaging ✅ v1.17.0; rclone offsite sync pending]
+6. Credit limit workflow maturity (DEC-013 ✅ — hard block; manager-override workflow pending)
 7. Quarterly restore governance
 8. Multi-template expansion
 
@@ -124,7 +125,7 @@ See: `docs/operations/RESTORE_DRILL.md` for full drill reports.
 | `om_fiscal_year`                  | Fiscal year management                        | third-party  |
 | `om_recurring_payments`           | Recurring payment automation                  | third-party  |
 
-**OCA Web addons (in /Users/mac/oca_web):**
+**OCA Web addons (in `docker/oca_addons/` — DEC-014 / v1.17.0):**
 `web_responsive`, `web_environment_ribbon`, `web_notify`, `web_refresher`,
 `web_theme_classic`, `web_dialog_size`, `web_m2x_options`,
 `web_pivot_computed_measure`, `web_search_with_and`,
@@ -213,7 +214,7 @@ Deodorization (id=23)
 - DO NOT commit ERP backup archives (SQL, filestore, tar.gz) to the repository — only `backups/BACKUP_MANIFEST.md` metadata is tracked
 
 **Backup status:**
-- Last backup: 2026-05-29 07:53 — `/Users/mac/odoo_backups/famoil_20260529_0753/`
+- Last backup: 2026-05-29 07:53 — `~/OdooFolder/odoo_backups/famoil_20260529_0753/`
 - Backup format: `pg_dump -F c` (custom format — `Famoil.dump`, 6MB) — resolves ir_attachment FK issue
 - Restore script: `scripts/restore_famoil.sh` — full restore + validation in one script
 - Governance bridge: `backups/BACKUP_MANIFEST.md` (must be committed after each run)
@@ -237,6 +238,8 @@ Deodorization (id=23)
 | GitHub Actions — doc_lint.yml   | ACTIVE                  | Fires on push + PR to main         |
 | GitHub Actions — backup_check.yml | ACTIVE               | Fires every Monday 06:00 UTC       |
 | GitHub Actions — security_scan.yml | ACTIVE              | Fires on push + PR to main         |
+| GitHub Actions — governance.yml | ACTIVE                  | Required gate: fires on every PR; calls governance-gate.yml reusable workflow (G1–G3) |
+| GitHub Actions — docker-build.yml | ACTIVE              | Build-only dry-run: fires on PRs + pushes to main that touch docker/** or custom_addons/** |
 | Branch protection (main)        | ENABLED                 | Applied by operator 2026-05-27     |
 | Last audit log entry            | 2026-05-28              |                                    |
 | Last backup verification        | 2026-05-28 (Drill 2 — FULL PASS) |                             |
@@ -252,9 +255,9 @@ Deodorization (id=23)
 - Cost method not set on Raw Materials category
 - Consumables (Hexane, Lubricant Oil) missing from BOM 10
 - Spare parts/consumables list_price = ₦1 (placeholder)
-- Off-machine backup sync not yet activated (rclone not installed)
+- Off-machine survivability: Docker packaging ✅ v1.17.0 (DEC-014); rclone offsite sync still pending (rclone not installed)
 - 5L Jerrycan, 1L Jerrycan, and Labels have ₦0 cost — RSO 5L/1L prices understated
-- Sahad Oil Traders credit limit not enforced (no native credit limit in Odoo Community)
+- Sahad Oil Traders credit limit — enforced via base.automation (DEC-013 / v1.16.0); hard block only, no manager-override workflow yet
 - GitHub ruleset gaps: 0 required reviewers, all merge methods, claude-review not required (G-5/G-6)
 
 ---
@@ -262,7 +265,7 @@ Deodorization (id=23)
 ## REPOSITORY STRUCTURE
 
 ```
-/Users/mac/odoo17/
+/Users/aliyuumaru/OdooFolder/odoo17/
 ├── CLAUDE.md                        ← this file
 ├── CHANGELOG.md                     ← version history
 ├── VERSION                          ← FamOil-Template-v1.0.0
@@ -293,7 +296,13 @@ Deodorization (id=23)
 │   └── famoil_erp_template/         ← FamOil-specific docs
 ├── csv_templates/                   ← 9 reusable import templates
 ├── custom_addons/                   ← 11 installed modules
-├── scripts/                         ← 5 operational scripts
+├── docker/                          ← Docker packaging (DEC-014 / SPEC-DOCKER-01)
+│   ├── Dockerfile                   ← Odoo 17 + custom_addons + OCA addons
+│   ├── docker-compose.yml           ← Odoo + PostgreSQL 16 stack
+│   ├── odoo.conf                    ← Docker-tuned Odoo config
+│   ├── .env.example                 ← credential template (never commit .env)
+│   └── oca_addons/                  ← 10 OCA web addons (self-contained)
+├── scripts/                         ← operational scripts (10 shell + 2 Python + 2 plist)
 ├── prompts/                         ← prompt library
 ├── tests/                           ← test scripts
 └── logs/                            ← local audit logs (git-ignored)

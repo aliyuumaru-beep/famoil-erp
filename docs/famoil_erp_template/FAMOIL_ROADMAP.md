@@ -291,17 +291,21 @@ before implementation work begins.
 12. GOVERNANCE UPLIFT WORK ITEMS
 
 WP-GOV-01 — Governance Standards Uplift (ERP-AGRO)
+
 Scope:
-	•	CLAUDE.md §8: 10 AI-agent operating rules (native-first investigation, OCA-first, no core modification, architectural implications before coding, no ORM bypass without documentation, mandatory automated tests, regression checks, multi-scenario acceptance, maintain governance docs, no live database changes without approval)
-	•	docs/ODOO17_BREAKING_CHANGES.md: reference catalogue of Odoo 16→17 breaking patterns
-	•	scripts/pre_review_check.py: static pre-review checker (inline imports, create decorator, ACL XML IDs, secrets, Odoo 16→17 version-compat)
-	•	scripts/tests/test_pre_review_check.py: unit tests for the checker
-	•	Governance doc updates: CHANGELOG.md, IMPLEMENTATION_HISTORY.md, DECISION_LOG.md (DEC-017), MODULE_REGISTRY.md
+- CLAUDE.md §8: 10 AI-agent operating rules (native-first investigation, OCA-first, no core modification, architectural implications before coding, no ORM bypass without documentation, mandatory automated tests, regression checks, multi-scenario acceptance, maintain governance docs, no live database changes without approval)
+- docs/ODOO17_BREAKING_CHANGES.md: reference catalogue of Odoo 16→17 breaking patterns
+- scripts/pre_review_check.py: static pre-review checker (inline imports, create decorator, ACL XML IDs, secrets, Odoo 16→17 version-compat)
+- scripts/tests/test_pre_review_check.py: unit tests for the checker (19 cases; all 6 checks covered)
+- Governance doc updates: CHANGELOG.md, IMPLEMENTATION_HISTORY.md, DECISION_LOG.md (DEC-017), MODULE_REGISTRY.md, FAMOIL_ROADMAP.md §12
+
 Branch: feat/gov-uplift-erp-agro
+
 Acceptance criteria:
-	•	python3 scripts/pre_review_check.py exits 0 on clean repo
-	•	python3 scripts/tests/test_pre_review_check.py passes all tests
-	•	gov verify → READY
-Status: IN PROGRESS (2026-11-25)
+- python3 scripts/pre_review_check.py exits 0 on clean repo
+- python3 scripts/tests/test_pre_review_check.py passes all tests (19/19)
+- gov verify → READY
+
+Status: IMPLEMENTED (2026-11-25)
 
 END

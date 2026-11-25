@@ -487,7 +487,7 @@ stack is ever multi-tenant or multi-operator.
 
 **Date:** 2026-11-25
 
-**Status:** IN PROGRESS — `feat/gov-uplift-erp-agro` pending gov review.
+**Status:** IMPLEMENTED — `feat/gov-uplift-erp-agro`; 19/19 tests pass; G1 APPROVED; G3 APPROVED_WITH_CONDITIONS (deferred pre-conditions for future WPs only).
 
 **Rationale:**
 

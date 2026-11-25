@@ -1,6 +1,6 @@
 # Module Registry
 # FamOil Software Factory — Installed Modules Inventory
-# Version: 1.2 | Created: 2026-05-27 | Updated: 2026-11-18
+# Version: 1.3 | Created: 2026-05-27 | Updated: 2026-11-25
 
 ---
 
@@ -97,6 +97,10 @@
 
 | Field | Value |
 |-------|-------|
+| Type | Script (Python 3 CLI — no Odoo runtime dependency) |
+| Status | ACTIVE |
+| Introduced In | `feat/gov-uplift-erp-agro` (WP-GOV-01) |
+| Owner | Technical Lead |
 | Path | `scripts/pre_review_check.py` |
 | Purpose | Static checks before `gov review`: inline imports, create() decorator, ACL XML ID references, hardcoded database ID constants, Odoo 16→17 breaking patterns in branch-changed XML files, hardcoded secrets (excluding odoo/ and venv/) |
 | Scope | `custom_addons/stock_crude_oil_tank_restriction`, `mrp_component_availability_check`, `stock_landed_cost_po_check`; secrets scan covers full repo minus skip_dirs |

@@ -59,6 +59,7 @@ The Software Factory assessment (SPEC-GOV-ENF-001 / Step 2) identified five gove
 | OQ-GOV-05 | `check_no_secrets()` SECRET_PATTERN covers password/admin_passwd only; misses api_key/token/secret/private_key. Fix before any WP adding external API integrations. OPEN. |
 | OQ-GOV-07 | `TestCheckNoSecrets` does not test: (a) skip_dirs exclusion of `odoo/`/`venv/`, (b) `admin_passwd` variant, (c) `.xml`/`.conf`/`.env` file types. Address before any WP changing `check_no_secrets()` or `skip_dirs`. OPEN. |
 | OQ-GOV-08 | `check_version_compat()` check 5c advisory WARNING `print()` path is not asserted in unit tests. Tests confirm it does not add to ISSUES; the print itself is unverified. Accepted limitation for a non-fatal advisory path. OPEN. |
+| OQ-GOV-09 | `HARDCODED_ID_PATTERN` only detects SCREAMING_SNAKE_CASE constants at module scope — mixed-case names and class-body constants evade detection. Accepted for current code base. Revisit if new modules use non-SCREAMING_SNAKE_CASE or place ID constants inside a class body. OPEN. |
 
 ---
 

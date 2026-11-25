@@ -51,13 +51,13 @@ from vendor source that is Odoo 17-compatible.
 
 ---
 
-## §3 — `<tree>` view tag vs `<list>` view tag (ADVISORY)
+## §3 — `<tree>` view tag deprecated; use `<list>` (ADVISORY)
 
-**Pattern:** `<list ...>` as the root element of a list view definition
-**Impact:** In Odoo 17, list views use `<list>` (not `<tree>`). Using `<tree>`
-still works via a compatibility shim but is deprecated and may break in Odoo 18.
+**Pattern:** `<tree ...>` as the root element of a list view definition
+**Impact:** In Odoo 17, list views use `<list>` (not `<tree>`). `<tree>` still
+works via a compatibility shim but is deprecated and may break in Odoo 18.
 **Fix:** Replace `<tree>` with `<list>` in new list view definitions.
-**Check:** pre_review_check.py check 5c — ADVISORY WARNING (exits 0, prints warning).
+**Check:** pre_review_check.py check 5c — ADVISORY WARNING on `<tree\b` (exits 0, prints warning).
 
 ```xml
 <!-- DEPRECATED (Odoo 16 / transitional Odoo 17) -->
@@ -111,5 +111,6 @@ overrides `_track_subtype`, verify the override signature matches Odoo 17.
 
 | ID | Question | Status |
 |---|---|---|
-| OQ-GOV-01 | check 5b does not strip XML comments — a commented-out `<t t-field>` will fire a false-positive fatal error. Fix: `re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)` before the per-line loop. | OPEN — fix before first WP that adds portal/QWeb XML to custom_addons/ |
+| OQ-GOV-01 | check 5b does not strip XML comments — a commented-out `<t t-field>` will fire a false-positive fatal error. Fix: `re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)` before the per-line loop. | OPEN — fix before first WP adding portal/QWeb XML to custom_addons/ |
 | OQ-GOV-02 | §4–§6 are manual-check only. Consider adding automated detection in a future pre_review_check.py extension. | OPEN |
+| OQ-GOV-04 | check_acl_xml_ids resolves local groups.xml refs only — cross-module refs fire false positives. Fix: skip refs whose module prefix is a known core or installed module. | OPEN — fix before first WP adding ACL CSV with cross-module group refs |

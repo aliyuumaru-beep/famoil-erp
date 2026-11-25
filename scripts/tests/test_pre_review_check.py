@@ -100,8 +100,8 @@ class TestCheckVersionCompatTField(unittest.TestCase):
                          f'False positive on template t-field: {issues}')
 
 
-class TestCheckVersionCompatListTag(unittest.TestCase):
-    """check 5c — <list> advisory (exits 0, prints warning only)"""
+class TestCheckVersionCompatTreeTag(unittest.TestCase):
+    """check 5c — <tree> advisory (exits 0, prints warning only)"""
 
     def _run(self, xml_content):
         issues = []
@@ -112,17 +112,63 @@ class TestCheckVersionCompatListTag(unittest.TestCase):
             ns['check_version_compat']()
         return issues
 
-    def test_list_tag_does_not_add_issue(self):
-        """<list> is advisory only — must NOT add to ISSUES (no fatal exit)."""
+    def test_tree_tag_does_not_add_issue(self):
+        """<tree> is advisory only — must NOT add to ISSUES (no fatal exit)."""
+        issues = self._run('        <tree string="Items">')
+        self.assertEqual(issues, [],
+                         f'<tree> must be advisory only (no ISSUES entry), got: {issues}')
+
+    def test_list_tag_clean(self):
+        """<list> (the preferred Odoo 17 form) must NOT trigger the advisory."""
         issues = self._run('        <list string="Items">')
         self.assertEqual(issues, [],
-                         f'<list> must be advisory only (no ISSUES entry), got: {issues}')
+                         f'False positive on <list>: {issues}')
 
-    def test_listing_tag_clean(self):
-        """<listing> must NOT trigger the advisory."""
-        issues = self._run('<listing string="Items">')
-        self.assertEqual(issues, [],
-                         f'False positive on <listing>: {issues}')
+
+class TestCheckNoHardcodedIds(unittest.TestCase):
+    """check 4 — hardcoded database ID constants (ISSUE-003 recurrence prevention)"""
+
+    def _load_and_run(self, py_content):
+        issues = []
+        source = CHECK_SCRIPT.read_text()
+        cut = source.find('# ── Run all checks')
+        assert cut > 0
+        fn_source = source[:cut]
+        with tempfile.TemporaryDirectory() as td:
+            # Mimic custom_addons/my_module/models/stock_picking.py
+            mod_dir = Path(td) / 'my_module' / 'models'
+            mod_dir.mkdir(parents=True)
+            py_file = mod_dir / 'stock_picking.py'
+            py_file.write_text(py_content)
+            ns = {
+                '__file__': str(CHECK_SCRIPT),
+                'ISSUES': issues,
+                're': re,
+                'sys': sys,
+            }
+            exec(compile(fn_source, str(CHECK_SCRIPT), 'exec'), ns)  # noqa: S102
+            ns['ROOT'] = Path(td)
+            ns['CUSTOM_ADDONS'] = Path(td)
+            ns['CUSTOM_MODULE_NAMES'] = {'my_module'}
+            def _issue(filepath, line_no, msg):
+                issues.append(f'  [{filepath.name}:{line_no}] {msg}')
+            ns['issue'] = _issue
+            ns['check_no_hardcoded_ids']()
+        return issues
+
+    def test_hardcoded_id_constant_detected(self):
+        """CRUDE_OIL_TANK_IDS = {141, 142} must fire."""
+        issues = self._load_and_run('CRUDE_OIL_TANK_IDS = {141, 142}\n')
+        self.assertTrue(any('hardcoded database ID' in i for i in issues),
+                        f'Expected hardcoded-ID finding, got: {issues}')
+
+    def test_name_based_lookup_clean(self):
+        """Runtime name lookup must NOT fire."""
+        issues = self._load_and_run(
+            "tanks = self.env['stock.location'].search([('name', 'ilike', 'Crude Oil Tank')])\n"
+        )
+        self.assertFalse(any('hardcoded database ID' in i for i in issues),
+                         f'False positive on name-based lookup: {issues}')
 
 
 if __name__ == '__main__':

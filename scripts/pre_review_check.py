@@ -37,6 +37,8 @@ def _custom_module_dirs():
 
 
 # ── 1. No inline imports inside method bodies ───────────────────────────────
+# OQ-GOV-03: in_method resets on any def/class boundary (indent heuristic).
+# A nested def inside a method resets the flag prematurely — accepted limitation.
 def check_inline_imports():
     for mod in _custom_module_dirs():
         for py in mod.rglob('*.py'):
@@ -44,8 +46,9 @@ def check_inline_imports():
             in_method = False
             for i, line in enumerate(lines, 1):
                 stripped = line.strip()
-                if stripped.startswith('def ') or stripped.startswith('async def '):
-                    in_method = True
+                # Reset on any top-level def/class (indent 0 or 4-space class method)
+                if re.match(r'^(def |async def |class )', stripped):
+                    in_method = stripped.startswith('def ') or stripped.startswith('async def ')
                 if in_method and re.match(r'^\s+(import |from \S+ import )', line):
                     issue(py, i, f'Inline import inside method body: {stripped!r}')
 
@@ -144,11 +147,10 @@ def check_version_compat():
                       'Odoo 16→17: <t t-field="..."> raises AssertionError — '
                       'use a concrete element: <span t-field="..."/> '
                       '(see docs/ODOO17_BREAKING_CHANGES.md §2)')
-            # 5c — <list> tag advisory (deprecated <tree> tag in Odoo 17)
-            if re.search(r'^\s*<list\b', line):
+            # 5c — <tree> tag advisory (deprecated in Odoo 17; prefer <list>)
+            if re.search(r'^\s*<tree\b', line):
                 print(f'  WARNING [{xml.relative_to(ROOT)}:{i}]: '
-                      'Odoo 17 uses <list> for list views (not <tree>). '
-                      'If this is a new view, prefer <list>. '
+                      'Odoo 17 deprecated <tree> for list views — prefer <list>. '
                       '(see docs/ODOO17_BREAKING_CHANGES.md §3)')
 
 

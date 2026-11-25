@@ -478,3 +478,29 @@ stack is ever multi-tenant or multi-operator.
 **Revisit Conditions:**
 - If Odoo adds a native landed cost / PO linkage gate in a later Community version.
 - If the automated activity reminder causes notification fatigue — consider a cron-based consolidation instead.
+
+---
+
+## DEC-017 — Governance Standards Uplift: Pre-Review Checker + AI-Agent Rules (WP-GOV-01)
+
+**Decision:** Implement a static pre-review checker (`scripts/pre_review_check.py`) scoped to ERP-AGRO custom modules, add 10 AI-agent operating rules to `CLAUDE.md §8`, and publish `docs/ODOO17_BREAKING_CHANGES.md` as a reference catalogue.
+
+**Date:** 2026-11-25
+
+**Status:** IN PROGRESS — `feat/gov-uplift-erp-agro` pending gov review.
+
+**Rationale:**
+
+1. **Why a custom checker, not FERMA's?** FERMA's `pre_review_check.py` is scoped to `addons/ferma/ferma_road_maintenance` and includes FERMA-specific checks (action_* group guards, approval-log sudo pattern) that have no equivalent in ERP-AGRO's manufacturing/stock modules. ERP-AGRO's checker is scoped to `CUSTOM_MODULE_NAMES` (the three FamOil custom modules) and adds a hardcoded-ID guard (prevention for ISSUE-003 recurrence).
+
+2. **Why branch-scoped XML check?** Scanning all XML on every pre-review would flag pre-existing violations in third-party om_* modules that we do not own and cannot fix without replacing them. The branch-scoped approach catches only files touched on the current branch, preventing false-positive blocks on unrelated WPs. Fallback to full custom-module scan when no git base is available.
+
+3. **Why exclude `odoo/` and `venv/` from secrets scan?** The Odoo core test suite contains many legitimate test passwords (e.g., `password='Pl1bhD@2!kXZ'` in Odoo bus tests). Including these would generate ~30 false-positive secrets issues on every pre-review. Exclusion is correct: we do not modify `odoo/` (Rule 3) and the core is not ours to audit.
+
+4. **Why a hardcoded-ID check?** ISSUE-003 (stock_crude_oil_tank_restriction used `CRUDE_OIL_TANK_IDS = {141, 142}`) was fixed manually in v17.0.1.1.0 but no automated gate existed to prevent recurrence. The pattern `^[A-Z_]+_ID[S]?\s*=\s*\{?\d` catches module-level constants of the form `SOME_ID = 141` or `TANK_IDS = {141, 142}`.
+
+5. **Why 10 rules, not fewer?** The same 10-rule set was designed and validated for the FERMA pod (WP-GOV-01, DEC-21). Consistency across pods ensures cross-pod reviewers (G1–G3) can apply the same checklist. Rules 1–2 (native-first, OCA-first) replicate existing wording from `ARCHITECTURAL_PRINCIPLES.md` but are repeated here to make them actionable within the AI session context.
+
+**Open Questions:**
+- OQ-GOV-01: check 5b does not strip XML comments — false-positive risk for commented-out `<t t-field>`. Fix: `re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)` before the per-line loop. Address before first WP adding portal QWeb to `custom_addons/`.
+- OQ-GOV-02: §4–§6 of ODOO17_BREAKING_CHANGES.md (account.move renames, http.route signature, mail.thread signature) are manual-check only. Consider automated detection in a future pre_review_check.py extension.

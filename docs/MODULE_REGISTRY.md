@@ -91,6 +91,22 @@
 
 ---
 
+## Development Scripts (in scripts/)
+
+### SCR-001 — pre_review_check.py
+
+| Field | Value |
+|-------|-------|
+| Path | `scripts/pre_review_check.py` |
+| Purpose | Static checks before `gov review`: inline imports, create() decorator, ACL XML ID references, hardcoded database ID constants, Odoo 16→17 breaking patterns in branch-changed XML files, hardcoded secrets (excluding odoo/ and venv/) |
+| Scope | `custom_addons/stock_crude_oil_tank_restriction`, `mrp_component_availability_check`, `stock_landed_cost_po_check`; secrets scan covers full repo minus skip_dirs |
+| Usage | `python3 scripts/pre_review_check.py` — exits 0 (clean) or 1 (issues found) |
+| Tests | `scripts/tests/test_pre_review_check.py` — 8 unittest cases; all pass |
+| Decision | DEC-017 / WP-GOV-01 |
+| Added | 2026-11-25 |
+
+---
+
 ## Known Conflicts
 
 None currently identified. Monitor after every Odoo version upgrade.

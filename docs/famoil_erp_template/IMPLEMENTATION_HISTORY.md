@@ -14,6 +14,47 @@
 
 ---
 
+## WP-GOV-01 — Governance Standards Uplift
+
+**Branch:** feat/gov-uplift-erp-agro | **Date:** 2026-11-25
+
+### Motivation
+
+The Software Factory assessment (SPEC-GOV-ENF-001 / Step 2) identified five governance gaps in ERP-AGRO:
+1. No AI-agent operating rules — CLAUDE.md had no §8 specifying native-first, OCA-first, test mandates or approval gates.
+2. No static pre-review checker — no equivalent of FERMA's `make pre-review` gate existed, meaning Odoo 16→17 breaking patterns, inline imports, and secrets could reach G1–G3 reviewers undetected.
+3. No Odoo 17 breaking-changes reference — developers had no canonical doc for the portal_my_home_entry rename, `<t t-field>` AssertionError, and `<list>` migration.
+4. No unit tests for tooling — no automated validation of checker logic.
+5. No hardcoded-ID guard — ISSUE-003 was fixed manually in v17.0.1.1.0 but no automated check prevents recurrence.
+
+### Changes Made
+
+| File | Change |
+|---|---|
+| `CLAUDE.md` | Added §8: 10 AI-agent operating rules (WP-GOV-01) |
+| `docs/ODOO17_BREAKING_CHANGES.md` | New — 6 breaking-pattern catalogue with ERP-AGRO context |
+| `scripts/pre_review_check.py` | New — 6-check static analyser for custom_addons/ |
+| `scripts/tests/test_pre_review_check.py` | New — 8 unittest cases; all pass |
+| `CHANGELOG.md` | WP-GOV-01 [Unreleased] section added |
+| `docs/famoil_erp_template/DECISION_LOG.md` | DEC-017 added |
+| `docs/MODULE_REGISTRY.md` | SCR-001 entry for pre_review_check.py |
+| `docs/famoil_erp_template/FAMOIL_ROADMAP.md` | §12 Governance Uplift Work Items added |
+
+### Validation
+
+- `python3 scripts/pre_review_check.py` → clean (exit 0) on this branch
+- `python3 scripts/tests/test_pre_review_check.py` → 8/8 pass
+- `gov verify` → READY (after gov review)
+
+### Open Questions
+
+| ID | Question |
+|---|---|
+| OQ-GOV-01 | check 5b does not strip XML comments — false-positive risk for commented-out `<t t-field>`. Fix: `re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)` before the per-line loop. Address before first WP adding portal QWeb to custom_addons/. |
+| OQ-GOV-02 | §4–§6 of ODOO17_BREAKING_CHANGES.md are manual-check only. Consider automated detection in a future pre_review_check.py extension. |
+
+---
+
 ## Phase 1 — Foundation Infrastructure
 
 **Completed:** 2026-05-22 | **Tag:** v0.1-alpha

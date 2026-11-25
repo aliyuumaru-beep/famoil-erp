@@ -325,3 +325,29 @@ Deodorization (id=23)
 
 **If Claude is unsure:** STOP. Do not proceed. Report the uncertainty clearly
 and wait for operator instruction. Never take a destructive action to resolve ambiguity.
+
+---
+
+## §8 — AI-AGENT OPERATING RULES (WP-GOV-01)
+
+These rules apply to every AI session in this repository. They extend and supplement the governance rules in §5 (CRITICAL RULES) and the CLAUDE.md global rules.
+
+**Rule 1 — Native-first investigation.** Before proposing any custom module or ORM bypass, investigate whether Odoo 17 Community can accomplish the same goal through native configuration (settings, sequences, automated actions, server actions, scheduled actions). Document the investigation result in DECISION_LOG.md before writing any code.
+
+**Rule 2 — OCA-first after native.** If native configuration is insufficient, evaluate relevant OCA modules (check https://github.com/OCA/ repositories for Odoo 17 compatibility) before writing a custom module. Document OCA candidates considered and why they were accepted or rejected in DECISION_LOG.md.
+
+**Rule 3 — No core modification.** Never modify files under `odoo/` (the Odoo core). All customisation goes in `custom_addons/`. If a core behaviour must change, use inheritance (`_inherit`) or monkey-patch with explicit documentation in DECISION_LOG.md.
+
+**Rule 4 — Architectural implications before coding.** Before starting any new custom module or significant extension to an existing one, write the architectural rationale in DECISION_LOG.md (new DEC-xxx entry). Cover: what it does, why no native/OCA alternative was used, the override point, upgrade risk, and known conflicts. Get sponsor acknowledgement before coding.
+
+**Rule 5 — No ORM bypass without documentation.** Raw SQL (`env.cr.execute`) and direct `psycopg2` calls are forbidden except for read-only diagnostic queries or where Odoo ORM cannot perform the operation (e.g., bulk updates that would cause N+1 ORM calls). Any such bypass must be documented in DECISION_LOG.md with the reason.
+
+**Rule 6 — Mandatory automated tests.** Every new custom module must include at least one `unittest` or `pytest` test covering its main enforcement logic. Test files go in `tests/` (project-level) or `<module>/tests/` (module-level). Tests must pass via `python3 -m pytest tests/` before any `gov review`.
+
+**Rule 7 — Regression checks before gov review.** Run `python3 scripts/pre_review_check.py` before every `gov review`. Fix all issues it reports. Never submit a review with pre_review_check failing.
+
+**Rule 8 — Multi-scenario acceptance.** For every business rule implemented (validation, constraint, workflow state), test at least two scenarios: (a) the happy path where the rule allows the action, and (b) a violation path where the rule correctly blocks the action. Document both scenarios in IMPLEMENTATION_HISTORY.md.
+
+**Rule 9 — Maintain governance docs.** Every WP that changes code must update `CHANGELOG.md`, `docs/famoil_erp_template/IMPLEMENTATION_HISTORY.md`, and `docs/famoil_erp_template/DECISION_LOG.md` in the same commit. MODULE_REGISTRY.md must be updated for any new or changed module. These are not optional.
+
+**Rule 10 — No live database changes without approval.** Never execute INSERT/UPDATE/DELETE/DROP on the `Famoil` production database without an explicit operator instruction. Diagnostic SELECT queries are allowed. Any proposed live change must be shown to the operator first; run only after explicit confirmation. Take a fresh backup before any mutating command.

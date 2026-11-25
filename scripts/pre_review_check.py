@@ -134,6 +134,8 @@ def check_version_compat():
             text = xml.read_text(errors='ignore')
         except (OSError, IsADirectoryError):
             continue
+        # Strip XML comments to avoid false positives on commented-out old patterns (OQ-GOV-01)
+        text = re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)
         lines = text.splitlines()
         for i, line in enumerate(lines, 1):
             # 5a — portal_my_home_entry rename

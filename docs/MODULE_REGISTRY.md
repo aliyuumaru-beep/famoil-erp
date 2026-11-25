@@ -101,7 +101,7 @@
 | Purpose | Static checks before `gov review`: inline imports, create() decorator, ACL XML ID references, hardcoded database ID constants, Odoo 16→17 breaking patterns in branch-changed XML files, hardcoded secrets (excluding odoo/ and venv/) |
 | Scope | `custom_addons/stock_crude_oil_tank_restriction`, `mrp_component_availability_check`, `stock_landed_cost_po_check`; secrets scan covers full repo minus skip_dirs |
 | Usage | `python3 scripts/pre_review_check.py` — exits 0 (clean) or 1 (issues found) |
-| Tests | `scripts/tests/test_pre_review_check.py` — 10 unittest cases; all pass. Coverage: check_version_compat (checks 5a/5b/5c) and check_no_hardcoded_ids (check 4). Checks 1–3/6 are not unit-tested; regression-visible via pre_review_check.py clean-run. |
+| Tests | `scripts/tests/test_pre_review_check.py` — 11 unittest cases; all pass. Coverage: check_version_compat (checks 5a/5b/5c + commented-out false-positive guard) and check_no_hardcoded_ids (check 4). Checks 1–3/6 are not unit-tested; regression-visible via pre_review_check.py clean-run. |
 | Limitations | `check_acl_xml_ids` resolves local `groups.xml` refs only — cross-module group refs (e.g., `base.group_user`) fire false positives (OQ-GOV-04). `check_no_secrets` covers `password`/`admin_passwd` only; not `api_key`/`token`/`secret` (OQ-GOV-05). |
 | Decision | DEC-017 / WP-GOV-01 |
 | Added | 2026-11-25 |

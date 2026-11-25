@@ -43,7 +43,7 @@ The Software Factory assessment (SPEC-GOV-ENF-001 / Step 2) identified five gove
 ### Validation
 
 - `python3 scripts/pre_review_check.py` → clean (exit 0) on this branch
-- `python3 scripts/tests/test_pre_review_check.py` → 8/8 pass
+- `python3 scripts/tests/test_pre_review_check.py` → 11/11 pass
 - `gov verify` → READY (after gov review)
 
 ### Open Questions

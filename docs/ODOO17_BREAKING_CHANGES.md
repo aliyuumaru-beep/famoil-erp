@@ -111,6 +111,6 @@ overrides `_track_subtype`, verify the override signature matches Odoo 17.
 
 | ID | Question | Status |
 |---|---|---|
-| OQ-GOV-01 | check 5b does not strip XML comments — a commented-out `<t t-field>` will fire a false-positive fatal error. Fix: `re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)` before the per-line loop. | OPEN — fix before first WP adding portal/QWeb XML to custom_addons/ |
+| OQ-GOV-01 | check 5b does not strip XML comments — a commented-out `<t t-field>` will fire a false-positive fatal error. Fix: `re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)` before the per-line loop. | **RESOLVED 2026-11-25** — fix applied in scripts/pre_review_check.py; test added |
 | OQ-GOV-02 | §4–§6 are manual-check only. Consider adding automated detection in a future pre_review_check.py extension. | OPEN |
 | OQ-GOV-04 | check_acl_xml_ids resolves local groups.xml refs only — cross-module refs fire false positives. Fix: skip refs whose module prefix is a known core or installed module. | OPEN — fix before first WP adding ACL CSV with cross-module group refs |

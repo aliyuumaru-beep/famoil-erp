@@ -99,6 +99,12 @@ class TestCheckVersionCompatTField(unittest.TestCase):
         self.assertFalse(any('t-field' in i for i in issues),
                          f'False positive on template t-field: {issues}')
 
+    def test_commented_out_tfield_no_false_positive(self):
+        """Commented-out <t t-field> must NOT fire after OQ-GOV-01 fix."""
+        issues = self._run('<!-- <t t-field="o.partner_id.name"/> -->')
+        self.assertFalse(any('t-field' in i for i in issues),
+                         f'False positive on commented-out t-field: {issues}')
+
 
 class TestCheckVersionCompatTreeTag(unittest.TestCase):
     """check 5c — <tree> advisory (exits 0, prints warning only)"""

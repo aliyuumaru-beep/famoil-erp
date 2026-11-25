@@ -342,7 +342,7 @@ These rules apply to every AI session in this repository. They extend and supple
 
 **Rule 5 — No ORM bypass without documentation.** Raw SQL (`env.cr.execute`) and direct `psycopg2` calls are forbidden except for read-only diagnostic queries or where Odoo ORM cannot perform the operation (e.g., bulk updates that would cause N+1 ORM calls). Any such bypass must be documented in DECISION_LOG.md with the reason.
 
-**Rule 6 — Mandatory automated tests.** Every new custom module must include at least one `unittest` or `pytest` test covering its main enforcement logic. Test files go in `tests/` (project-level) or `<module>/tests/` (module-level). Tests must pass via `python3 -m pytest tests/` before any `gov review`.
+**Rule 6 — Mandatory automated tests.** Every new custom module must include at least one `unittest` or `pytest` test covering its main enforcement logic. Test files go in `scripts/tests/` (for tooling) or `<module>/tests/` (for Odoo modules). Run tooling tests via `python3 scripts/tests/<test_file>.py` or `python3 -m pytest scripts/tests/`.
 
 **Rule 7 — Regression checks before gov review.** Run `python3 scripts/pre_review_check.py` before every `gov review`. Fix all issues it reports. Never submit a review with pre_review_check failing.
 

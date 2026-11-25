@@ -53,6 +53,8 @@ The Software Factory assessment (SPEC-GOV-ENF-001 / Step 2) identified five gove
 | OQ-GOV-01 | **RESOLVED 2026-11-25.** XML comment stripping added to `check_version_compat()` via `re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)`. Test `test_commented_out_tfield_no_false_positive` confirms resolution. |
 | OQ-GOV-02 | §4–§6 of ODOO17_BREAKING_CHANGES.md are manual-check only. Consider automated detection in a future pre_review_check.py extension. OPEN. |
 | OQ-GOV-03 | `check_inline_imports()` `in_method` resets on any def/class boundary (indent heuristic); nested def causes premature reset. Accepted limitation for current simple module code. OPEN. |
+| OQ-GOV-03b | `check_create_decorator()` 3-line lookback may miss decorator if more than 3 lines above `def create(`. Accepted limitation; custom modules have simple decorator usage. OPEN. |
+| OQ-GOV-06 | Line numbers reported by `check_version_compat()` after comment stripping may be off by N if a multi-line comment precedes the violation. Workaround: search file for the pattern. OPEN. |
 | OQ-GOV-04 | `check_acl_xml_ids()` only resolves local groups.xml refs — cross-module refs (base.group_user etc.) will fire false positives. Fix before first WP adding ACL CSV with cross-module group refs. OPEN. |
 | OQ-GOV-05 | `check_no_secrets()` SECRET_PATTERN covers password/admin_passwd only; misses api_key/token/secret/private_key. Fix before any WP adding external API integrations. OPEN. |
 

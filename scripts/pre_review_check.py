@@ -172,7 +172,7 @@ def check_no_secrets():
         ).splitlines())
     except Exception:
         ignored = set()
-    skip_dirs = {'.git', '__pycache__', 'specs', 'backups', 'notes', 'odoo', 'venv'}
+    skip_dirs = {'.git', '__pycache__', 'backups', 'notes', 'odoo', 'venv'}
     for path in ROOT.rglob('*'):
         if any(d in path.parts for d in skip_dirs):
             continue

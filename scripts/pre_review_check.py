@@ -172,7 +172,8 @@ def check_no_secrets():
         ).splitlines())
     except Exception:
         ignored = set()
-    skip_dirs = {'.git', '__pycache__', 'backups', 'notes', 'odoo', 'venv'}
+    # 'tests' excluded: test fixture code intentionally contains detection patterns
+    skip_dirs = {'.git', '__pycache__', 'backups', 'notes', 'odoo', 'venv', 'tests'}
     for path in ROOT.rglob('*'):
         if any(d in path.parts for d in skip_dirs):
             continue

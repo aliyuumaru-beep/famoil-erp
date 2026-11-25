@@ -6,7 +6,7 @@
 - **CLAUDE.md §8**: 10 AI-agent operating rules (native-first investigation, OCA-first, no core modification, architectural implications before coding, no ORM bypass without documentation, mandatory automated tests, regression checks, multi-scenario acceptance, maintain governance docs, no live DB changes without approval)
 - **`docs/ODOO17_BREAKING_CHANGES.md`** (new): Reference catalogue of 6 known Odoo 16→17 breaking patterns with ERP-AGRO context and open questions OQ-GOV-01/OQ-GOV-02
 - **`scripts/pre_review_check.py`** (new): Static pre-review checker — 6 checks: inline imports, create() decorator, ACL XML ID references, hardcoded database ID constants, Odoo 16→17 version-compat (branch-changed XML scope), hardcoded secrets (excluding odoo/ and venv/)
-- **`scripts/tests/test_pre_review_check.py`** (new): 11 unittest cases covering all three check_version_compat patterns (5a portal_my_home_entry, 5b t-field on \<t\>, 5b commented-out false-positive guard, 5c \<tree\> advisory-only), check_no_hardcoded_ids (check 4); all pass
+- **`scripts/tests/test_pre_review_check.py`** (new): 19 unittest cases covering all 6 checks — check_version_compat (5a/5b/commented-out/5c), check_no_hardcoded_ids (4), check_inline_imports (1), check_create_decorator (2), check_acl_xml_ids (3), check_no_secrets (6); all pass
 - **`docs/famoil_erp_template/DECISION_LOG.md` DEC-017**: Design decisions for branch-scoped XML check, skip_dirs scope, hardcoded-ID check, 10-rule set
 - **`docs/MODULE_REGISTRY.md`**: SCR-001 entry for scripts/pre_review_check.py
 

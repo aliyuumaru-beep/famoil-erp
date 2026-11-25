@@ -34,7 +34,7 @@ The Software Factory assessment (SPEC-GOV-ENF-001 / Step 2) identified five gove
 | `CLAUDE.md` | Added §8: 10 AI-agent operating rules (WP-GOV-01) |
 | `docs/ODOO17_BREAKING_CHANGES.md` | New — 6 breaking-pattern catalogue with ERP-AGRO context |
 | `scripts/pre_review_check.py` | New — 6-check static analyser for custom_addons/ |
-| `scripts/tests/test_pre_review_check.py` | New — 11 unittest cases; all pass |
+| `scripts/tests/test_pre_review_check.py` | New — 19 unittest cases; all pass (all 6 checks covered) |
 | `CHANGELOG.md` | WP-GOV-01 [Unreleased] section added |
 | `docs/famoil_erp_template/DECISION_LOG.md` | DEC-017 added |
 | `docs/MODULE_REGISTRY.md` | SCR-001 entry for pre_review_check.py |
@@ -43,7 +43,7 @@ The Software Factory assessment (SPEC-GOV-ENF-001 / Step 2) identified five gove
 ### Validation
 
 - `python3 scripts/pre_review_check.py` → clean (exit 0) on this branch
-- `python3 scripts/tests/test_pre_review_check.py` → 11/11 pass
+- `python3 scripts/tests/test_pre_review_check.py` → 19/19 pass
 - `gov verify` → READY (after gov review)
 
 ### Open Questions

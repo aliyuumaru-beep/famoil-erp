@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-Unit tests for scripts/pre_review_check.py — covers check_version_compat().
+Unit tests for scripts/pre_review_check.py.
+
+Covers: check_version_compat, check_no_hardcoded_ids, check_inline_imports,
+check_create_decorator, check_acl_xml_ids, check_no_secrets.
 
 Run with:
     python3 scripts/tests/test_pre_review_check.py
@@ -12,6 +15,31 @@ import unittest
 from pathlib import Path
 
 CHECK_SCRIPT = Path(__file__).resolve().parent.parent / 'pre_review_check.py'
+
+
+def _load_module_ns(mod_dir: Path, issues_list: list):
+    """
+    Exec the checker up to the '# ── Run all checks' sentinel. Patches CUSTOM_ADDONS
+    and CUSTOM_MODULE_NAMES so only mod_dir's parent / mod_dir.name is scanned.
+    """
+    source = CHECK_SCRIPT.read_text()
+    cut = source.find('# ── Run all checks')
+    assert cut > 0, 'Sentinel not found in pre_review_check.py'
+    fn_source = source[:cut]
+    ns = {
+        '__file__': str(CHECK_SCRIPT),
+        'ISSUES': issues_list,
+        're': re,
+        'sys': sys,
+    }
+    exec(compile(fn_source, str(CHECK_SCRIPT), 'exec'), ns)  # noqa: S102
+    ns['ROOT'] = mod_dir.parent
+    ns['CUSTOM_ADDONS'] = mod_dir.parent
+    ns['CUSTOM_MODULE_NAMES'] = {mod_dir.name}
+    def _issue(filepath, line_no, msg):
+        issues_list.append(f'  [{filepath.name}:{line_no}] {msg}')
+    ns['issue'] = _issue
+    return ns
 
 
 def _load_checker_functions(xml_file: Path, issues_list: list):
@@ -136,29 +164,11 @@ class TestCheckNoHardcodedIds(unittest.TestCase):
 
     def _load_and_run(self, py_content):
         issues = []
-        source = CHECK_SCRIPT.read_text()
-        cut = source.find('# ── Run all checks')
-        assert cut > 0
-        fn_source = source[:cut]
         with tempfile.TemporaryDirectory() as td:
-            # Mimic custom_addons/my_module/models/stock_picking.py
             mod_dir = Path(td) / 'my_module' / 'models'
             mod_dir.mkdir(parents=True)
-            py_file = mod_dir / 'stock_picking.py'
-            py_file.write_text(py_content)
-            ns = {
-                '__file__': str(CHECK_SCRIPT),
-                'ISSUES': issues,
-                're': re,
-                'sys': sys,
-            }
-            exec(compile(fn_source, str(CHECK_SCRIPT), 'exec'), ns)  # noqa: S102
-            ns['ROOT'] = Path(td)
-            ns['CUSTOM_ADDONS'] = Path(td)
-            ns['CUSTOM_MODULE_NAMES'] = {'my_module'}
-            def _issue(filepath, line_no, msg):
-                issues.append(f'  [{filepath.name}:{line_no}] {msg}')
-            ns['issue'] = _issue
+            (mod_dir / 'stock_picking.py').write_text(py_content)
+            ns = _load_module_ns(Path(td) / 'my_module', issues)
             ns['check_no_hardcoded_ids']()
         return issues
 
@@ -175,6 +185,131 @@ class TestCheckNoHardcodedIds(unittest.TestCase):
         )
         self.assertFalse(any('hardcoded database ID' in i for i in issues),
                          f'False positive on name-based lookup: {issues}')
+
+
+class TestCheckInlineImports(unittest.TestCase):
+    """check 1 — inline imports inside method bodies"""
+
+    def _run(self, py_content):
+        issues = []
+        with tempfile.TemporaryDirectory() as td:
+            mod = Path(td) / 'my_mod' / 'models'
+            mod.mkdir(parents=True)
+            (mod / 'test.py').write_text(py_content)
+            ns = _load_module_ns(Path(td) / 'my_mod', issues)
+            ns['check_inline_imports']()
+        return issues
+
+    def test_inline_import_detected(self):
+        code = 'def my_method(self):\n    import os\n    return os.getcwd()\n'
+        issues = self._run(code)
+        self.assertTrue(any('Inline import' in i for i in issues),
+                        f'Expected inline import finding, got: {issues}')
+
+    def test_module_level_import_clean(self):
+        code = 'import os\n\ndef my_method(self):\n    return os.getcwd()\n'
+        issues = self._run(code)
+        self.assertFalse(any('Inline import' in i for i in issues),
+                         f'False positive on module-level import: {issues}')
+
+
+class TestCheckCreateDecorator(unittest.TestCase):
+    """check 2 — create() overrides must have @api.model_create_multi"""
+
+    def _run(self, py_content):
+        issues = []
+        with tempfile.TemporaryDirectory() as td:
+            mod = Path(td) / 'my_mod' / 'models'
+            mod.mkdir(parents=True)
+            (mod / 'test.py').write_text(py_content)
+            ns = _load_module_ns(Path(td) / 'my_mod', issues)
+            ns['check_create_decorator']()
+        return issues
+
+    def test_missing_decorator_detected(self):
+        code = 'class MyModel:\n    def create(self, vals):\n        return super().create(vals)\n'
+        issues = self._run(code)
+        self.assertTrue(any('missing @api.model_create_multi' in i for i in issues),
+                        f'Expected missing decorator finding, got: {issues}')
+
+    def test_with_decorator_clean(self):
+        code = 'class MyModel:\n    @api.model_create_multi\n    def create(self, vals_list):\n        return super().create(vals_list)\n'
+        issues = self._run(code)
+        self.assertFalse(any('missing @api.model_create_multi' in i for i in issues),
+                         f'False positive with decorator present: {issues}')
+
+
+class TestCheckAclXmlIds(unittest.TestCase):
+    """check 3 — ACL group refs must exist in groups.xml"""
+
+    def _run(self, csv_content, groups_xml_content):
+        issues = []
+        with tempfile.TemporaryDirectory() as td:
+            mod = Path(td) / 'my_mod'
+            sec = mod / 'security'
+            sec.mkdir(parents=True)
+            (sec / 'ir.model.access.csv').write_text(csv_content)
+            if groups_xml_content is not None:
+                (sec / 'groups.xml').write_text(groups_xml_content)
+            ns = _load_module_ns(mod, issues)
+            ns['check_acl_xml_ids']()
+        return issues
+
+    def test_missing_group_ref_detected(self):
+        csv = 'id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink\n'
+        csv += 'access_test,test,model_my_model,group_nonexistent,1,0,0,0\n'
+        groups = '<odoo><data><record id="group_other" model="res.groups"/></data></odoo>'
+        issues = self._run(csv, groups)
+        self.assertTrue(any('ACL group ref not found' in i for i in issues),
+                        f'Expected ACL finding, got: {issues}')
+
+    def test_known_group_ref_clean(self):
+        csv = 'id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink\n'
+        csv += 'access_test,test,model_my_model,group_manager,1,0,0,0\n'
+        groups = '<odoo><data><record id="group_manager" model="res.groups"/></data></odoo>'
+        issues = self._run(csv, groups)
+        self.assertFalse(any('ACL group ref not found' in i for i in issues),
+                         f'False positive on known group ref: {issues}')
+
+
+class TestCheckNoSecrets(unittest.TestCase):
+    """check 6 — no hardcoded passwords/secrets"""
+
+    def _run_with_root(self, root: Path, issues_list: list):
+        source = CHECK_SCRIPT.read_text()
+        cut = source.find('# ── Run all checks')
+        assert cut > 0
+        fn_source = source[:cut]
+        ns = {
+            '__file__': str(CHECK_SCRIPT),
+            'ISSUES': issues_list,
+            're': re,
+            'sys': sys,
+        }
+        exec(compile(fn_source, str(CHECK_SCRIPT), 'exec'), ns)  # noqa: S102
+        ns['ROOT'] = root
+        def _issue(filepath, line_no, msg):
+            issues_list.append(f'  [{filepath.name}:{line_no}] {msg}')
+        ns['issue'] = _issue
+        return ns
+
+    def test_hardcoded_password_in_py_detected(self):
+        issues = []
+        with tempfile.TemporaryDirectory() as td:
+            (Path(td) / 'config.py').write_text("password = 'mysecretpass'\n")
+            ns = self._run_with_root(Path(td), issues)
+            ns['check_no_secrets']()
+        self.assertTrue(any('hardcoded secret' in i for i in issues),
+                        f'Expected secret finding, got: {issues}')
+
+    def test_example_file_excluded(self):
+        issues = []
+        with tempfile.TemporaryDirectory() as td:
+            (Path(td) / '.env.example').write_text("password = 'changeme'\n")
+            ns = self._run_with_root(Path(td), issues)
+            ns['check_no_secrets']()
+        self.assertFalse(any('hardcoded secret' in i for i in issues),
+                         f'False positive on .example file: {issues}')
 
 
 if __name__ == '__main__':

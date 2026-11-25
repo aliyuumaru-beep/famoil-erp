@@ -184,12 +184,12 @@ Added in WP-GOV-01. This is a mandatory manual gate, not a hook — it must be r
 
 | Rule (CLAUDE.md §8) | Check |
 |---|---|
-| Rule 3 — No inline imports in method bodies | `check_inline_imports()` |
-| Rule 1/2 — Correct Odoo ORM patterns | `check_create_decorator()` |
-| Rule 4 — ACL XML ID integrity | `check_acl_xml_ids()` |
-| Rule 1 — No hardcoded DB IDs (ISSUE-003 prevention) | `check_no_hardcoded_ids()` |
-| Rule 1 — Odoo 16→17 breaking patterns | `check_version_compat()` |
-| Rule 10 — No hardcoded secrets | `check_no_secrets()` |
+| No inline imports inside method bodies (Python code quality) | `check_inline_imports()` |
+| create() overrides need @api.model_create_multi (Odoo ORM correctness) | `check_create_decorator()` |
+| ACL XML ID references exist in local groups.xml (security/data integrity) | `check_acl_xml_ids()` |
+| No hardcoded database ID constants (ISSUE-003 prevention; use runtime name lookup) | `check_no_hardcoded_ids()` |
+| Odoo 16→17 breaking XML patterns in branch-changed files | `check_version_compat()` |
+| No hardcoded passwords/secrets in repo files | `check_no_secrets()` |
 
 **Usage:**
 ```bash

@@ -38,7 +38,7 @@ def _custom_module_dirs():
 
 # ── 1. No inline imports inside method bodies ───────────────────────────────
 # OQ-GOV-03: in_method resets on any def/class boundary (indent heuristic).
-# A nested def inside a method resets the flag prematurely — accepted limitation.
+# A `class` block inside a method body resets in_method to False prematurely — accepted limitation.
 def check_inline_imports():
     for mod in _custom_module_dirs():
         for py in mod.rglob('*.py'):

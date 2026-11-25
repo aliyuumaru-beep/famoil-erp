@@ -174,6 +174,32 @@ Never disable a BLOCK (exit 2) hook without explicit operator approval and a DEC
 
 ---
 
+## Pre-Review Enforcement Gate — `scripts/pre_review_check.py`
+
+Added in WP-GOV-01. This is a mandatory manual gate, not a hook — it must be run by the AI session before every `gov review` call (enforced by CLAUDE.md §8 Rule 7).
+
+**Purpose:** Static analysis of the branch before the independent G1/G2/G3 review cycle. Catching issues here avoids expensive re-review rounds.
+
+**Rules it enforces:**
+
+| Rule (CLAUDE.md §8) | Check |
+|---|---|
+| Rule 3 — No inline imports in method bodies | `check_inline_imports()` |
+| Rule 1/2 — Correct Odoo ORM patterns | `check_create_decorator()` |
+| Rule 4 — ACL XML ID integrity | `check_acl_xml_ids()` |
+| Rule 1 — No hardcoded DB IDs (ISSUE-003 prevention) | `check_no_hardcoded_ids()` |
+| Rule 1 — Odoo 16→17 breaking patterns | `check_version_compat()` |
+| Rule 10 — No hardcoded secrets | `check_no_secrets()` |
+
+**Usage:**
+```bash
+python3 scripts/pre_review_check.py   # exits 0 (clean) or 1 (issues found)
+```
+
+**Known limitations:** See `docs/MODULE_REGISTRY.md` SCR-001 Limitations field (OQ-GOV-04 through OQ-GOV-09).
+
+---
+
 ## How to Test a Hook
 
 Test hooks before relying on them by simulating their inputs:

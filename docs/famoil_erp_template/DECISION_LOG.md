@@ -487,7 +487,7 @@ stack is ever multi-tenant or multi-operator.
 
 **Date:** 2026-11-25
 
-**Status:** IMPLEMENTED — `feat/gov-uplift-erp-agro`; 19/19 tests pass; G1 APPROVED; G3 APPROVED_WITH_CONDITIONS (deferred pre-conditions for future WPs only).
+**Status:** IMPLEMENTED — `feat/gov-uplift-erp-agro`; 19/19 tests pass. Gov review in progress; verdicts to be recorded after conclusion.
 
 **Rationale:**
 
@@ -511,3 +511,4 @@ stack is ever multi-tenant or multi-operator.
 - OQ-GOV-06: After XML comment stripping in `check_version_compat()`, reported line numbers refer to the stripped text, not the original file. If a multi-line comment precedes the violation, the reported line may be off by N lines. Workaround: search the XML file for the pattern string to find the true line. Fix in a future pre_review_check.py extension by keeping a line-offset map during stripping.
 - OQ-GOV-07: `TestCheckNoSecrets` does not test: (a) the `skip_dirs` exclusion of `odoo/` or `venv/` paths (regression guard for accidental removal of those entries), (b) the `admin_passwd` variant of SECRET_PATTERN, or (c) `.xml`/`.conf`/`.env` file type coverage. Address before any WP that changes `check_no_secrets()` or `skip_dirs`.
 - OQ-GOV-08: The advisory WARNING `print()` path in `check_version_compat()` check 5c (`<tree>` deprecated) is not asserted in unit tests — tests only confirm it does not add to `ISSUES`. Capturing `stdout` in `TestCheckVersionCompatTreeTag` would add coverage but is deferred as low-value for a non-fatal advisory path. Accepted limitation.
+- OQ-GOV-09: `HARDCODED_ID_PATTERN` (`^[A-Z_]+_ID[S]?\s*=\s*\{?\d`) requires ALL-CAPS prefix — a mixed-case constant like `Crude_Oil_Tank_Id = 141` or `crude_oil_tank_id = 141` is not detected. Constants using CamelCase or snake_case naming would evade the check. Accepted for current code base (all three custom modules use SCREAMING_SNAKE_CASE for constants); revisit if new modules adopt different naming conventions.

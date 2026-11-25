@@ -57,6 +57,8 @@ The Software Factory assessment (SPEC-GOV-ENF-001 / Step 2) identified five gove
 | OQ-GOV-06 | Line numbers reported by `check_version_compat()` after comment stripping may be off by N if a multi-line comment precedes the violation. Workaround: search file for the pattern. OPEN. |
 | OQ-GOV-04 | `check_acl_xml_ids()` only resolves local groups.xml refs — cross-module refs (base.group_user etc.) will fire false positives. Fix before first WP adding ACL CSV with cross-module group refs. OPEN. |
 | OQ-GOV-05 | `check_no_secrets()` SECRET_PATTERN covers password/admin_passwd only; misses api_key/token/secret/private_key. Fix before any WP adding external API integrations. OPEN. |
+| OQ-GOV-07 | `TestCheckNoSecrets` does not test: (a) skip_dirs exclusion of `odoo/`/`venv/`, (b) `admin_passwd` variant, (c) `.xml`/`.conf`/`.env` file types. Address before any WP changing `check_no_secrets()` or `skip_dirs`. OPEN. |
+| OQ-GOV-08 | `check_version_compat()` check 5c advisory WARNING `print()` path is not asserted in unit tests. Tests confirm it does not add to ISSUES; the print itself is unverified. Accepted limitation for a non-fatal advisory path. OPEN. |
 
 ---
 
